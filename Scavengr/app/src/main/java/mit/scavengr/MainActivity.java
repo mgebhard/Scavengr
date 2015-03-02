@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.hunt:
-                Intent hunt = new Intent(this, HuntActivity.class);
+                Intent hunt = new Intent(this, MapTestActivity.class);
                 this.startActivity(hunt);
                 break;
             case R.id.create_hunt:
