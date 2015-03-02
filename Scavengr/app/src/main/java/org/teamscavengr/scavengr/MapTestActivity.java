@@ -22,8 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 
-public class MapTestActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public abstract class MapTestActivity extends Activity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -64,7 +64,6 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
         mapFragment.getMapAsync(this);
 
 
-
         buildGoogleApiClient();
     }
 
@@ -100,4 +99,5 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
         }
+    }
 }
