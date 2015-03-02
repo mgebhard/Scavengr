@@ -8,5 +8,6 @@
     <string name="title_activity_create_hunt">CreateHuntActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_hunt">HuntActivity</string>
+    <string name="title_activity_map_test">MapTestActivity</string>
 
 </resources>
