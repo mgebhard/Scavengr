@@ -21,6 +21,8 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
+
 
 public class MapTestActivity extends Activity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -31,6 +33,7 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
     protected TextView mLongitudeText;
 
     public Location mLastLocation;
+    public GoogleMap mapObject;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,10 +83,11 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
-
+        LatLng sydney = new LatLng(42.3736, -71.1106);
+        sydney = new LatLng(10., 10.);
+        mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
 
         map.addMarker(new MarkerOptions()
                 .title("Sydney")
@@ -99,6 +103,7 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
         }
+
     }
 
     @Override
