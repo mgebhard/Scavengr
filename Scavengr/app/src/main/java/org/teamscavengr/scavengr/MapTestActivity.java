@@ -1,4 +1,4 @@
-package mit.scavengr;
+package org.teamscavengr.scavengr;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
