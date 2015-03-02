@@ -1,5 +1,0 @@
-/Users/megangebhard/Documents/21W.789/Scavengr/app/build/intermediates/classes/debug
-/Users/megangebhard/Documents/21W.789/Scavengr/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-8761157a8e936e21d7f1c9eef2357c5bfaf4c22e.jar
-/Users/megangebhard/Documents/21W.789/Scavengr/app/build/intermediates/pre-dexed/debug/internal_impl-21.0.3-621cd29152a155e9893f82457b1dc1e3b6c0d659.jar
-/Users/megangebhard/Documents/21W.789/Scavengr/app/build/intermediates/pre-dexed/debug/classes-79517d4fc0212840d5b0ee75aa0e66d00f36c343.jar
-/Users/megangebhard/Documents/21W.789/Scavengr/app/build/intermediates/pre-dexed/debug/classes-c52127e970bb989c44904c8f11ff6066033621f9.jar
