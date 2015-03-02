@@ -22,7 +22,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 
 
-public abstract class MapTestActivity extends Activity implements OnMapReadyCallback,
+public class MapTestActivity extends Activity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     protected GoogleApiClient mGoogleApiClient;
@@ -99,5 +99,15 @@ public abstract class MapTestActivity extends Activity implements OnMapReadyCall
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
         }
+    }
+
+    @Override
+    public void onConnectionSuspended(final int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(final ConnectionResult connectionResult) {
+
     }
 }
