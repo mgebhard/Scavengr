@@ -1,4 +1,4 @@
-package mit.scavengr;
+package org.teamscavengr.scavengr;
 
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;

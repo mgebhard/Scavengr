@@ -1,4 +1,4 @@
-package mit.scavengr;
+package org.teamscavengr.scavengr;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
