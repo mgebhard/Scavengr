@@ -100,4 +100,15 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
             mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
             mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
         }
+    }
+
+    @Override
+    public void onConnectionSuspended(final int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(final ConnectionResult connectionResult) {
+
+    }
 }
