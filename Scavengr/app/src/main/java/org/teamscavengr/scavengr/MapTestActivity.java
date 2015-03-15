@@ -1,31 +1,28 @@
 package org.teamscavengr.scavengr;
 
+
+import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
-import android.app.Activity;
-import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
-
-import java.io.IOException;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MapTestActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -65,7 +62,8 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        Button finishHunt = (Button)findViewById(R.id.finish_hunt);
+        finishHunt.setOnClickListener(this);
 
         buildGoogleApiClient();
     }
@@ -113,6 +111,17 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
+
+    }
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.finish_hunt:
+                Intent home = new Intent(this, ReviewHunt.class);
+                this.startActivity(home);
+                break;
+            default:
+                break;
+        }
 
     }
 }

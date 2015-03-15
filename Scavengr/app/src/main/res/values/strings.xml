@@ -19,5 +19,6 @@
     <string name="title_activity_hunts_list">HuntsList</string>
     <string name="title_activity_confirm_hunt">ConfirmHunt</string>
     <string name="title_activity_hunt_conformation">HuntConformationActivity</string>
+    <string name="title_activity_review_hunt">ReviewHunt</string>
 
 </resources>
