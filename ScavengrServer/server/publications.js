@@ -15,5 +15,12 @@ Meteor.startup(function(){
       createdHunts: [0, 1, 2],
     });
   };
+
+  if((Hunts.find().count() == 0)) {
+    Hunts.insert({
+      name: "Boston Hunt 1",
+      data: "data",
+    });
+  };
 });
 
