@@ -149,7 +149,7 @@ public class User {
      * @param id The id The id of the user in our database.
      * @param ulc A callback for when the request completes.
      */
-    public void loadUserInBackground(final String id, final UserLoadedCallback ulc) {
+    public static void loadUserInBackground(final String id, final UserLoadedCallback ulc) {
         new Thread(new Runnable() {
             public void run() {
                 try {
