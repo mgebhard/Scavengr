@@ -47,6 +47,22 @@
             android:name=".MapTestActivity"
             android:label="@string/title_activity_map_test" >
         </activity>
+        <activity
+            android:name=".HuntsList"
+            android:label="@string/title_activity_hunts_list" >
+        </activity>
+        <activity
+            android:name=".ConfirmHunt"
+            android:label="@string/title_activity_confirm_hunt" >
+        </activity>
+        <activity
+            android:name=".HuntConformationActivity"
+            android:label="@string/title_activity_hunt_conformation" >
+        </activity>
+        <activity
+            android:name=".ReviewHunt"
+            android:label="@string/title_activity_review_hunt" >
+        </activity>
     </application>
 
 </manifest>
