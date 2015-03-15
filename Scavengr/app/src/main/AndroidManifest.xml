@@ -2,14 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.teamscavengr.scavengr" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -20,7 +22,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="org.teamscavengr.scavengr.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,16 +31,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.teamscavengr.scavengr.CreateHuntActivity"
+            android:name=".CreateHuntActivity"
             android:label="@string/title_activity_create_hunt" >
         </activity>
         <activity
-            android:name="org.teamscavengr.scavengr.HuntActivity"
+            android:name=".HuntActivity"
             android:label="@string/title_activity_hunt" >
         </activity>
+
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDY7LxaXicRIUcpuI5h51UQo2rEeGvs1SM" />
+
         <activity
             android:name=".MapTestActivity"
             android:label="@string/title_activity_map_test" >
