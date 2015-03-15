@@ -1,11 +1,14 @@
 package org.teamscavengr.scavengr;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +28,7 @@ import java.io.IOException;
 
 
 public class MapTestActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -65,7 +68,8 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        Button finishHunt = (Button)findViewById(R.id.finish_hunt);
+        finishHunt.setOnClickListener(this);
 
         buildGoogleApiClient();
     }
@@ -113,6 +117,17 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
+
+    }
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.finish_hunt:
+                Intent home = new Intent(this, ReviewHunt.class);
+                this.startActivity(home);
+                break;
+            default:
+                break;
+        }
 
     }
 }

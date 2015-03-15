@@ -9,22 +9,21 @@ import android.view.View;
 import android.widget.Button;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class ReviewHunt extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Button hunt = (Button)findViewById(R.id.hunt);
-        Button create = (Button)findViewById(R.id.create_hunt);
-        hunt.setOnClickListener(this);
-        create.setOnClickListener(this);
+        setContentView(R.layout.activity_review_hunt);
+        Button submitForm = (Button)findViewById(R.id.submit_review);
+        submitForm.setOnClickListener(this);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
         return true;
     }
 
@@ -45,14 +44,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.hunt:
-                Intent hunt = new Intent(this, HuntsList.class);
-                // Pass in Geo Location of user
-                this.startActivity(hunt);
-                break;
-            case R.id.create_hunt:
-                Intent createHuntIntent = new Intent(this, CreateHuntActivity.class);
-                this.startActivity(createHuntIntent);
+            case R.id.submit_review:
+                Intent home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
                 break;
             default:
                 break;

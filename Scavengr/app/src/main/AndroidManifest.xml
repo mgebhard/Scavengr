@@ -59,6 +59,10 @@
             android:name=".HuntConformationActivity"
             android:label="@string/title_activity_hunt_conformation" >
         </activity>
+        <activity
+            android:name=".ReviewHunt"
+            android:label="@string/title_activity_review_hunt" >
+        </activity>
     </application>
 
 </manifest>
