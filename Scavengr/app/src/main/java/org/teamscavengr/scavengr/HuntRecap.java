@@ -1,25 +1,26 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class HuntRecap extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_hunt_recap);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_hunt_recap, menu);
         return true;
     }
 
@@ -37,16 +38,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
     }
-
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.go_on_hunt:
-                Intent hunt = new Intent(this, HuntsList.class);
-                // Pass in Geo Location of user
+            case R.id.review:
+                Intent hunt = new Intent(this, ReviewHunt.class);
                 this.startActivity(hunt);
                 break;
-            case R.id.create_hunt:
-                Intent createHuntIntent = new Intent(this, CreateHuntActivity.class);
+            case R.id.home:
+                Intent createHuntIntent = new Intent(this, MainActivity.class);
                 this.startActivity(createHuntIntent);
                 break;
             default:

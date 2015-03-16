@@ -16,12 +16,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
-    <string name="title_activity_hunts_list">HuntsList</string>
-    <string name="title_activity_confirm_hunt">ConfirmHunt</string>
-    <string name="title_activity_hunt_conformation">HuntConformationActivity</string>
-    <string name="title_activity_review_hunt">ReviewHunt</string>
+    <string name="title_activity_hunts_list">Hunts List</string>
+    <string name="title_activity_confirm_hunt">Confirm Hunt</string>
+    <string name="title_activity_hunt_conformation">Hunt Conformation Activity</string>
+    <string name="title_activity_review_hunt">Review Hunt</string>
     <string name="my_profile">My Profile</string>
     <string name="facebook">Facebook</string>
     <string name="my_name">My Name</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_hunt_recap">Hunt Recap</string>
 
 </resources>
