@@ -40,15 +40,15 @@ public class HuntsList extends ListActivity implements
         super.onCreate(savedInstanceState);
 
         // Create a progress bar to display while the list loads
-//        ProgressBar progressBar = new ProgressBar(this);
-//        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
-//                LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-//        progressBar.setIndeterminate(true);
-//        getListView().setEmptyView(progressBar);
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        progressBar.setIndeterminate(true);
+        getListView().setEmptyView(progressBar);
 //
 //        // Must add the progress bar to the root of the layout
-//        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
-//        root.addView(progressBar);
+        ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
+        root.addView(progressBar);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
