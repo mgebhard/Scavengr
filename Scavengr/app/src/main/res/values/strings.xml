@@ -25,4 +25,8 @@
     <string name="title_review_created">title_review_created</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_hunt_recap">HuntRecap</string>
+    <string name="my_profile">My Profile</string>
+    <string name="facebook">Facebook</string>
+    <string name="my_name">My Name</string>
+
 </resources>

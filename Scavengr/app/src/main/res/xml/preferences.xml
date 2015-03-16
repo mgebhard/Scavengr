@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/my_profile"
+        android:key="pref_key_profile_settings">
+        <SwitchPreference
+            android:title="@string/facebook"
+            android:key="pref_key_profile_facebook">
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="http://facebook.com" />
+        </SwitchPreference>
+        <EditTextPreference
+            android:title="@string/my_name"
+            android:key="pref_key_profile_name" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
