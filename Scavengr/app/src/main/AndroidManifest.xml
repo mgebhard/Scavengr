@@ -55,13 +55,25 @@
             android:name=".ConfirmHunt"
             android:label="@string/title_activity_confirm_hunt" >
         </activity>
-        <activity
-            android:name=".HuntConformationActivity"
-            android:label="@string/title_activity_hunt_conformation" >
-        </activity>
+        <!--<activity-->
+            <!--android:name=".HuntConfirmationActivity"-->
+            <!--android:label="@string/title_activity_hunt_conformation" >-->
+        <!--</activity>-->
         <activity
             android:name=".ReviewHunt"
             android:label="@string/title_activity_review_hunt" >
+        </activity>
+        <activity
+            android:name=".CreateWaypointActivity"
+            android:label="@string/title_create_waypoint" >
+        </activity>
+        <activity
+            android:name=".MyHuntsActivity"
+            android:label="@string/title_my_hunts" >
+        </activity>
+        <activity
+            android:name=".ReviewCreatedHunt"
+            android:label="@string/title_review_created" >
         </activity>
     </application>
 

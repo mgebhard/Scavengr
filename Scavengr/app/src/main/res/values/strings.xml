@@ -20,5 +20,8 @@
     <string name="title_activity_confirm_hunt">ConfirmHunt</string>
     <string name="title_activity_hunt_conformation">HuntConformationActivity</string>
     <string name="title_activity_review_hunt">ReviewHunt</string>
+    <string name="title_create_waypoint">title_create_waypoint</string>
+    <string name="title_my_hunts">title_my_hunts</string>
+    <string name="title_review_created">title_review_created</string>
 
 </resources>
