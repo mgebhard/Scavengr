@@ -1,4 +1,4 @@
-// A simple REST API to access the MongoDB
+// A REST API to access the MongoDB
 
 Router.route('/users', function() {
     this.response.statusCode = 200;
@@ -141,12 +141,23 @@ Router.route('/hunts/:huntId/tasks/:taskId/', function() {
     this.response.setHeader("Access-Control-Allow-Origin", "*");
     this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
+    var taskId = this.params.taskId;
+
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(
                 Hunts.findOne({
                     _id: new Meteor.Collection.ObjectID(this.params.huntId),
                     'tasks._id': new Meteor.Collection.ObjectID(this.params.taskId)
-                })
+                })['tasks'].filter(function(task) {
+                    return task._id._str == taskId;
+                })[0]
+        ));
+    } else if(this.request.method == 'DELETE') {
+        this.response.end(JSON.stringify(
+            Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+                { $pull: {
+                    tasks: { _id: new Meteor.Collection.ObjectID(this.params.taskId) }
+                }})
         ));
     } else {
         this.response.statusCode = 405;
