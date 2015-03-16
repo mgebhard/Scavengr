@@ -10,17 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Go Hunting"
-        android:id="@+id/confirmHunt"
+        android:id="@+id/confirm_hunt"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="36dp" />
+        android:layout_marginBottom="36dp"
+        android:onClick="onClick"/>
 
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ratingBar"
         android:layout_marginBottom="51dp"
-        android:layout_above="@+id/confirmHunt"
+        android:layout_above="@+id/confirm_hunt"
         android:layout_centerHorizontal="true" />
 
     <TextView

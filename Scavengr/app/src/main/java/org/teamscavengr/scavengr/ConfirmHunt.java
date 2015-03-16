@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 
 public class ConfirmHunt extends ActionBarActivity implements View.OnClickListener {
@@ -15,9 +14,6 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_hunt);
-        Button confirmHunt = (Button)findViewById(R.id.confirmHunt);
-        confirmHunt.setOnClickListener(this);
-
     }
 
 
@@ -45,9 +41,8 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
 
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.confirmHunt:
+            case R.id.confirm_hunt:
                 Intent hunt = new Intent(this, MapTestActivity.class);
-                // Pass in Geo Location of user
                 this.startActivity(hunt);
                 break;
             default:

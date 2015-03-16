@@ -45,8 +45,8 @@ public class ReviewHunt extends ActionBarActivity implements View.OnClickListene
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.submit_review:
-                Intent home = new Intent(this, MainActivity.class);
-                this.startActivity(home);
+                Intent recap = new Intent(this, HuntRecap.class);
+                this.startActivity(recap);
                 break;
             default:
                 break;

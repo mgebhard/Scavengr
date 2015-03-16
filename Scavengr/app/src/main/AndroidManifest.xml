@@ -75,6 +75,11 @@
             android:name=".ReviewCreatedHunt"
             android:label="@string/title_review_created" >
         </activity>
+        <activity
+            android:name=".HuntRecap"
+            android:label="@string/title_activity_hunt_recap" >
+
+        </activity>
     </application>
 
 </manifest>

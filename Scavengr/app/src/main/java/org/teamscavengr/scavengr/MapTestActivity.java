@@ -1,10 +1,11 @@
 package org.teamscavengr.scavengr;
 
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +22,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class MapTestActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+
+public class MapTestActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -61,11 +64,16 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(this);
-        Button finishHunt = (Button)findViewById(R.id.finish_hunt);
-        finishHunt.setOnClickListener(this);
+
+        // If not in radius show start screen
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, new StartHuntFragment()).commit();
 
         buildGoogleApiClient();
+
+//        loadTask();
     }
 
     /**
@@ -78,6 +86,58 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
                 .addApi(LocationServices.API)
                 .build();
     }
+
+    public void loadTask() {
+        TaskFragment newFragment = new TaskFragment();
+        Bundle args = new Bundle();
+//        args.putInt(TaskFragment.ARG_POSITION, position);
+//        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
+    public void completedTask(){
+        CompletedTaskFragment newFragment = new CompletedTaskFragment();
+        Bundle args = new Bundle();
+//        args.putInt(TaskFragment.ARG_POSITION, position);
+//        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
+    public void finishedPuzzle(){
+        CompletedHuntFragment newFragment = new CompletedHuntFragment();
+        Bundle args = new Bundle();
+//        args.putInt(TaskFragment.ARG_POSITION, position);
+//        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
 
     @Override
     public void onMapReady(GoogleMap map) {
@@ -115,9 +175,23 @@ public class MapTestActivity extends Activity implements OnMapReadyCallback,
     }
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.finish_hunt:
-                Intent home = new Intent(this, ReviewHunt.class);
-                this.startActivity(home);
+            case R.id.get_photo_recap:
+                Intent photoRecap = new Intent(this, HuntRecap.class);
+                this.startActivity(photoRecap);
+                break;
+            case R.id.begin_hunt:
+                loadTask();
+                break;
+            case R.id.next_task:
+                loadTask();
+                break;
+            case R.id.camera:
+                // Run a camera intent
+                finishedPuzzle();
+                break;
+            case R.id.get_hint:
+                // Call method with two geo points to get the distance between them then add toast
+                completedTask();
                 break;
             default:
                 break;

@@ -23,5 +23,6 @@
     <string name="title_create_waypoint">title_create_waypoint</string>
     <string name="title_my_hunts">title_my_hunts</string>
     <string name="title_review_created">title_review_created</string>
-
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_hunt_recap">HuntRecap</string>
 </resources>
