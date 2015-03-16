@@ -6,17 +6,32 @@ Router.route('/users', function() {
     this.response.setHeader("Access-Control-Allow-Origin", "*");
     this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
-    if(this.request.method == 'GET') {
-        this.response.end(JSON.stringify(Users.find().fetch()));
-    } else if(this.request.method == 'POST') {
+    if(this.request.method == 'POST') {
         this.response.end(JSON.stringify(Users.insert(this.request.body)));
     } else if(this.request.method == 'DELETE') {
         this.response.end(JSON.stringify(Users.remove(this.request.body)));
     } else if(this.request.method == 'OPTIONS') {
-        this.response.setHeader('Access-Control-Allow-Methods', "POST, GET, DELETE, OPTIONS");
+        this.response.setHeader('Access-Control-Allow-Methods', "POST, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
     }
-}, {where: 'server'});
+}, { where: 'server' });
+
+Router.route('/users/byName/:name', function() {
+    this.response.statusCode = 200;
+    this.response.setHeader("Content-Type", "application/json");
+    this.response.setHeader("Access-Control-Allow-Origin", "*");
+    this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    if(this.request.method == 'GET') {
+        this.response.end(JSON.stringify(Users.findOne({ name: this.params.name })));
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
+    }
+}, { where: 'server' });
 
 Router.route('/users/:userId', function() {
     this.response.statusCode = 200;
@@ -38,9 +53,11 @@ Router.route('/users/:userId', function() {
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "PUT, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
+    } else {
+        this.responseCode = 405;
+        this.response.end("Not Allowed");
     }
-
-}, {where: 'server'});
+}, { where: 'server' });
 
 Router.route('/hunts', function() {
     this.response.statusCode = 200;
@@ -57,10 +74,13 @@ Router.route('/hunts', function() {
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "POST, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
+    } else {
+        this.responseCode = 405;
+        this.response.end("Not Allowed");
     }
-}, {where: 'server'});
+}, { where: 'server' });
 
-Router.route('/hunt/:huntId', function() {
+Router.route('/hunts/:huntId', function() {
     this.response.statusCode = 200;
     this.response.setHeader("Content-Type", "application/json");
     this.response.setHeader("Access-Control-Allow-Origin", "*");
@@ -79,7 +99,58 @@ Router.route('/hunt/:huntId', function() {
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "PUT, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
     }
 
-}, {where: 'server'});
+}, { where: 'server' });
+
+Router.route('/hunts/:huntId/tasks/', function() {
+    this.response.statusCode = 200;
+    this.response.setHeader("Content-Type", "application/json");
+    this.response.setHeader("Access-Control-Allow-Origin", "*");
+    this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    if(this.request.method == 'GET') {
+        this.response.end(JSON.stringify(Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })['tasks']))
+    } else if(this.request.method == 'DELETE') {
+        this.response.end(JSON.stringify(
+            Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+                { $pull: {
+                    tasks: {}
+                }})));
+    } else if(this.request.method == 'POST') {
+        this.response.end(JSON.stringify(Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+                    { $push: {
+                        tasks: {
+                            _id: new Meteor.Collection.ObjectID(),
+                            latitude: this.request.body.latitude,
+                            longitude: this.request.body.longitude,
+                        }
+                    }})));
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
+    }
+}, { where: 'server' });
+
+Router.route('/hunts/:huntId/tasks/:taskId/', function() {
+    this.response.statusCode = 200;
+    this.response.setHeader("Content-Type", "application/json");
+    this.response.setHeader("Access-Control-Allow-Origin", "*");
+    this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    if(this.request.method == 'GET') {
+        this.response.end(JSON.stringify(
+                Hunts.findOne({
+                    _id: new Meteor.Collection.ObjectID(this.params.huntId),
+                    'tasks._id': new Meteor.Collection.ObjectID(this.params.taskId)
+                })
+        ));
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
+    }
+}, { where: 'server' });
 

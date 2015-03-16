@@ -20,5 +20,8 @@
     <string name="title_activity_confirm_hunt">ConfirmHunt</string>
     <string name="title_activity_hunt_conformation">HuntConformationActivity</string>
     <string name="title_activity_review_hunt">ReviewHunt</string>
+    <string name="my_profile">My Profile</string>
+    <string name="facebook">Facebook</string>
+    <string name="my_name">My Name</string>
 
 </resources>
