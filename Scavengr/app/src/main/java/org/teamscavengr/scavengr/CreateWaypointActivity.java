@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -9,13 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -23,8 +20,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
+/**
+ * Created by hzhou1235 on 3/15/15.
+ */
+public class CreateWaypointActivity extends ActionBarActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
@@ -34,44 +33,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     public Location mLastLocation;
     public GoogleMap mapObject;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_hunt, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_hunt);
-
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        Button finish = (Button) findViewById(R.id.finish);
-        Button addWaypoint = (Button) findViewById(R.id.add_waypoint);
-        finish.setOnClickListener(this);
-        addWaypoint.setOnClickListener(this);
-
-        buildGoogleApiClient();
-    }
 
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
@@ -119,18 +80,48 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onConnectionFailed(final ConnectionResult connectionResult) {
 
     }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create_waypoint);
+        Button confirm = (Button)findViewById(R.id.ok);
+        Button back = (Button)findViewById(R.id.cancel);
+        confirm.setOnClickListener(this);
+        back.setOnClickListener(this);
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        buildGoogleApiClient();
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.finish:
-                EditText text = (EditText)findViewById(R.id.estimated_time);
-                String value = text.getText().toString(); //store this time
-                Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                //store all waypoints
-                this.startActivity(reviewCreated);
+            case R.id.ok:
+                //store stuff
+                this.finish();
                 break;
-            case R.id.add_waypoint:
-                Intent addWaypoint = new Intent(this, CreateWaypointActivity.class);
-                this.startActivity(addWaypoint);
+            case R.id.cancel:
+                this.finish(); //not sure if this works/keeps old stuff
                 break;
             default:
                 break;
