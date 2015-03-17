@@ -49,4 +49,13 @@ public class Optional<T> {
         return object;
     }
 
+    /**
+     * @return The thing stored in this optional or something else
+     * @param other Something else
+     */
+    public T orElse(T other) {
+        if(!present) return other;
+        return object;
+    }
+
 }
