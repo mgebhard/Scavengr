@@ -1,5 +1,7 @@
 package org.teamscavengr.scavengr;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -148,17 +150,37 @@ public class User {
      * Loads a user in a background thread.
      * @param id The id The id of the user in our database.
      * @param ulc A callback for when the request completes.
+     * @param onUIThread If true, the callback will be run on the UI thread.
      */
-    public static void loadUserInBackground(final String id, final UserLoadedCallback ulc) {
+    public static void loadUserInBackground(final String id, final UserLoadedCallback ulc,
+                                            final boolean onUIThread) {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    User u = loadUser(id);
-                    ulc.userLoaded(u);
-                } catch (IOException e) {
-                    ulc.userFailedToLoad(e);
-                } catch (RuntimeException e) {
-                    ulc.userFailedToLoad(e);
+                    final User u = loadUser(id);
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                ulc.userLoaded(u);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        ulc.userLoaded(u);
+                    }
+                } catch (final IOException | RuntimeException e) {
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                ulc.userFailedToLoad(e);
+                            }
+                        };
+                        new Handler(Looper.myLooper()).post(r);
+                    } else {
+                        ulc.userFailedToLoad(e);
+                    }
                 }
             }
         }).start();
