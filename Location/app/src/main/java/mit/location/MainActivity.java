@@ -1,5 +1,6 @@
 package mit.location;
 
+import android.net.TrafficStats;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,6 +31,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void logDownloadSpeed() {
+
+        // Begin downloading the file
+        long beforeTime = System.currentTimeMillis();
+        long transmittedBefore = TrafficStats.getTotalTxBytes();
+        long receivedBefore = TrafficStats.getTotalRxBytes();
 
     }
 
