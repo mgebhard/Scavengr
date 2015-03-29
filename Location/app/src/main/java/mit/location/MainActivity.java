@@ -1,5 +1,6 @@
 package mit.location;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -13,6 +14,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -20,10 +23,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,
@@ -41,6 +44,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private static final String REMOTE_LOCATION =
             "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
+
+    private static final int REMOTE_SIZE = 650_924;
 
     @Override
     public void onClick(View v) {
@@ -87,40 +92,89 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void logDownloadSpeed() {
+        new Downloader(this, (ProgressBar) findViewById(R.id.progressBar),
+                (TextView) findViewById(R.id.downloadResult)).execute(REMOTE_LOCATION);
+    }
 
-        // Begin downloading the file
-        long transmittedBefore = TrafficStats.getTotalTxBytes();
-        long receivedBefore = TrafficStats.getTotalRxBytes();
+    private static class Downloader extends AsyncTask<String, Integer, Void> {
 
-        AsyncTask<String, Double, Long> at = new AsyncTask<String, Double, Long>() {
-            @Override
-            protected Long doInBackground(final String... params) {
-                try {
-                    HttpURLConnection connection =
-                            (HttpURLConnection) new URL(REMOTE_LOCATION).openConnection();
-                    connection.setReadTimeout(10000);
-                    connection.setConnectTimeout(15000);
-                    connection.setRequestMethod("GET");
-                    connection.setDoInput(true);
-                    long preConnectionTime = System.currentTimeMillis();
-                    connection.connect();
-                    return System.currentTimeMillis() - preConnectionTime;
-                } catch (MalformedURLException e) {
-                    throw new InternalError("bad code");
-                } catch (IOException e) {
-                    throw new RuntimeException("could not connect", e);
-                }
-            }
-        };
-        try {
-            long latency = at.execute().get();
-            Toast.makeText(this, "latency: " + latency + " ms", Toast.LENGTH_LONG).show();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        private final Activity context;
+        private final ProgressBar bar;
+        private final TextView resultView;
+
+        private long transmittedBefore;
+        private long receivedBefore;
+
+        private long downloadTotalTime;
+
+        public Downloader(final Activity context, final ProgressBar bar, final TextView resultView) {
+            this.context = context;
+            this.bar = bar;
+            this.resultView = resultView;
         }
 
+        @Override
+        protected void onPreExecute() {
+            bar.setMax(REMOTE_SIZE);
+        }
 
+        @Override
+        protected void onPostExecute(final Void _) {
+            long dt = TrafficStats.getTotalTxBytes() - transmittedBefore;
+            long dr = TrafficStats.getTotalRxBytes() - receivedBefore;
 
+            resultView.setText("Transmitted: " + dt + "\nReceived: " +
+                               dr + "\nTime taken: " + downloadTotalTime +
+                               "\nDownload speed: " + (int) (1d * dr / downloadTotalTime) +
+                               " bytes/millisecond");
+        }
+
+        @Override
+        protected Void doInBackground(final String... params) {
+            try {
+                HttpURLConnection connection =
+                        (HttpURLConnection) new URL(params[0]).openConnection();
+                connection.setReadTimeout(10000);
+                connection.setConnectTimeout(15000);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+                long preConnectionTime = System.currentTimeMillis();
+                connection.connect();
+                final long latency = System.currentTimeMillis() - preConnectionTime;
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "latency: " + latency + " ms", Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+                InputStream in = connection.getInputStream();
+                transmittedBefore = TrafficStats.getTotalTxBytes();
+                receivedBefore = TrafficStats.getTotalRxBytes();
+                byte[] buffer = new byte[1024];
+                int bytesRead = 0;
+                int n;
+                long downloadStartTime = System.currentTimeMillis();
+                while((n = in.read(buffer)) != -1) {
+                    // Update progress bar
+                    bytesRead += n;
+                    publishProgress(bytesRead);
+                }
+                publishProgress(REMOTE_SIZE);
+                downloadTotalTime = System.currentTimeMillis() - downloadStartTime;
+            } catch (MalformedURLException e) {
+                throw new InternalError("bad code");
+            } catch (IOException e) {
+                throw new RuntimeException("could not connect", e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            bar.setProgress(values[0]);
+        }
     }
 
     @Override
