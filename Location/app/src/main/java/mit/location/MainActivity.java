@@ -6,6 +6,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -101,6 +103,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         private final Activity context;
         private final ProgressBar bar;
         private final TextView resultView;
+        private final NetworkInfo info;
 
         private long transmittedBefore;
         private long receivedBefore;
@@ -111,6 +114,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             this.context = context;
             this.bar = bar;
             this.resultView = resultView;
+            // Get connection type
+            info = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+            if(!(info != null && info.isConnected())) {
+                throw new IllegalStateException("could not connect to internet");
+            }
         }
 
         @Override
@@ -126,7 +134,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             resultView.setText("Transmitted: " + dt + "\nReceived: " +
                                dr + "\nTime taken: " + downloadTotalTime +
                                "\nDownload speed: " + (int) (1d * dr / downloadTotalTime) +
-                               " bytes/millisecond");
+                               "\nNetwork type: " + info.getTypeName() +
+                               "\nNetwork state: " + info.getDetailedState().name() +
+                               "\nExtra info: " + info.getExtraInfo());
         }
 
         @Override
