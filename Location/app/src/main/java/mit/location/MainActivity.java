@@ -1,5 +1,6 @@
 package mit.location;
 
+import android.content.Context;
 import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -47,33 +48,36 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         long transmittedBefore = TrafficStats.getTotalTxBytes();
         long receivedBefore = TrafficStats.getTotalRxBytes();
 
-        AsyncTask<String, Double, Long> at = new AsyncTask<String, Double, Long>() {
+        final Context self = this;
+
+        new AsyncTask<String, Double, Void>() {
             @Override
-            protected Long doInBackground(final String... params) {
+            protected Void doInBackground(final String... params) {
                 try {
                     HttpURLConnection connection =
-                            (HttpURLConnection) new URL(REMOTE_LOCATION).openConnection();
+                            (HttpURLConnection) new URL(params[0]).openConnection();
                     connection.setReadTimeout(10000);
                     connection.setConnectTimeout(15000);
                     connection.setRequestMethod("GET");
                     connection.setDoInput(true);
                     long preConnectionTime = System.currentTimeMillis();
                     connection.connect();
-                    return System.currentTimeMillis() - preConnectionTime;
+                    final long latency = System.currentTimeMillis() - preConnectionTime;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(self, "latency: " + latency + " ms", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 } catch (MalformedURLException e) {
                     throw new InternalError("bad code");
                 } catch (IOException e) {
                     throw new RuntimeException("could not connect", e);
                 }
-            }
-        };
-        try {
-            long latency = at.execute().get();
-            Toast.makeText(this, "latency: " + latency + " ms", Toast.LENGTH_LONG).show();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
 
+                return null;
+            }
+        }.execute(REMOTE_LOCATION);
 
 
     }
