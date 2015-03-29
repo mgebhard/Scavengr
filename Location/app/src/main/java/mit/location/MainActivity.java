@@ -11,6 +11,8 @@ import android.net.NetworkInfo;
 import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +34,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Handler;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,
@@ -43,8 +46,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public FileOutputStream fos;
     public PrintWriter pw;
     public Boolean isLocationServiceOn = false;
-    public final static int REQUEST_LOCATION_UPDATE_TIMER = 5*60*1000;
-    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 500;
+    public final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
     public Button locationButton;
 
 
@@ -68,7 +71,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 break;
         }
     }
-
 
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
@@ -221,7 +223,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 locationManager.getBestProvider(cr, true), // GPS_PROVIDER
                 REQUEST_LOCATION_UPDATE_TIMER, // 5*60*1000
                 REQUEST_LOCATION_UPDATE_MINDISTANCE_METER, // 500
-                this);
+                this,
+                getMainLooper());
         try {
             fos = new FileOutputStream(locationLog);
             pw = new PrintWriter(fos);
@@ -288,4 +291,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void onProviderDisabled(String provider) {
 
     }
+
+
 }
