@@ -1,14 +1,25 @@
 package mit.location;
 
 import android.net.TrafficStats;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+
+    private static final String REMOTE_LOCATION =
+            "http://web.mit.edu/21w.789/www/papers/griswold2004.pdf";
 
     @Override
     public void onClick(View v) {
@@ -33,9 +44,37 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void logDownloadSpeed() {
 
         // Begin downloading the file
-        long beforeTime = System.currentTimeMillis();
         long transmittedBefore = TrafficStats.getTotalTxBytes();
         long receivedBefore = TrafficStats.getTotalRxBytes();
+
+        AsyncTask<String, Double, Long> at = new AsyncTask<String, Double, Long>() {
+            @Override
+            protected Long doInBackground(final String... params) {
+                try {
+                    HttpURLConnection connection =
+                            (HttpURLConnection) new URL(REMOTE_LOCATION).openConnection();
+                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(15000);
+                    connection.setRequestMethod("GET");
+                    connection.setDoInput(true);
+                    long preConnectionTime = System.currentTimeMillis();
+                    connection.connect();
+                    return System.currentTimeMillis() - preConnectionTime;
+                } catch (MalformedURLException e) {
+                    throw new InternalError("bad code");
+                } catch (IOException e) {
+                    throw new RuntimeException("could not connect", e);
+                }
+            }
+        };
+        try {
+            long latency = at.execute().get();
+            Toast.makeText(this, "latency: " + latency + " ms", Toast.LENGTH_LONG).show();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
 
     }
 
