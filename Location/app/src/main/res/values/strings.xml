@@ -5,5 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_download">Download Activity</string>
+    <string name="download_button_text">Download the File</string>
 
 </resources>

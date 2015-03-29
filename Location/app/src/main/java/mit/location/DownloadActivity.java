@@ -1,9 +1,11 @@
 package mit.location;
 
+import android.net.TrafficStats;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class DownloadActivity extends ActionBarActivity {
@@ -35,5 +37,14 @@ public class DownloadActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(View clicked) {
+
+        // Begin downloading the file
+        long beforeTime = System.currentTimeMillis();
+        long transmittedBefore = TrafficStats.getTotalTxBytes();
+        long receivedBefore = TrafficStats.getTotalRxBytes();
+
     }
 }
