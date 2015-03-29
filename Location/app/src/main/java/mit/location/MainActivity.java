@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.InputStream;
@@ -69,10 +70,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     public void toggleLocationService() {
@@ -82,7 +80,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             pw.close();
             try {
                 fos.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
 
             }
 
@@ -98,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 (TextView) findViewById(R.id.downloadResult)).execute(REMOTE_LOCATION);
     }
 
-    private static class Downloader extends AsyncTask<String, Integer, Void> {
+    private class Downloader extends AsyncTask<String, Integer, Void> {
 
         private final Activity context;
         private final ProgressBar bar;
@@ -131,12 +129,27 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             long dt = TrafficStats.getTotalTxBytes() - transmittedBefore;
             long dr = TrafficStats.getTotalRxBytes() - receivedBefore;
 
-            resultView.setText("Transmitted: " + dt + "\nReceived: " +
+            String data = "Transmitted: " + dt + "\nReceived: " +
                                dr + "\nTime taken: " + downloadTotalTime +
                                "\nDownload speed: " + (int) (1d * dr / downloadTotalTime) +
                                "\nNetwork type: " + info.getTypeName() +
                                "\nNetwork state: " + info.getDetailedState().name() +
-                               "\nExtra info: " + info.getExtraInfo());
+                               "\nExtra info: " + info.getExtraInfo();
+            resultView.setText(data);
+            // write data to log file, with an extra newline
+            try {
+                File f = new File(root.getAbsolutePath(), "downloadLogs.txt");
+                if (!f.exists()) {
+                    f.createNewFile();
+                }
+                FileWriter fw = new FileWriter(f, true);
+                fw.write(data);
+                fw.write("\n\n");
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
         @Override
@@ -205,7 +218,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         try {
             fos = new FileOutputStream(locationLog);
             pw = new PrintWriter(fos);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException ignored) {
 
         }
     }
