@@ -1,5 +1,9 @@
 package mit.location;
 
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,7 +11,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,
+        LocationListener {
+
+    LocationManager locationManager;
+    public final static int REQUEST_LOCATION_UPDATE_TIMER = 5*60*1000;
+    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 500;
 
     @Override
     public void onClick(View v) {
@@ -27,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void logLatLongAcc() {
 
+
     }
 
     public void logDownloadSpeed() {
@@ -37,6 +47,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //get location service
+        locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, // GPS_PROVIDER
+                REQUEST_LOCATION_UPDATE_TIMER, // 5*60*1000
+                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER, // 500
+                this);
     }
 
 
@@ -60,5 +77,30 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        int lat = (int) (location.getLatitude());
+        int lng = (int) (location.getLongitude());
+        String provider = location.getProvider();
+        float accuracy = location.getAccuracy();
+        float speed = location.getSpeed();
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
