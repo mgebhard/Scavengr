@@ -4,9 +4,34 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.location:
+                // call method to get lat/long and acc
+                logLatLongAcc();
+                break;
+            case R.id.download:
+                // call download on PDF
+                logDownloadSpeed();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void logLatLongAcc() {
+
+    }
+
+    public void logDownloadSpeed() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
