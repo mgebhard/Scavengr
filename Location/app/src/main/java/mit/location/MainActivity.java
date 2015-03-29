@@ -110,8 +110,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         private long transmittedBefore;
         private long receivedBefore;
-
         private long downloadTotalTime;
+        private long latency;
 
         public Downloader(final Activity context, final ProgressBar bar, final TextView resultView) {
             this.context = context;
@@ -137,6 +137,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             String data = "Transmitted: " + dt + "\nReceived: " +
                                dr + "\nTime taken: " + downloadTotalTime +
                                "\nDownload speed: " + (int) (1d * dr / downloadTotalTime) +
+                               "\nLatency: " + latency +
                                "\nNetwork type: " + info.getTypeName() +
                                "\nNetwork state: " + info.getDetailedState().name() +
                                "\nExtra info: " + info.getExtraInfo();
@@ -168,14 +169,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 connection.setDoInput(true);
                 long preConnectionTime = System.currentTimeMillis();
                 connection.connect();
-                final long latency = System.currentTimeMillis() - preConnectionTime;
-                context.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, "latency: " + latency + " ms", Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
+                latency = System.currentTimeMillis() - preConnectionTime;
                 InputStream in = connection.getInputStream();
                 transmittedBefore = TrafficStats.getTotalTxBytes();
                 receivedBefore = TrafficStats.getTotalRxBytes();
