@@ -13,9 +13,11 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public Boolean isLocationServiceOn = false;
     public final static int REQUEST_LOCATION_UPDATE_TIMER = 5*60*1000;
     public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 500;
+    public Button locationButton;
 
 
     private static final String REMOTE_LOCATION =
@@ -75,6 +78,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     public void toggleLocationService() {
         if (isLocationServiceOn) {
+            locationButton.setText("Start Location Services");
             locationManager.removeUpdates(this);
             pw.flush();
             pw.close();
@@ -85,6 +89,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             }
 
         } else{
+            locationButton.setText("Stop Location Services");
             startLocationUpdates();
         }
         isLocationServiceOn = !isLocationServiceOn;
@@ -206,6 +211,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         //get location service
         locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        locationButton = (Button) findViewById(R.id.location);
+
     }
 
     public void startLocationUpdates() {
@@ -218,11 +225,11 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         try {
             fos = new FileOutputStream(locationLog);
             pw = new PrintWriter(fos);
+            pw.print("Starting Location Services: \n");
         } catch (FileNotFoundException ignored) {
 
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -248,18 +255,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onLocationChanged(Location location) {
-        int lat = (int) (location.getLatitude());
-        int lng = (int) (location.getLongitude());
+        String text = getLocationText(location);
+        Toast toast = Toast.makeText(this, text,  Toast.LENGTH_LONG);
+        toast.show();
+        Log.d("DEBUG", text);
+        if (isExternalStorageWritable()) {
+            pw.print(text);
+        }
+    }
+
+    public String getLocationText(Location location) {
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
         String provider = location.getProvider();
         float accuracy = location.getAccuracy();
         float speed = location.getSpeed();
-
-        if (isExternalStorageWritable()) {
-            pw.printf("TimeStamp: %d, Lat: %d, Long: %d, Provider: %s, Accuracy: %f, Speed %f \n",
-                    System.currentTimeMillis(), lat, lng, provider, accuracy, speed);
-        }
-
-
+        return String.format("TimeStamp: %d, Lat: %f, Long: %f, Provider: %s, Accuracy: %f, Speed %f \n\n",
+                System.currentTimeMillis(), lat, lng, provider, accuracy, speed);
     }
 
     @Override
