@@ -15,17 +15,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
  * Created by erosales on 3/15/15.
  */
-public class Hunt {
+public class ServerGetHunt {
     private final JSONArray waypoints;
     private final String huntTitle;
     private final String avgRating;
 
-    public Hunt (String huntTitle, Optional<JSONArray> waypoints, Optional<String> avgRating) {
+    public ServerGetHunt(String huntTitle, Optional<JSONArray> waypoints, Optional<String> avgRating) {
         this.huntTitle = huntTitle;
         this.waypoints = waypoints.get();
         this.avgRating= avgRating.get();
@@ -39,7 +38,7 @@ public class Hunt {
         return waypoints;
     }
 
-    public Hunt queryDatabase(LatLng usersLocation) throws IOException {
+    public ServerGetHunt queryDatabase(LatLng usersLocation) throws IOException {
         InputStream in = null;
         try {
             // Initialize connection
@@ -82,7 +81,7 @@ public class Hunt {
             } else {
                 avgRating = Optional.empty();
             }
-            return new Hunt(result.getString("title"), waypoints, avgRating);
+            return new ServerGetHunt(result.getString("title"), waypoints, avgRating);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.GoOnHunt;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
+import org.teamscavengr.scavengr.R;
 
 
 public class StartHuntFragment extends Fragment {

@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -23,8 +21,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-
-public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
+/**
+ * Created by hzhou1235 on 3/30/15.
+ */
+public class HuntDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
@@ -60,15 +60,15 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_hunt);
+        setContentView(R.layout.activity_hunt_details);
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Button finish = (Button) findViewById(R.id.finish);
-        Button addWaypoint = (Button) findViewById(R.id.add_waypoint);
-        finish.setOnClickListener(this);
-        addWaypoint.setOnClickListener(this);
+        Button back = (Button) findViewById(R.id.back);
+        Button edit = (Button) findViewById(R.id.edit);
+        back.setOnClickListener(this);
+        edit.setOnClickListener(this);
 
         buildGoogleApiClient();
     }
@@ -121,21 +121,18 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     }
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.finish:
-                EditText text = (EditText)findViewById(R.id.estimated_time);
-                String value = text.getText().toString(); //store this time
-                Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                //store all waypoints
-                this.startActivity(reviewCreated);
+            case R.id.edit:
+                Intent editHunt = new Intent(this, HuntDetailsActivity.class);
+                //TODO: edit page
+                this.startActivity(editHunt);
                 break;
-            case R.id.add_waypoint:
-                Intent addWaypoint = new Intent(this, CreateWaypointActivity.class);
-                this.startActivity(addWaypoint);
+            case R.id.back: //TODO: should this just go back?
+                Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                this.startActivity(myHunts);
                 break;
             default:
                 break;
         }
 
     }
-
 }
