@@ -1,14 +1,19 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.CreateHunt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,6 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.R;
+
 /**
  * Created by hzhou1235 on 3/15/15.
  */
@@ -28,10 +35,34 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
-    protected TextView mLatitudeText;
-    protected TextView mLongitudeText;
+    // Defaults to Michigan
+    protected double currentLatitude = 43.6867;
+    protected double currentLongitude = - 85.0102;
 
-    public Location mLastLocation;
+    // Not sure if you need this might be able to just always get last location known
+//    private final LocationListener locationListener = new LocationListener() {
+//        public void onLocationChanged(Location location) {
+//            currentLongitude = location.getLongitude();
+//            currentLatitude = location.getLatitude();
+//            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
+//        }
+//
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//        }
+//
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//
+//        }
+//
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//
+//        }
+//    };
+
     public GoogleMap mapObject;
 
     /**
@@ -47,38 +78,31 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(42.3736, -71.1106);
-        sydney = new LatLng(10., 10.);
+        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
+        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 22));
 
         map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+                .title("Your Current Location")
+                .snippet("Task number.")
+                .position(usersLastKnownLocation));
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-        }
-        LatLng here = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 6));
+        Log.d("MEGAN", "onConnected getting called");
     }
 
     @Override
     public void onConnectionSuspended(final int i) {
-
+        Log.d("MEGAN", "onConnected getting called");
     }
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
-
+        Log.d("MEGAN", "onConnected getting called");
     }
 
 
@@ -86,14 +110,23 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_waypoint);
-        Button confirm = (Button)findViewById(R.id.ok);
-        Button back = (Button)findViewById(R.id.cancel);
-        confirm.setOnClickListener(this);
-        back.setOnClickListener(this);
+
+        // Gets the users last known location to set the flag on the map
+        Log.d("MEGAN", "On Create for create way point");
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        Location currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (currentLocation != null) {
+            currentLatitude = currentLocation.getLatitude();
+            currentLongitude = currentLocation.getLongitude();
+            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
+        }
+
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         buildGoogleApiClient();
     }
@@ -117,11 +150,11 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
-                //store stuff
+                //
                 this.finish();
                 break;
             case R.id.cancel:
-                this.finish(); //not sure if this works/keeps old stuff
+                this.finish(); //
                 break;
             default:
                 break;

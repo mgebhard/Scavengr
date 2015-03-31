@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.teamscavengr.scavengr.CreateHunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.GoOnHunt.HuntsList;
+
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -46,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 this.startActivity(hunt);
                 break;
             case R.id.create_hunt:
-                Intent createHuntIntent = new Intent(this, CreateHuntActivity.class);
+                Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(createHuntIntent);
                 break;
             default:

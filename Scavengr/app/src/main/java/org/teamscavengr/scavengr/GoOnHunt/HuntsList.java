@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.GoOnHunt;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.provider.ContactsContract;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -18,6 +17,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
+
+import org.teamscavengr.scavengr.R;
 
 
 public class HuntsList extends ListActivity implements

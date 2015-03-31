@@ -214,9 +214,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     public void startLocationUpdates() {
         Criteria cr = new Criteria();
         locationManager.requestLocationUpdates(
-                locationManager.getBestProvider(cr, true), // GPS_PROVIDER
-                REQUEST_LOCATION_UPDATE_TIMER, // 5*60*1000
-                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER, // 500
+                locationManager.getBestProvider(cr, true),
+                REQUEST_LOCATION_UPDATE_TIMER,
+                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
                 this,
                 getMainLooper());
         try {

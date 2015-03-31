@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.GoOnHunt;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import org.teamscavengr.scavengr.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

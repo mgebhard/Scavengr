@@ -1,26 +1,34 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.CreateHunt;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
+import org.teamscavengr.scavengr.R;
 
-public class ConfirmHunt extends ActionBarActivity implements View.OnClickListener {
+/**
+ * Created by hzhou1235 on 3/15/15.
+ */
+public class MyHuntsActivity extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_confirm_hunt);
+        setContentView(R.layout.activity_my_hunts);
+        Button create = (Button) findViewById(R.id.create_new);
+        create.setOnClickListener(this);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
+        //TODO: load in waypoints and display
         return true;
     }
 
@@ -40,14 +48,13 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     }
 
     public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.confirm_hunt:
-                Intent hunt = new Intent(this, MapTestActivity.class);
-                this.startActivity(hunt);
+        switch (view.getId()) {
+            case R.id.create_new:
+                Intent create = new Intent(this, CreateHuntActivity.class);
+                this.startActivity(create);
                 break;
             default:
                 break;
         }
-
     }
 }

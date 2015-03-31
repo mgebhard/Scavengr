@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +20,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.GoOnHunt.CompletedHuntFragment;
+import org.teamscavengr.scavengr.GoOnHunt.CompletedTaskFragment;
+import org.teamscavengr.scavengr.GoOnHunt.HuntRecap;
+import org.teamscavengr.scavengr.GoOnHunt.StartHuntFragment;
+import org.teamscavengr.scavengr.GoOnHunt.TaskFragment;
 
 
 public class MapTestActivity extends FragmentActivity implements OnMapReadyCallback,

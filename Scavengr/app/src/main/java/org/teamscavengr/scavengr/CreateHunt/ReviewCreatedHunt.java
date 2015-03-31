@@ -1,6 +1,5 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.CreateHunt;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import org.teamscavengr.scavengr.CreateHunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.R;
 
 /**
  * Created by hzhou1235 on 3/15/15.
