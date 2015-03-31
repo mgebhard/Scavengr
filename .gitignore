@@ -60,4 +60,4 @@ Pods
 
 .metadata/
 
-.meteor/
+.meteor/local
