@@ -88,7 +88,7 @@ public class Hunt {
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
-                id = doRequest(url, "POST", requestMap).getString("_str");
+                id = getJSONObject(url, "POST", requestMap).getString("_str");
                 requestMap.clear();
                 url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
@@ -103,7 +103,7 @@ public class Hunt {
         }
     }
 
-    private static JSONObject doRequest(URL url, String type, Map<String, String> values) throws IOException,
+    private static JSONObject getJSONObject(URL url, String type, Map<String, String> values) throws IOException,
             JSONException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(1000);
@@ -163,31 +163,9 @@ public class Hunt {
      * @return The Hunt object.
      */
     public static Hunt loadHunt(String id) throws IOException {
-        InputStream in = null;
         try {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(1000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-
-            // int response = conn.getResponseCode();
-            Log.d("SCV", "Got response from scavengr.meteor.com");
-            in = conn.getInputStream();
-
-            // Read data
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while((line = br.readLine()) != null) {
-                sb.append(line);
-                sb.append("\n");
-            }
-
-            // Handle JSON
-            JSONObject obj = new JSONObject(sb.toString());
+            JSONObject obj = getJSONObject(url, "GET", new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
                     tasksFromJSONArray(obj.getJSONArray("tasks")));
 
@@ -195,10 +173,6 @@ public class Hunt {
             throw new IllegalArgumentException("id \"" + id + "\" leads to Malformed URL", e);
         } catch (JSONException e) {
             throw new RuntimeException("server returned invalid data", e);
-        } finally {
-            if(in != null) {
-                in.close();
-            }
         }
     }
 
