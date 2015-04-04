@@ -26,6 +26,7 @@ import org.teamscavengr.scavengr.ServerGetHunt;
 import org.teamscavengr.scavengr.Task;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class HuntsList extends ListActivity implements
@@ -82,13 +83,27 @@ public class HuntsList extends ListActivity implements
 
         }
         Hunt basicHunt = new Hunt("basicHunt", "1234567890", reviewId, tasks);
+        ArrayList<Hunt> hunts = new ArrayList<Hunt>;
         try {
-            basicHunt =  Hunt.loadHunt("27d43e54e5f4a07aad00c588");
+
+            basicHunt =  Hunt.loadAllHuntsInBackground(
+                    new Hunt.HuntLoadedCallback() {
+
+                           @Override
+                           public void huntLoaded(Hunt hunt) {
+                                //hunts
+                           }
+
+                           @Override
+                           public void huntFailedToLoad(Exception e) {
+
+                           }
+                       }, true);
         } catch (IOException e) {
             System.out.print("I am failing hard");
             e.printStackTrace();
         }
-        Hunt[] hunts = { basicHunt };
+        hunts.add(basicHunt);
 
         String[] fromColumns = {hunts[0].getId() , hunts[0].getName()};
         //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
