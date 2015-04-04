@@ -106,13 +106,13 @@ public class User {
             conn.setDoInput(true);
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d("SPA", "Got response from scavengr.meteor.com");
+            Log.d("SCV", "Got response from scavengr.meteor.com");
             in = conn.getInputStream();
 
             // Read data
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
             while((line = br.readLine()) != null) {
                 sb.append(line);
                 sb.append("\n");
@@ -134,11 +134,9 @@ public class User {
 
             return new User(result.getString("name"), gPlus, fb, result.getString("email"), id);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             throw new IllegalArgumentException("id \"" + id + "\" lead to Malformed URL", e);
         } catch (JSONException e) {
-            e.printStackTrace();
-            throw new RuntimeException("server returned invalid data");
+            throw new RuntimeException("server returned invalid data", e);
         } finally {
             if(in != null) {
                 in.close();
