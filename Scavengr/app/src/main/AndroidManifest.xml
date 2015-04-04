@@ -32,11 +32,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateHunt.CreateHuntActivity"
+            android:name=".createhunt.CreateHuntActivity"
             android:label="@string/title_activity_create_hunt" >
         </activity>
         <activity
-            android:name=".GoOnHunt.HuntActivity"
+            android:name=".goonhunt.HuntActivity"
             android:label="@string/title_activity_hunt" >
         </activity>
 
@@ -49,11 +49,11 @@
             android:label="@string/title_activity_map_test" >
         </activity>
         <activity
-            android:name=".GoOnHunt.HuntsList"
+            android:name=".goonhunt.HuntsList"
             android:label="@string/title_activity_hunts_list" >
         </activity>
         <activity
-            android:name=".GoOnHunt.ConfirmHunt"
+            android:name=".goonhunt.ConfirmHunt"
             android:label="@string/title_activity_confirm_hunt" >
         </activity>
         <!--<activity-->
@@ -61,23 +61,23 @@
             <!--android:label="@string/title_activity_hunt_conformation" >-->
         <!--</activity>-->
         <activity
-            android:name=".GoOnHunt.RateHunt"
+            android:name=".goonhunt.RateHunt"
             android:label="@string/title_activity_review_hunt" >
         </activity>
         <activity
-            android:name=".CreateHunt.CreateWaypointActivity"
+            android:name=".createhunt.CreateWaypointActivity"
             android:label="@string/title_create_waypoint" >
         </activity>
         <activity
-            android:name=".CreateHunt.MyHuntsActivity"
+            android:name=".createhunt.MyHuntsActivity"
             android:label="@string/title_my_hunts" >
         </activity>
         <activity
-            android:name=".CreateHunt.ReviewCreatedHunt"
+            android:name=".createhunt.ReviewCreatedHunt"
             android:label="@string/title_review_created" >
         </activity>
         <activity
-            android:name=".GoOnHunt.HuntRecap"
+            android:name=".goonhunt.HuntRecap"
             android:label="@string/title_activity_hunt_recap" >
 
         </activity>

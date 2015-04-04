@@ -1,29 +1,36 @@
-package org.teamscavengr.scavengr.GoOnHunt;
+package org.teamscavengr.scavengr.createhunt;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
-import org.teamscavengr.scavengr.MapTestActivity;
 import org.teamscavengr.scavengr.R;
 
-
-public class ConfirmHunt extends ActionBarActivity implements View.OnClickListener {
+/**
+ * Created by hzhou1235 on 3/15/15.
+ */
+public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_confirm_hunt);
+        setContentView(R.layout.review_created_hunt);
+        Button confirm = (Button)findViewById(R.id.confirm);
+        Button back = (Button)findViewById(R.id.back);
+        confirm.setOnClickListener(this);
+        back.setOnClickListener(this);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
+        //TODO: load in waypoints and display
         return true;
     }
 
@@ -44,9 +51,12 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
 
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.confirm_hunt:
-                Intent hunt = new Intent(this, MapTestActivity.class);
-                this.startActivity(hunt);
+            case R.id.confirm:
+                Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                this.startActivity(myHunts);
+                break;
+            case R.id.back:
+                this.finish(); //not sure if this works/keeps old stuff
                 break;
             default:
                 break;
