@@ -42,10 +42,10 @@ public class Hunt {
         }
     }
 
-    private final String name;
+    private String name;
     private String id;
-    private final String[] reviewIds;
-    private final Task[] tasks;
+    private String[] reviewIds;
+    private Task[] tasks;
 
     /**
      * If we're creating the first hunt, id should be null.
@@ -59,6 +59,10 @@ public class Hunt {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getId() {

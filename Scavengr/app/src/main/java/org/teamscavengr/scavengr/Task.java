@@ -10,10 +10,10 @@ import org.json.JSONObject;
  */
 public class Task {
 
-    private final String id;
-    private final Location location;
-    private final String text;
-    private final double radius; // in meters
+    private String id;
+    private Location location;
+    private String text;
+    private double radius; // in meters
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -39,4 +39,17 @@ public class Task {
     public Location getLocation() {
         return location;
     }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
 }
