@@ -83,78 +83,30 @@ public class Hunt {
      */
     public void saveHunt() throws IOException {
         try {
+            URL url = null;
             if(id == null) {
-                URL url = new URL("http://scavengr.meteor.com/hunts/");
+                url = new URL("http://scavengr.meteor.com/hunts/");
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
-                id = getJSONObject(url, "POST", requestMap).getString("_str");
+                id = NetworkHelper.doRequest(url, "POST", requestMap).getString("_str");
                 requestMap.clear();
                 url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
             // TODO Save the reviews
 
             // TODO Save the tasks
+            url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
+            NetworkHelper.doRequest(url, "DELETE", new HashMap<String, String>());
+            for(Task t : tasks) {
+                t.saveToServer(url);
+            }
 
         } catch(MalformedURLException ex) {
             throw new RuntimeException("bad url", ex);
         } catch (JSONException ex) {
             throw new RuntimeException("server returned bad data", ex);
         }
-    }
-
-    private static JSONObject getJSONObject(URL url, String type, Map<String, String> values) throws IOException,
-            JSONException {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000);
-        conn.setConnectTimeout(1000);
-        conn.setRequestMethod(type);
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-
-        List<NameValuePair> params = new ArrayList<>();
-        for (String key : values.keySet()) {
-            params.add(new BasicNameValuePair(key, values.get(key)));
-        }
-
-        OutputStream out = conn.getOutputStream();
-        InputStream in = conn.getInputStream();
-
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-        bw.write(getQuery(params));
-        bw.flush();
-
-        conn.connect();
-
-        // Get output
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while((line = br.readLine()) != null) {
-            sb.append(line);
-            sb.append("\n");
-        }
-
-        in.close();
-        out.close();
-
-        return new JSONObject(sb.toString());
-    }
-
-    private static String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {
-        StringBuilder sb = new StringBuilder();
-        boolean first = true;
-        for(NameValuePair p : params) {
-            if(first) {
-                first = false;
-            } else {
-                sb.append("&");
-            }
-            sb.append(URLEncoder.encode(p.getName(), "UTF-8"));
-            sb.append("=");
-            sb.append(URLEncoder.encode(p.getValue(), "UTF-8"));
-        }
-        return sb.toString();
     }
 
     /**
@@ -165,7 +117,7 @@ public class Hunt {
     public static Hunt loadHunt(String id) throws IOException {
         try {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
-            JSONObject obj = getJSONObject(url, "GET", new HashMap<String, String>());
+            JSONObject obj = NetworkHelper.doRequest(url, "GET", new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
                     tasksFromJSONArray(obj.getJSONArray("tasks")));
 

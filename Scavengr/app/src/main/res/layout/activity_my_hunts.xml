@@ -14,7 +14,7 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My Hunts"
+            android:clue="My Hunts"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="center_horizontal"
             android:layout_margin="10dp" />
@@ -29,7 +29,7 @@
     <!--<Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create New Hunt"
+        android:clue="Create New Hunt"
         android:id="@+id/create_new"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"

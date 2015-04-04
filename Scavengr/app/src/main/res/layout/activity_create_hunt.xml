@@ -6,7 +6,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="org.teamscavengr.scavengr.createhunt.CreateHuntActivity">
 
-    <TextView android:text="CREATE HUNT"
+    <TextView android:clue="CREATE HUNT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView8" />
@@ -22,7 +22,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add"
+        android:clue="Add"
         android:id="@+id/add_waypoint"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -34,7 +34,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:clue="Done"
         android:id="@+id/finish"
         android:onClick="onClick"
         android:layout_alignParentBottom="true"

@@ -17,7 +17,7 @@
         android:id="@+id/hunt_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@+id/label"
+        android:clue="@+id/label"
         android:textSize="20px" >
     </TextView>
 
