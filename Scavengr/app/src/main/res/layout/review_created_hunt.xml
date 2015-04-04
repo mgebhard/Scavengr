@@ -16,7 +16,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Confirm"
+        android:text="Confirm"
         android:id="@+id/confirm"
         android:layout_gravity="center_horizontal"
         android:layout_alignParentBottom="true"
@@ -28,7 +28,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Back"
+        android:text="Back"
         android:id="@+id/back"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"

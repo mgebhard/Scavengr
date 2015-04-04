@@ -43,7 +43,7 @@ public class Hunt {
     /**
      * If we're creating the first hunt, id should be null.
      */
-    public Hunt(final String name, final String id, String[] reviewIds, Task[] tasks) {
+    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks) {
         this.name = name;
         this.id = id;
         this.reviewIds = reviewIds;

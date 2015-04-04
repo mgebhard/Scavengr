@@ -10,14 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:clue="Completed!"
+        android:text="Completed!"
         android:id="@+id/textView2"
         android:layout_gravity="center_horizontal|top" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Next Clue"
+        android:text="Next Clue"
         android:onClick="onClick"
         android:id="@+id/next_task"
         android:layout_gravity="right|bottom" />
@@ -25,7 +25,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Camera"
+        android:text="Camera"
         android:onClick="onClick"
         android:id="@+id/camera"
         android:layout_gravity="left|bottom" />
@@ -33,7 +33,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="79dp"
-        android:clue="Congrats you found the Boston Commons!"
+        android:text="Congrats you found the Boston Commons!"
         android:id="@+id/textView9"
         android:layout_gravity="center" />
 

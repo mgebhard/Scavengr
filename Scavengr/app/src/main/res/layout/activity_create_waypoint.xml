@@ -47,7 +47,7 @@
                 android:layout_alignStart="@+id/cancel"
                 android:layout_alignRight="@+id/ok"
                 android:layout_alignEnd="@+id/ok"
-                android:inputType="clue" />
+                android:inputType="text" />
 
             <EditText
                 android:layout_width="350dp"
@@ -76,7 +76,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clue="CANCEL"
+                    android:text="CANCEL"
                     android:onClick="onClick"
                     android:id="@+id/cancel"
                     android:name="com.google.android.gms.maps.MapFragment"
@@ -85,7 +85,7 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clue="OK"
+                    android:text="OK"
                     android:id="@+id/ok"
                     android:onClick="onClick"
                     android:layout_gravity="center_vertical"

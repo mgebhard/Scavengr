@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Go Hunting"
+        android:text="Go Hunting"
         android:id="@+id/confirm_hunt"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:clue="Boston Hunt 1"
+        android:text="Boston Hunt 1"
         android:id="@+id/textView3"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -37,7 +37,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clue="Description: This will take you around MIT and main attractions in Boston"
+        android:text="Description: This will take you around MIT and main attractions in Boston"
         android:id="@+id/textView4"
         android:layout_centerVertical="true"
         android:layout_alignLeft="@+id/ratingBar"
