@@ -12,11 +12,11 @@ import org.json.JSONObject;
  */
 public class Task {
 
-    private final String id;
-    private final Location location;
-    private final String clue;
-    private final double radius; // in meters
-    private final String answer;
+    private String id;
+    private Location location;
+    private String clue;
+    private double radius; // in meters
+    private String answer;
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -48,5 +48,25 @@ public class Task {
 
     public double distanceFrom(LatLng pointFrom) {
         return CalcLib.distanceFromLatLng(new LatLng(this.location.getLatitude(), this.location.getLongitude()), pointFrom);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setClue(String clue) {
+        this.clue = clue;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 }

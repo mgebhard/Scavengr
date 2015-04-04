@@ -146,7 +146,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         switch(view.getId()) {
             case R.id.ok:
                 EditText clueText = (EditText)findViewById(R.id.clue);
-                
+
                 this.finish();
                 break;
             case R.id.cancel:
