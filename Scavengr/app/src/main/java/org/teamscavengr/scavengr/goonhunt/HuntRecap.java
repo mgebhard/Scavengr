@@ -1,37 +1,29 @@
-package org.teamscavengr.scavengr.CreateHunt;
+package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
-import org.teamscavengr.scavengr.CreateHunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 
-/**
- * Created by hzhou1235 on 3/15/15.
- */
-public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
+
+public class HuntRecap extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.review_created_hunt);
-        Button confirm = (Button)findViewById(R.id.confirm);
-        Button back = (Button)findViewById(R.id.back);
-        confirm.setOnClickListener(this);
-        back.setOnClickListener(this);
+        setContentView(R.layout.activity_hunt_recap);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
-        //TODO: load in waypoints and display
+        getMenuInflater().inflate(R.menu.menu_hunt_recap, menu);
         return true;
     }
 
@@ -49,15 +41,15 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
 
         return super.onOptionsItemSelected(item);
     }
-
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.confirm:
-                Intent myHunts = new Intent(this, MyHuntsActivity.class);
-                this.startActivity(myHunts);
+            case R.id.review:
+                Intent hunt = new Intent(this, RateHunt.class);
+                this.startActivity(hunt);
                 break;
-            case R.id.back:
-                this.finish(); //not sure if this works/keeps old stuff
+            case R.id.home:
+                Intent createHuntIntent = new Intent(this, MainActivity.class);
+                this.startActivity(createHuntIntent);
                 break;
             default:
                 break;

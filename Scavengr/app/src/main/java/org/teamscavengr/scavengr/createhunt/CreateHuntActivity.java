@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.CreateHunt;
+package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.GoOnHunt;
+package org.teamscavengr.scavengr.goonhunt;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

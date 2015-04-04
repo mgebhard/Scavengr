@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.GoOnHunt;
+package org.teamscavengr.scavengr.goonhunt;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
