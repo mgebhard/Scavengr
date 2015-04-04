@@ -38,11 +38,23 @@ public class ServerGetHunt {
         return waypoints;
     }
 
+    public boolean uploadHunt(ServerGetHunt huntToUpload) throws IOException {
+        try {
+            URL url = new URL("http:/scavengr2.meteor.com/hunts/");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        } catch (MalformedURLException e) {
+            Log.d("SPA", "Malformed URL Exception");
+            return false;
+        }
+
+        return true;
+    }
+
     public ServerGetHunt queryDatabase(LatLng usersLocation) throws IOException {
         InputStream in = null;
         try {
             // Initialize connection
-            URL url = new URL("http://scavengr.meteor.com/hunts/");
+            URL url = new URL("http://scavengr2.meteor.com/hunts/");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(1000);
             conn.setConnectTimeout(1000);
@@ -50,7 +62,7 @@ public class ServerGetHunt {
             conn.setDoInput(true);
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d("SPA", "Got response from scavengr.meteor.com");
+            Log.d("SPA", "Got response from scavengr2.meteor.com");
             in = conn.getInputStream();
 
             // Read data

@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.ServerGetHunt;
 
 
 public class HuntsList extends ListActivity implements
@@ -65,17 +66,20 @@ public class HuntsList extends ListActivity implements
 
 
         // For the cursor adapter, specify which columns go into which views
-        //        String[] fromColumns = {Hunt.IMAGE, Hunt.TITLE};
-//        String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-//        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
+        // use static hunt objects for now
+        //ServerGetHunt[] hunts = { };
+
+        //String[] fromColumns = {ServerGetHunt.IMAGE, ServerGetHunt.TITLE};
+        //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
+        //int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
-//        mAdapter = new SimpleCursorAdapter(this,
-//                R.layout.hunt_list_row, null,
-//                fromColumns, toViews, 0);
-//        setListAdapter(mAdapter);
-
+        /*mAdapter = new SimpleCursorAdapter(this,
+                R.layout.hunt_list_row, null,
+                fromColumns, toViews, 0);
+        setListAdapter(mAdapter);
+        */
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
 //        getLoaderManager().initLoader(0, null, this);

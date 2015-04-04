@@ -45,7 +45,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch(view.getId()) {
             case R.id.go_on_hunt:
                 //Intent hunt = new Intent(this, HuntsList.class);
-                Intent hunt = new Intent(this, HuntDetailsActivity.class);
+                Intent hunt = new Intent(this, HuntsList.class);
                 // Pass in Geo Location of user
                 this.startActivity(hunt);
                 break;
