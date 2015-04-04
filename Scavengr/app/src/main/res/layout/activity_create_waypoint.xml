@@ -25,32 +25,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CANCEL"
-                android:onClick="onClick"
-                android:id="@+id/cancel"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="30dp"
-                android:layout_marginBottom="30dp"
-                android:name="com.google.android.gms.maps.MapFragment"
-                android:layout_gravity="center_vertical" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OK"
-                android:id="@+id/ok"
-                android:onClick="onClick"
-                android:layout_gravity="center_vertical" />
+            android:layout_weight="1"
+            android:id="@+id/asdf2">
 
             <EditText
                 android:layout_width="350dp"
@@ -69,6 +48,35 @@
                 android:layout_alignRight="@+id/ok"
                 android:layout_alignEnd="@+id/ok"
                 android:inputType="text" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/adsf">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CANCEL"
+                    android:onClick="onClick"
+                    android:id="@+id/cancel"
+                    android:name="com.google.android.gms.maps.MapFragment"
+                    android:layout_gravity="center_vertical" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK"
+                    android:id="@+id/ok"
+                    android:onClick="onClick"
+                    android:layout_gravity="center_vertical"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="30dp"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
 
