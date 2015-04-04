@@ -18,8 +18,14 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.ServerGetHunt;
+import org.teamscavengr.scavengr.Task;
+
+import java.io.IOException;
 
 
 public class HuntsList extends ListActivity implements
@@ -55,7 +61,7 @@ public class HuntsList extends ListActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
 
-        String[] values = new String[] { "Boston hunt 1", "Boston hunt 2", "WindowsMobile",
+        /*String[] values = new String[] { "Boston hunt 1", "Boston hunt 2", "WindowsMobile",
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
                 "Linux", "OS/2" };
 
@@ -63,23 +69,39 @@ public class HuntsList extends ListActivity implements
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);
+        */
 
 
         // For the cursor adapter, specify which columns go into which views
         // use static hunt objects for now
-        //ServerGetHunt[] hunts = { };
+        String[] reviewId = {"12345643210"};
+        Task[] tasks = new Task[1];
+        try {
+            tasks[0] = new Task(new JSONObject(""));
+        } catch (JSONException e) {
 
-        //String[] fromColumns = {ServerGetHunt.IMAGE, ServerGetHunt.TITLE};
+        }
+        Hunt basicHunt = new Hunt("basicHunt", "1234567890", reviewId, tasks);
+        try {
+            basicHunt =  Hunt.loadHunt("27d43e54e5f4a07aad00c588");
+        } catch (IOException e) {
+            System.out.print("I am failing hard");
+            e.printStackTrace();
+        }
+        Hunt[] hunts = { basicHunt };
+
+        String[] fromColumns = {hunts[0].getId() , hunts[0].getName()};
         //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        //int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
+        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
-        /*mAdapter = new SimpleCursorAdapter(this,
+        mAdapter = new SimpleCursorAdapter(this,
                 R.layout.hunt_list_row, null,
                 fromColumns, toViews, 0);
         setListAdapter(mAdapter);
-        */
+
+
         // Prepare the loader.  Either re-connect with an existing one,
         // or start a new one.
 //        getLoaderManager().initLoader(0, null, this);
