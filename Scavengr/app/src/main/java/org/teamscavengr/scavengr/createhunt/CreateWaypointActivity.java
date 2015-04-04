@@ -20,6 +20,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by hzhou1235 on 3/15/15.
@@ -29,33 +33,11 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
+    protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
+
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = - 85.0102;
-
-    // Not sure if you need this might be able to just always get last location known
-//    private final LocationListener locationListener = new LocationListener() {
-//        public void onLocationChanged(Location location) {
-//            currentLongitude = location.getLongitude();
-//            currentLatitude = location.getLatitude();
-//            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//
-//        }
-//    };
 
     public GoogleMap mapObject;
 
@@ -76,12 +58,16 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 22));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 20));
 
-        map.addMarker(new MarkerOptions()
-                .title("Your Current Location")
-                .snippet("Task number.")
-                .position(usersLastKnownLocation));
+        for (Task task : tasksForCurrentHunt){
+            Location taskLocation = task.getLocation();
+            map.addMarker(new MarkerOptions()
+                    .title(task.getAnswer())
+                    .snippet(task.getClue())
+                    .position(new LatLng(taskLocation.getLatitude(),
+                            taskLocation.getLongitude())));
+        }
     }
 
     @Override
