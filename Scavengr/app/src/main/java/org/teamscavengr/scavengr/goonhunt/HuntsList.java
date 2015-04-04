@@ -83,26 +83,25 @@ public class HuntsList extends ListActivity implements
 
         }
         Hunt basicHunt = new Hunt("basicHunt", "1234567890", reviewId, tasks);
-        ArrayList<Hunt> hunts = new ArrayList<Hunt>;
-        try {
+        ArrayList<Hunt> hunts = new ArrayList<Hunt>();
+        Hunt.loadAllHuntsInBackground(
+            new Hunt.HuntLoadedCallback() {
 
-            basicHunt =  Hunt.loadAllHuntsInBackground(
-                    new Hunt.HuntLoadedCallback() {
+                   @Override
+                   public void numHuntsFound(int num) {
+                     
+                   }
 
-                           @Override
-                           public void huntLoaded(Hunt hunt) {
-                                //hunts
-                           }
+                   @Override
+                   public void huntLoaded(Hunt hunt) {
+                        //hunts
+                   }
 
-                           @Override
-                           public void huntFailedToLoad(Exception e) {
+                   @Override
+                   public void huntFailedToLoad(Exception e) {
 
-                           }
-                       }, true);
-        } catch (IOException e) {
-            System.out.print("I am failing hard");
-            e.printStackTrace();
-        }
+                   }
+               }, true);
         hunts.add(basicHunt);
 
         String[] fromColumns = {hunts[0].getId() , hunts[0].getName()};

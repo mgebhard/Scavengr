@@ -15,6 +15,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A hunt is a hunt.
@@ -74,7 +77,7 @@ public class Hunt {
             conn.setDoInput(true);
             conn.connect();
 
-            int response = conn.getResponseCode();
+            // int response = conn.getResponseCode();
             Log.d("SCV", "Got response from scavengr.meteor.com");
             in = conn.getInputStream();
 
@@ -119,6 +122,7 @@ public class Hunt {
                     Hunt.run(onUIThread, new Runnable() {
                         @Override
                         public void run() {
+                            hlc.numHuntsFound(1);
                             hlc.huntLoaded(h);
                         }
                     });
@@ -126,6 +130,7 @@ public class Hunt {
                     Hunt.run(onUIThread, new Runnable() {
                         @Override
                         public void run() {
+                            hlc.numHuntsFound(1);
                             hlc.huntFailedToLoad(ex);
                         }
                     });
@@ -134,7 +139,7 @@ public class Hunt {
         }).start();
     }
 
-    public static Hunt[] loadAllHunts() throws IOException {
+    public static List<Optional<Hunt>> loadAllHunts() {
         InputStream in = null;
         try {
             URL url = new URL("http://scavengr.meteor.com/hunts/");
@@ -145,7 +150,7 @@ public class Hunt {
             conn.setDoInput(true);
             conn.connect();
 
-            int response = conn.getResponseCode();
+            // int response = conn.getResponseCode();
             Log.d("SCV", "Got response from scavengr.meteor.com");
             in = conn.getInputStream();
 
@@ -160,9 +165,14 @@ public class Hunt {
 
             // Chain-load all the other hunts
             JSONArray obj = new JSONArray(sb.toString());
-            Hunt[] ret = new Hunt[obj.length()];
+            @SuppressWarnings("unchecked")
+            List<Optional<Hunt>> ret = new ArrayList<>();
             for(int i = 0; i < obj.length(); i++) {
-                ret[i] = loadHunt(obj.getString(i));
+                try {
+                    ret.set(i, Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
+                } catch(JSONException | RuntimeException ex) {
+                    ret.set(i, Optional.<Hunt>empty());
+                }
             }
             return ret;
 
@@ -170,44 +180,50 @@ public class Hunt {
             throw new IllegalArgumentException("bad url", e);
         } catch (JSONException e) {
             throw new RuntimeException("server returned invalid data", e);
+        } catch (IOException e) {
+            // do something
         } finally {
-            if(in != null) {
+            if(in != null) try {
                 in.close();
+            } catch (IOException e) {
+                throw new RuntimeException("could not close!", e);
             }
         }
+
+        return Arrays.asList(Optional.<Hunt>empty());
     }
 
-    public static void loadAllHuntsInBackground(final HuntsLoadedCallback hlc,
+    public static void loadAllHuntsInBackground(final HuntLoadedCallback hlc,
                                                 final boolean onUIThread) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    final Hunt[] h = loadAllHunts();
-                    Hunt.run(onUIThread, new Runnable() {
-                        @Override
-                        public void run() {
-                            hlc.huntsLoaded(h);
-                        }
-                    });
-                } catch (IOException | RuntimeException ex) {
-                    Hunt.run(onUIThread, new Runnable() {
-                        @Override
-                        public void run() {
-                            hlc.huntsFailedToLoad(ex);
-                        }
-                    });
+                final List<Optional<Hunt>> h = loadAllHunts();
+                Hunt.run(onUIThread, new Runnable() {
+                    @Override
+                    public void run() {
+                        hlc.numHuntsFound(h.size());
+                    }
+                });
+                for(final Optional<Hunt> hunt : h) {
+                    if(hunt.isPresent()) {
+                        Hunt.run(onUIThread, new Runnable() {
+                            @Override
+                            public void run() {
+                                hlc.huntLoaded(hunt.get());
+                            }
+                        });
+                    } else {
+                        Hunt.run(onUIThread, new Runnable() {
+                            @Override
+                            public void run() {
+                                hlc.huntFailedToLoad(new RuntimeException("not present"));
+                            }
+                        });
+                    }
                 }
             }
         }).start();
-    }
-
-    public static interface HuntsLoadedCallback {
-
-        public void huntsLoaded(Hunt[] hunts);
-
-        public void huntsFailedToLoad(Exception ex);
-
     }
 
     public static interface HuntLoadedCallback {
@@ -224,6 +240,12 @@ public class Hunt {
          * @param ex The exception thrown.
          */
         public void huntFailedToLoad(Exception ex);
+
+        /**
+         * Called when we know how many hunts there will be.
+         * @param i The number of hunts there will be.
+         */
+        public void numHuntsFound(int i);
 
     }
 

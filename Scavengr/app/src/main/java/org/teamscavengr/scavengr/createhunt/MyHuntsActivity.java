@@ -21,8 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.SimpleCursorAdapter;
 
-import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
 
 /**
  * Created by hzhou1235 on 3/15/15.
