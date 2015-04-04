@@ -265,9 +265,9 @@ public class Hunt {
             List<Optional<Hunt>> ret = new ArrayList<>();
             for(int i = 0; i < obj.length(); i++) {
                 try {
-                    ret.set(i, Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
+                    ret.add(Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
                 } catch(JSONException | RuntimeException ex) {
-                    ret.set(i, Optional.<Hunt>empty());
+                    ret.add(Optional.<Hunt>empty());
                 }
             }
             return ret;
