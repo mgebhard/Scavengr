@@ -56,11 +56,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap map) {
         Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
-        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 20));
-
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
+                                                                    currentLongitude), 20));
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
             map.addMarker(new MarkerOptions()
