@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.GoOnHunt;
+package org.teamscavengr.scavengr.goonhunt;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,12 +12,12 @@ import org.teamscavengr.scavengr.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CompletedTaskFragment.OnFragmentInteractionListener} interface
+ * {@link TaskFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CompletedTaskFragment#newInstance} factory method to
+ * Use the {@link TaskFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CompletedTaskFragment extends Fragment {
+public class TaskFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,11 +35,11 @@ public class CompletedTaskFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CompletedTaskFragment.
+     * @return A new instance of fragment TaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CompletedTaskFragment newInstance(String param1, String param2) {
-        CompletedTaskFragment fragment = new CompletedTaskFragment();
+    public static TaskFragment newInstance(String param1, String param2) {
+        TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -47,7 +47,7 @@ public class CompletedTaskFragment extends Fragment {
         return fragment;
     }
 
-    public CompletedTaskFragment() {
+    public TaskFragment() {
         // Required empty public constructor
     }
 
@@ -64,7 +64,7 @@ public class CompletedTaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_completed_task, container, false);
+        return inflater.inflate(R.layout.fragment_task, container, false);
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

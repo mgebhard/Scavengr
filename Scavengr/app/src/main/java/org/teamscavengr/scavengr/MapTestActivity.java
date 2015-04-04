@@ -20,11 +20,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.teamscavengr.scavengr.GoOnHunt.CompletedHuntFragment;
-import org.teamscavengr.scavengr.GoOnHunt.CompletedTaskFragment;
-import org.teamscavengr.scavengr.GoOnHunt.HuntRecap;
-import org.teamscavengr.scavengr.GoOnHunt.StartHuntFragment;
-import org.teamscavengr.scavengr.GoOnHunt.TaskFragment;
+import org.teamscavengr.scavengr.goonhunt.CompletedHuntFragment;
+import org.teamscavengr.scavengr.goonhunt.CompletedTaskFragment;
+import org.teamscavengr.scavengr.goonhunt.HuntRecap;
+import org.teamscavengr.scavengr.goonhunt.StartHuntFragment;
+import org.teamscavengr.scavengr.goonhunt.TaskFragment;
 
 
 public class MapTestActivity extends FragmentActivity implements OnMapReadyCallback,

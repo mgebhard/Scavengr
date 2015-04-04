@@ -7,8 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import org.teamscavengr.scavengr.CreateHunt.MyHuntsActivity;
-import org.teamscavengr.scavengr.GoOnHunt.HuntsList;
+import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {

@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.GoOnHunt;
+package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;

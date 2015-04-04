@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr.CreateHunt;
+package org.teamscavengr.scavengr.createhunt;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,22 +8,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import org.teamscavengr.scavengr.CreateHunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.R;
 
 /**
  * Created by hzhou1235 on 3/15/15.
  */
-public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
+public class MyHuntsActivity extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.review_created_hunt);
-        Button confirm = (Button)findViewById(R.id.confirm);
-        Button back = (Button)findViewById(R.id.back);
-        confirm.setOnClickListener(this);
-        back.setOnClickListener(this);
+        setContentView(R.layout.activity_my_hunts);
+        Button create = (Button) findViewById(R.id.create_new);
+        create.setOnClickListener(this);
     }
 
 
@@ -51,17 +48,13 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
     }
 
     public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.confirm:
-                Intent myHunts = new Intent(this, MyHuntsActivity.class);
-                this.startActivity(myHunts);
-                break;
-            case R.id.back:
-                this.finish(); //not sure if this works/keeps old stuff
+        switch (view.getId()) {
+            case R.id.create_new:
+                Intent create = new Intent(this, CreateHuntActivity.class);
+                this.startActivity(create);
                 break;
             default:
                 break;
         }
-
     }
 }
