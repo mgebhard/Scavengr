@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 
@@ -41,6 +42,22 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void onClick(View view) {
+        Hunt.loadAllHuntsInBackground(new Hunt.HuntLoadedCallback() {
+            @Override
+            public void huntLoaded(final Hunt hunt) {
+                Toast.makeText(MainActivity.this, "loaded hunt " + hunt.getId(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void huntFailedToLoad(final Exception ex) {
+                ex.printStackTrace();
+                Toast.makeText(MainActivity.this, "failed to load hunts", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void numHuntsFound(final int i) {}
+
+        }, true);
         switch(view.getId()) {
             case R.id.go_on_hunt:
                 //Intent hunt = new Intent(this, HuntsList.class);
