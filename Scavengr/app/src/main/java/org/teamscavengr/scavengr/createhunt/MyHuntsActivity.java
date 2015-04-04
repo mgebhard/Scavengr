@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,8 @@ import android.widget.ProgressBar;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.SimpleCursorAdapter;
 
-import org.teamscavengr.scavengr.GoOnHunt.ConfirmHunt;
+import org.teamscavengr.scavengr.HuntDetailsActivity;
+import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
 import org.teamscavengr.scavengr.R;
 
 /**
@@ -35,8 +37,8 @@ public class MyHuntsActivity extends ListActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_hunts);
-        Button create = (Button) findViewById(R.id.create_new);
-        create.setOnClickListener(this);
+        //Button create = (Button) findViewById(R.id.create_new);
+        //create.setOnClickListener(this);
 
         // Create a progress bar to display while the list loads
         ProgressBar progressBar = new ProgressBar(this);
@@ -52,9 +54,9 @@ public class MyHuntsActivity extends ListActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
 
-        String[] values = new String[] { "My First Hunt", "My Second Hunt", "My Third Hunt",
+        String[] values = new String[] {"+ CREATE NEW HUNT", "My First Hunt", "My Second Hunt", "My Third Hunt",
                 "BlahBlah", "BlahBlahBlah", "asdf", "jkl;", "anothername",
-                "anothername2", "anothername3" };
+                "anothername2"};
 
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -89,17 +91,24 @@ public class MyHuntsActivity extends ListActivity implements
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
-        Intent hunt = new Intent(this, ConfirmHunt.class);
+        Intent hunt = null;
+
+        if (position == 0){
+            hunt = new Intent(this, CreateHuntActivity.class);
+        } else {
+            hunt = new Intent(this, HuntDetailsActivity.class);
+        }
         this.startActivity(hunt);
         // Put in ID for the hunt selected
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
-        //TODO: load in waypoints and display
-        return true;
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_review_hunt, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -119,10 +128,10 @@ public class MyHuntsActivity extends ListActivity implements
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.create_new:
-                Intent create = new Intent(this, CreateHuntActivity.class);
-                this.startActivity(create);
-                break;
+            //case R.id.create_new:
+            //    Intent create = new Intent(this, CreateHuntActivity.class);
+            //    this.startActivity(create);
+            //    break;
             default:
                 break;
         }
