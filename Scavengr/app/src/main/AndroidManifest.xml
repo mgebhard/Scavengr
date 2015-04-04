@@ -66,7 +66,7 @@
         </activity>
         <activity
             android:name=".createhunt.CreateWaypointActivity"
-            android:label="@string/title_create_waypoint" >
+            android:label="Create Waypoint" >
         </activity>
         <activity
             android:name=".createhunt.MyHuntsActivity"

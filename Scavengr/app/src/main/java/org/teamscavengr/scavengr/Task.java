@@ -2,6 +2,8 @@ package org.teamscavengr.scavengr;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,24 +14,26 @@ public class Task {
 
     private String id;
     private Location location;
-    private String text;
+    private String clue;
     private double radius; // in meters
+    private String answer;
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
         this.location = new Location(""); // no provider
         this.location.setLatitude(Double.parseDouble(obj.getString("latitude")));
         this.location.setLongitude(Double.parseDouble(obj.getString("longitude")));
-        this.text = obj.getString("text");
+        this.clue = obj.getString("clue");
         this.radius = Double.parseDouble(obj.getString("radius"));
+        this.answer = obj.getString("answer");
     }
 
     public String getId() {
         return id;
     }
 
-    public String getText() {
-        return text;
+    public String getClue() {
+        return clue;
     }
 
     public double getRadius() {
@@ -40,16 +44,29 @@ public class Task {
         return location;
     }
 
+    public String getAnswer() { return answer; }
+
+    public double distanceFrom(LatLng pointFrom) {
+        return CalcLib.distanceFromLatLng(new LatLng(this.location.getLatitude(), this.location.getLongitude()), pointFrom);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setLocation(Location location) {
         this.location = location;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setClue(String clue) {
+        this.clue = clue;
     }
 
     public void setRadius(double radius) {
         this.radius = radius;
     }
 
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 }

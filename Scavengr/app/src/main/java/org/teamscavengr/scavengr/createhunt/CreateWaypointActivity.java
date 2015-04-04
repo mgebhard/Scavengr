@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -130,11 +131,12 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
-                //
+                EditText clueText = (EditText)findViewById(R.id.clue);
+
                 this.finish();
                 break;
             case R.id.cancel:
-                this.finish(); //
+                this.finish();
                 break;
             default:
                 break;
