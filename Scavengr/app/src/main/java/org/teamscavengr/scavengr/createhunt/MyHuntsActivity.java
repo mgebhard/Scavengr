@@ -21,9 +21,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.SimpleCursorAdapter;
-
 import org.teamscavengr.scavengr.HuntDetailsActivity;
-import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
 import org.teamscavengr.scavengr.R;
 
 /**

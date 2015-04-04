@@ -22,6 +22,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.createhunt.*;
+import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 
 /**
  * Created by hzhou1235 on 3/30/15.
