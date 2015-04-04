@@ -1,14 +1,16 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -28,8 +30,9 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     protected GoogleApiClient mGoogleApiClient;
 
-    protected TextView mLatitudeText;
-    protected TextView mLongitudeText;
+    // Defaults to Michigan
+    protected double currentLatitude = 43.6867;
+    protected double currentLongitude = - 85.0102;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
@@ -65,6 +68,13 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (mLastLocation != null) {
+            currentLatitude = mLastLocation.getLatitude();
+            currentLongitude = mLastLocation.getLongitude();
+        }
+
 
         buildGoogleApiClient();
     }
@@ -82,26 +92,22 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(42.3736, -71.1106);
-        sydney = new LatLng(10., 10.);
+        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
+        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 20));
 
         map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+                .title("Your Current Location")
+                .snippet("Task number.")
+                .position(usersLastKnownLocation));
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-        }
         LatLng here = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 6));
     }

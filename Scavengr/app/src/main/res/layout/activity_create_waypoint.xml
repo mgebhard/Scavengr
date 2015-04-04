@@ -49,6 +49,24 @@
                 android:layout_alignEnd="@+id/ok"
                 android:inputType="clue" />
 
+            <EditText
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/editText2"
+                android:editable="false"
+                android:textStyle="italic"
+                android:layout_alignParentBottom="true"
+                android:visibility="visible"
+                android:outlineProvider="paddedBounds"
+                android:hint="Add clue here"
+                android:layout_marginBottom="80dp"
+                android:layout_alignLeft="@+id/cancel"
+                android:layout_alignStart="@+id/cancel"
+                android:layout_alignRight="@+id/ok"
+                android:layout_alignEnd="@+id/ok"
+                android:inputType="text" />
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"

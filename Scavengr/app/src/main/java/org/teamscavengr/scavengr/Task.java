@@ -2,6 +2,8 @@ package org.teamscavengr.scavengr;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +22,7 @@ public class Task {
     private Location location;
     private String clue;
     private double radius; // in meters
+    private String answer;
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -28,6 +31,7 @@ public class Task {
         this.location.setLongitude(Double.parseDouble(obj.getString("longitude")));
         this.clue = obj.getString("clue");
         this.radius = Double.parseDouble(obj.getString("radius"));
+        this.answer = obj.getString("answer");
     }
 
     public Task(final String id, final Location location, final String clue, final double radius) {
@@ -53,6 +57,16 @@ public class Task {
         return location;
     }
 
+    public String getAnswer() { return answer; }
+
+    public double distanceFrom(LatLng pointFrom) {
+        return CalcLib.distanceFromLatLng(new LatLng(this.location.getLatitude(), this.location.getLongitude()), pointFrom);
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public void setLocation(Location location) {
         this.location = location;
     }
@@ -65,6 +79,10 @@ public class Task {
         this.radius = radius;
     }
 
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     public void saveToServer(final URL baseUrl) throws IOException, JSONException {
         URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
         Map<String, String> requestMap = new HashMap<>();
@@ -72,6 +90,9 @@ public class Task {
         requestMap.put("longitude", Double.toString(location.getLongitude()));
         requestMap.put("clue", clue);
         requestMap.put("radius", Double.toString(radius));
+        requestMap.put("answer", answer);
         id = NetworkHelper.doRequest(url, "POST", requestMap).getString("_str");
+
     }
+
 }

@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -20,6 +21,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by hzhou1235 on 3/15/15.
@@ -29,33 +34,11 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
+    protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
+
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = - 85.0102;
-
-    // Not sure if you need this might be able to just always get last location known
-//    private final LocationListener locationListener = new LocationListener() {
-//        public void onLocationChanged(Location location) {
-//            currentLongitude = location.getLongitude();
-//            currentLatitude = location.getLatitude();
-//            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
-//        }
-//
-//        @Override
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderEnabled(String provider) {
-//
-//        }
-//
-//        @Override
-//        public void onProviderDisabled(String provider) {
-//
-//        }
-//    };
 
     public GoogleMap mapObject;
 
@@ -73,15 +56,18 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     @Override
     public void onMapReady(GoogleMap map) {
         Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
-        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 22));
-
-        map.addMarker(new MarkerOptions()
-                .title("Your Current Location")
-                .snippet("Task number.")
-                .position(usersLastKnownLocation));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
+                                                                    currentLongitude), 20));
+        for (Task task : tasksForCurrentHunt){
+            Location taskLocation = task.getLocation();
+            map.addMarker(new MarkerOptions()
+                    .title(task.getAnswer())
+                    .snippet(task.getClue())
+                    .position(new LatLng(taskLocation.getLatitude(),
+                            taskLocation.getLongitude())));
+        }
     }
 
     @Override
@@ -144,11 +130,12 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
-                //
+                EditText clueText = (EditText)findViewById(R.id.clue);
+
                 this.finish();
                 break;
             case R.id.cancel:
-                this.finish(); //
+                this.finish();
                 break;
             default:
                 break;
