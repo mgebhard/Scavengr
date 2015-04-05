@@ -1,12 +1,8 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.ListActivity;
-import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -17,19 +13,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by hzhou1235 on 3/15/15.

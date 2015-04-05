@@ -4,7 +4,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,8 +21,6 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class HuntsList extends ListActivity {
@@ -154,7 +151,7 @@ public class HuntsList extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
-        Intent hunt = new Intent(this, ConfirmHunt.class);
+        Intent hunt = new Intent(this, ConfirmHuntActivity.class);
         hunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
         this.startActivity(hunt);
         // Put in ID for the hunt selected
