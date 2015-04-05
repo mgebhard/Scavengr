@@ -85,7 +85,7 @@ public class HuntsList extends ListActivity {
         }
         Hunt basicHunt = new Hunt("basicHunt", "1234567890", reviewId, tasks);*/
 
-        /*//load hunts as they come in
+        //load hunts as they come in
         ArrayList<Hunt> hunts = new ArrayList<Hunt>();
         Hunt.loadAllHuntsInBackground(
             new Hunt.HuntLoadedCallback() {
@@ -111,8 +111,8 @@ public class HuntsList extends ListActivity {
                    @Override
                    public void huntFailedToLoad(Exception e) {
 
-                       Context context = getApplicationContext();
-                       Context context = getApplicationContext();
+                       //Context context = getApplicationContext();
+                       //Context context = getApplicationContext();
                        CharSequence text = "Failed to load a hunt";
 
                        int duration = Toast.LENGTH_SHORT;
@@ -123,11 +123,11 @@ public class HuntsList extends ListActivity {
         //mHuntNames.add("Loading Hunts");
         //String[] fromColumns = {hunts.get(0).getId() , hunts.get(0).getName()};
         //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1 */
+        // int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
 
 
         //TODO: REMOVE THIS; JUST FOR TESTING PURPOSES
-        List<String> revIds = new ArrayList<String>();
+        /*List<String> revIds = new ArrayList<String>();
         revIds.add("4.5");
         List<Task> tasks = new ArrayList<Task>();
         Task task = new Task(null, new Location("network"), "It's a cool place.",
@@ -138,7 +138,7 @@ public class HuntsList extends ListActivity {
         "reallySmartRabbit", 2L, TimeUnit.HOURS, 20L);
 
         mHuntNames.add(h.getName());
-        mHuntsObj.add(h);
+        mHuntsObj.add(h); */
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
