@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
@@ -93,30 +92,32 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void numHuntsFound(int num) {
-                       Context context = getApplicationContext();
                        CharSequence text = "Loading " + num + " hunts...";
                        int duration = Toast.LENGTH_LONG;
 
-                       Toast toast = Toast.makeText(context, text, duration);
+                       Toast.makeText(HuntsList.this, text, duration).show();
                    }
 
                    @Override
                    public void huntLoaded(Hunt hunt) {
+                       int duration = Toast.LENGTH_LONG;
+
+                       Toast.makeText(HuntsList.this, "Loaded " + hunt.getId(), duration).show();
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
-
-
                    }
 
                    @Override
                    public void huntFailedToLoad(Exception e) {
+<<<<<<< HEAD
                        Context context = getApplicationContext();
                        Context context = getApplicationContext();
                        CharSequence text = "Failed to load a hunt";
+=======
+>>>>>>> 55ade6a2389636274989763033c7bddfc244585f
                        int duration = Toast.LENGTH_SHORT;
-
-                       Toast toast = Toast.makeText(context, text, duration);
+                       Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);
         //hunts.add(basicHunt);
@@ -179,8 +180,8 @@ public class HuntsList extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
-        Intent hunt = new Intent(this, ConfirmHunt.class);
         Log.d("Null?", mHuntsObj.get(position).toString());
+        Intent hunt = new Intent(this, ConfirmHuntActivity.class);
         hunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
         this.startActivity(hunt);
         // Put in ID for the hunt selected

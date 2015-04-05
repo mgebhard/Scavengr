@@ -17,7 +17,7 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 
 
-public class ConfirmHunt extends ActionBarActivity implements View.OnClickListener {
+public class ConfirmHuntActivity extends ActionBarActivity implements View.OnClickListener {
     private Hunt hunt;
 
     @Override
