@@ -117,7 +117,7 @@ Router.route('/hunts/:huntId/reviews/', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(
                 Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })['reviews']
-                    .map(function(x) { return { id: x._str }; })
+                    //.map(function(x) { return { id: x._str }; })
         ));
     } else if(this.request.method == 'DELETE') {
         this.response.end(JSON.stringify(
