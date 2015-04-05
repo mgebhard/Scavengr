@@ -1,8 +1,12 @@
 package org.teamscavengr.scavengr;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,11 +26,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A hunt is a hunt.
  */
-public class Hunt {
+public class Hunt implements Parcelable {
 
     private static void run(boolean onUIThread, Runnable r) {
         if(onUIThread) {
@@ -39,15 +45,74 @@ public class Hunt {
     private String id;
     private String[] reviewIds;
     private Task[] tasks;
+    private String creatorId;
+    private long estTime;
+    private TimeUnit estTimeUnit;
+    private long timeCreated; // seconds past epoch
 
     /**
      * If we're creating the first hunt, id should be null.
      */
-    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks) {
+    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, final
+    String creatorId, final long estTime, final TimeUnit estTimeUnit, final long timeCreated) {
         this.name = name;
         this.id = id;
         this.reviewIds = reviewIds;
         this.tasks = tasks;
+        this.creatorId = creatorId;
+        this.estTime = estTime;
+        this.estTimeUnit = estTimeUnit;
+        this.timeCreated = timeCreated;
+    }
+
+    public Hunt(Parcel in) {
+        readFromParcel(in);
+    }
+
+    private void readFromParcel(Parcel in) {
+        name = in.readString();
+        id = in.readString();
+        final int nReview = in.readInt();
+        reviewIds = new String[nReview];
+        for (int i = 0; i < nReview; i++) {
+            reviewIds[i] = in.readString();
+        }
+        final int nTasks = in.readInt();
+        Task[] tasks = new Task[nTasks];
+        for (int i = 0; i < nTasks; i++) {
+            String taskId = in.readString();
+            Location taskLoc = Location.CREATOR.createFromParcel(in);
+            String taskClue = in.readString();
+            String taskAnswer = in.readString();
+            double taskRadius = in.readDouble();
+            tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius);
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // TODO Auto-generated method stub
+        dest.writeString(name);
+        dest.writeString(id);
+        // Write out reviewIds
+        dest.writeInt(reviewIds.length);
+        for (int i = 0; i < reviewIds.length; i++) {
+            dest.writeString(reviewIds[i]);
+        }
+        // Write out tasks
+        dest.writeInt(tasks.length);
+        for (Task task : tasks) {
+            dest.writeString(task.getId());
+            task.getLocation().writeToParcel(dest, flags);
+            dest.writeString(task.getClue());
+            dest.writeString(task.getAnswer());
+            dest.writeDouble(task.getRadius());
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public String getName() {
@@ -70,21 +135,38 @@ public class Hunt {
         return tasks;
     }
 
+    public Pair<Long, TimeUnit> getEstimatedTime() {
+        return new Pair<>(estTime, estTimeUnit);
+    }
+
+    public void setEstimatedTime(long time, TimeUnit unit) {
+        this.estTime = time;
+        this.estTimeUnit = unit;
+    }
+
+    public void setEstimatedTime(Pair<Long, TimeUnit> time) {
+        this.estTime = time.first;
+        this.estTimeUnit = time.second;
+    }
+
     /**
      * Saves this hunt to the server. If we don't currently have an ID, creates one.
      * @throws IOException If bullshit happens
      */
     public void saveHunt() throws IOException {
         try {
-            URL url = null;
+            URL url;
             if(id == null) {
                 url = new URL("http://scavengr.meteor.com/hunts/");
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
+                requestMap.put("creatorId", creatorId);
+                requestMap.put("timeCreated", Long.toString(timeCreated));
+                requestMap.put("estimatedTime", Long.toString(estTime));
+                requestMap.put("estimatedTimeUnit", estTimeUnit.name());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
-                url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
 
             // Save the tasks
@@ -111,7 +193,11 @@ public class Hunt {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
-                    tasksFromJSONArray(obj.getJSONArray("tasks")));
+                    tasksFromJSONArray(obj.getJSONArray("tasks")), obj.getString("creatorId"),
+                    Long.parseLong(obj.getString("estimatedTime")),
+                    TimeUnit.valueOf(obj.getString("estimatedTimeUnit")),
+                    Long.parseLong(obj.getString("timeCreated")));
+
 
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("id \"" + id + "\" leads to Malformed URL", e);
@@ -238,6 +324,22 @@ public class Hunt {
                 }
             }
         }).start();
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(final String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public long getTimeCreated() {
+        return timeCreated;
+    }
+
+    public void setTimeCreated(final long timeCreated) {
+        this.timeCreated = timeCreated;
     }
 
     public static interface HuntLoadedCallback {

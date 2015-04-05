@@ -7,7 +7,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
 
-        <ListView android:id="@android:id/list"
+    <ListView android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -15,7 +15,9 @@
 
         <TextView android:id="@android:id/empty"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FF0000"
-            android:text="No data"/>
-    </LinearLayout>
+            android:layout_height="733dp"
+            android:background="#FFFFFF"
+            android:text="No Hunts Available"
+            android:editable="false" />
+
+</LinearLayout>
