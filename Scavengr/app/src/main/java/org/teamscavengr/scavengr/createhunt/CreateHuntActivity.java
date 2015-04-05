@@ -30,7 +30,8 @@ import java.util.Set;
 
 
 public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -144,16 +145,20 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                EditText text = (EditText)findViewById(R.id.estimated_time);
-                String value = text.getText().toString(); //store this time
+                String estimatedTime = ((EditText)findViewById(R.id.estimated_time))
+                                        .getText().toString();
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                //store all waypoints
+                reviewCreated.putExtra("allTasks", tasksForCurrentHunt.toArray());
+                reviewCreated.putExtra("estimatedTime", estimatedTime);
                 this.startActivity(reviewCreated);
                 break;
+
             case R.id.add_waypoint:
-                Intent addWaypoint = new Intent(this, CreateWaypointActivity.class);
-                this.startActivity(addWaypoint);
+                Intent createTask = new Intent(this, CreateWaypointActivity.class);
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size());
+                this.startActivity(createTask);
                 break;
+
             default:
                 break;
         }

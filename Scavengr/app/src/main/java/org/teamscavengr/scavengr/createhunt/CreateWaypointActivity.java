@@ -86,18 +86,14 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         setContentView(R.layout.activity_create_waypoint);
 
         // Gets the users last known location to set the flag on the map
-        Log.d("MEGAN", "On Create for create way point");
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
-            Log.d("MEGAN", "Put task object into extra");
             currentLatitude = mLastLocation.getLatitude();
             currentLongitude = mLastLocation.getLongitude();
             Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
         }
-
-
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -132,9 +128,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 Double defaultRadius = 2.0;
                 // Need to get the radius after Helen adds bar
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
-                                        answerText.getText().toString(), defaultRadius);
+                                        answerText.getText().toString(), defaultRadius,
+                                        getIntent().getIntExtra("taskNumber", 0));
                 addTask.putExtra("task", taskAdded);
-                Log.d("MEGAN", "Put task object into extra");
+
                 this.startActivity(addTask);
                 break;
             case R.id.cancel:

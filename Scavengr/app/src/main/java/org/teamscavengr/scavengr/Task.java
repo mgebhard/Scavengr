@@ -24,6 +24,7 @@ public class Task implements Parcelable {
     private String clue;
     private String answer;
     private double radius; // in meters
+    private int taskNumber;
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -36,12 +37,13 @@ public class Task implements Parcelable {
     }
 
     public Task(final String id, final Location location, final String clue,
-                final String answer, final double radius) {
+                final String answer, final double radius, final int taskNumber) {
         this.id = id;
         this.location = location;
         this.clue = clue;
         this.answer = answer;
         this.radius = radius;
+        this.taskNumber = taskNumber;
     }
 
     public Task(Parcel in ) {
@@ -114,6 +116,7 @@ public class Task implements Parcelable {
         dest.writeString(answer);
         dest.writeDouble(radius);
         dest.writeString(id);
+        dest.writeInt(taskNumber);
     }
 
     // NOT SURE IF BELOW IS NEEDED COPYING EXAMPLE
@@ -133,5 +136,6 @@ public class Task implements Parcelable {
         answer = in.readString();
         radius = in.readDouble();
         id = in.readString();
+        taskNumber = in.readInt();
     }
 }
