@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A hunt is a hunt.
@@ -44,17 +46,25 @@ public class Hunt implements Parcelable {
     private String[] reviewIds;
     private Task[] tasks;
     private String description;
+    private String creatorId;
+    private long estTime;
+    private TimeUnit estTimeUnit;
+    private long timeCreated; // seconds past epoch
 
     /**
      * If we're creating the first hunt, id should be null.
      */
-    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, String description) {
+    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, final String description,
+        final String creatorId, final long estTime, final TimeUnit estTimeUnit, final long timeCreated) {
         this.name = name;
         this.id = id;
         this.reviewIds = reviewIds;
         this.tasks = tasks;
         this.description = description;
-
+        this.creatorId = creatorId;
+        this.estTime = estTime;
+        this.estTimeUnit = estTimeUnit;
+        this.timeCreated = timeCreated;
     }
 
     public Hunt(Parcel in) {
@@ -81,6 +91,8 @@ public class Hunt implements Parcelable {
             tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius, taskNumber);
         }
         description = in.readString();
+        creatorId = in.readString();
+        
     }
 
     @Override
@@ -135,21 +147,38 @@ public class Hunt implements Parcelable {
         return tasks;
     }
 
+    public Pair<Long, TimeUnit> getEstimatedTime() {
+        return new Pair<>(estTime, estTimeUnit);
+    }
+
+    public void setEstimatedTime(long time, TimeUnit unit) {
+        this.estTime = time;
+        this.estTimeUnit = unit;
+    }
+
+    public void setEstimatedTime(Pair<Long, TimeUnit> time) {
+        this.estTime = time.first;
+        this.estTimeUnit = time.second;
+    }
+
     /**
      * Saves this hunt to the server. If we don't currently have an ID, creates one.
      * @throws IOException If bullshit happens
      */
     public void saveHunt() throws IOException {
         try {
-            URL url = null;
+            URL url;
             if(id == null) {
                 url = new URL("http://scavengr.meteor.com/hunts/");
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
+                requestMap.put("creatorId", creatorId);
+                requestMap.put("timeCreated", Long.toString(timeCreated));
+                requestMap.put("estimatedTime", Long.toString(estTime));
+                requestMap.put("estimatedTimeUnit", estTimeUnit.name());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
-                url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
 
             // Save the tasks
@@ -176,7 +205,12 @@ public class Hunt implements Parcelable {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
-                    tasksFromJSONArray(obj.getJSONArray("tasks")), obj.getString("description"));
+                    tasksFromJSONArray(obj.getJSONArray("tasks")),
+                    obj.getString("description"),
+                    obj.getString("creatorId"),
+                    Long.parseLong(obj.getString("estimatedTime")),
+                    TimeUnit.valueOf(obj.getString("estimatedTimeUnit")),
+                    Long.parseLong(obj.getString("timeCreated")));
 
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("id \"" + id + "\" leads to Malformed URL", e);
@@ -303,6 +337,22 @@ public class Hunt implements Parcelable {
                 }
             }
         }).start();
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(final String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public long getTimeCreated() {
+        return timeCreated;
+    }
+
+    public void setTimeCreated(final long timeCreated) {
+        this.timeCreated = timeCreated;
     }
 
     public static interface HuntLoadedCallback {

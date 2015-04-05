@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
@@ -58,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void numHuntsFound(final int i) {}
 
         }, true);*/
+
         switch(view.getId()) {
             case R.id.go_on_hunt:
                 //Intent hunt = new Intent(this, HuntsList.class);

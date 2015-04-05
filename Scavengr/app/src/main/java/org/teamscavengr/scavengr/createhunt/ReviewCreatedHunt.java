@@ -6,9 +6,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hzhou1235 on 3/15/15.
@@ -48,6 +51,12 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm:
+                Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
+                long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
+                TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
+
+                // Hunt h = new Hunt();
+
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(myHunts);
                 break;
