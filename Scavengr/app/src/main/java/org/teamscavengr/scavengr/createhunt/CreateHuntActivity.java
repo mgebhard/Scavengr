@@ -28,7 +28,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -43,12 +45,32 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
-    protected double currentLongitude = - 85.0102;
+    protected double currentLongitude = -85.0102;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
 
     private int hour, minute;
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putParcelableArrayList("allTasksList",
+                new ArrayList<Task>(tasksForCurrentHunt));
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
+        tasksForCurrentHunt = new HashSet<Task>(allTasks);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,7 +165,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
             map.addMarker(new MarkerOptions()
-                    .title(task.getAnswer())
+                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
                     .position(new LatLng(taskLocation.getLatitude(),
                             taskLocation.getLongitude())));
@@ -180,14 +202,12 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
-                createTask.putExtra("taskNumber", tasksForCurrentHunt.size());
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size()+1);
                 this.startActivity(createTask);
                 break;
 
             default:
                 break;
         }
-
     }
-
 }

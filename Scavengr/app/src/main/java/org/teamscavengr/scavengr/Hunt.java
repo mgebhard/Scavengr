@@ -1,7 +1,10 @@
 package org.teamscavengr.scavengr;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
 
@@ -13,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A hunt is a hunt.
  */
-public class Hunt {
+public class Hunt implements Parcelable {
 
     private static void run(boolean onUIThread, Runnable r) {
         if(onUIThread) {
@@ -59,6 +63,56 @@ public class Hunt {
         this.estTime = estTime;
         this.estTimeUnit = estTimeUnit;
         this.timeCreated = timeCreated;
+    }
+
+    public Hunt(Parcel in) {
+        readFromParcel(in);
+    }
+
+    private void readFromParcel(Parcel in) {
+        name = in.readString();
+        id = in.readString();
+        final int nReview = in.readInt();
+        reviewIds = new String[nReview];
+        for (int i = 0; i < nReview; i++) {
+            reviewIds[i] = in.readString();
+        }
+        final int nTasks = in.readInt();
+        Task[] tasks = new Task[nTasks];
+        for (int i = 0; i < nTasks; i++) {
+            String taskId = in.readString();
+            Location taskLoc = Location.CREATOR.createFromParcel(in);
+            String taskClue = in.readString();
+            String taskAnswer = in.readString();
+            double taskRadius = in.readDouble();
+            tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius);
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // TODO Auto-generated method stub
+        dest.writeString(name);
+        dest.writeString(id);
+        // Write out reviewIds
+        dest.writeInt(reviewIds.length);
+        for (int i = 0; i < reviewIds.length; i++) {
+            dest.writeString(reviewIds[i]);
+        }
+        // Write out tasks
+        dest.writeInt(tasks.length);
+        for (Task task : tasks) {
+            dest.writeString(task.getId());
+            task.getLocation().writeToParcel(dest, flags);
+            dest.writeString(task.getClue());
+            dest.writeString(task.getAnswer());
+            dest.writeDouble(task.getRadius());
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public String getName() {

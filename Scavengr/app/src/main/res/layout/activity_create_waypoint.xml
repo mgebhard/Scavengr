@@ -21,7 +21,11 @@
                 android:name="com.google.android.gms.maps.MapFragment"
                 android:id="@+id/map"
                 android:layout_weight="0.5"
-                android:layout_alignParentTop="true" />
+                android:layout_alignParentTop="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:onClick="onClick"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -31,52 +35,114 @@
             android:layout_weight="1"
             android:id="@+id/asdf2">
 
-            <EditText
-                android:layout_width="350dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/clue"
-                android:editable="false"
-                android:textStyle="italic"
-                android:layout_alignParentBottom="true"
-                android:visibility="visible"
-                android:outlineProvider="paddedBounds"
-                android:hint="Add clue here"
-                android:layout_marginBottom="80dp"
-                android:layout_alignLeft="@+id/cancel"
-                android:layout_alignStart="@+id/cancel"
-                android:layout_alignRight="@+id/ok"
-                android:layout_alignEnd="@+id/ok"
-                android:inputType="text" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1">
 
-            <EditText
-                android:layout_width="350dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:id="@+id/answer"
-                android:editable="false"
-                android:textStyle="italic"
-                android:layout_alignParentBottom="true"
-                android:visibility="visible"
-                android:outlineProvider="paddedBounds"
-                android:hint="Add clue here"
-                android:layout_marginBottom="80dp"
-                android:layout_alignLeft="@+id/cancel"
-                android:layout_alignStart="@+id/cancel"
-                android:layout_alignRight="@+id/ok"
-                android:layout_alignEnd="@+id/ok"
-                android:inputType="text" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Set Radius of Waypoint"
+                    android:id="@+id/textView16"
+                    android:layout_gravity="center_horizontal" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radius_bar" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1.5">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Clue:"
+                        android:id="@+id/textView15"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp" />
+
+                    <EditText
+                        android:layout_width="350dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/clue"
+                        android:editable="false"
+                        android:textStyle="italic"
+                        android:layout_alignParentBottom="true"
+                        android:visibility="visible"
+                        android:outlineProvider="paddedBounds"
+                        android:hint="Add clue here"
+                        android:layout_alignLeft="@+id/cancel"
+                        android:layout_alignStart="@+id/cancel"
+                        android:layout_alignRight="@+id/ok"
+                        android:layout_alignEnd="@+id/ok"
+                        android:inputType="text"
+                        android:layout_marginLeft="10dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:clickable="true"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1.5">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Answer:"
+                        android:id="@+id/textView17"
+                        android:layout_marginLeft="10dp" />
+
+                    <EditText
+                        android:layout_width="350dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:id="@+id/answer"
+                        android:editable="false"
+                        android:textStyle="italic"
+                        android:layout_alignParentBottom="true"
+                        android:visibility="visible"
+                        android:outlineProvider="paddedBounds"
+                        android:hint="Enter destination"
+                        android:layout_alignLeft="@+id/cancel"
+                        android:layout_alignStart="@+id/cancel"
+                        android:layout_alignRight="@+id/ok"
+                        android:layout_alignEnd="@+id/ok"
+                        android:inputType="text"
+                        android:layout_marginLeft="10dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:clickable="true"/>
+                </LinearLayout>
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:id="@+id/adsf">
+                android:layout_height="wrap_content"
+                android:id="@+id/bottom_buttons"
+                android:focusableInTouchMode="false"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CANCEL"
+                    android:layout_alignParentBottom="true"
                     android:onClick="onClick"
                     android:id="@+id/cancel"
                     android:name="com.google.android.gms.maps.MapFragment"
