@@ -93,8 +93,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
         } */
 
-
-
         try{
             MapFragment mapFragment = (MapFragment) getFragmentManager()
                     .findFragmentById(R.id.map);
