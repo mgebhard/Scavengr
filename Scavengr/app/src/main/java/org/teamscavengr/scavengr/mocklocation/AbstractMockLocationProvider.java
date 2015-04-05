@@ -59,7 +59,11 @@ public abstract class AbstractMockLocationProvider implements Closeable {
         l.setTime(System.currentTimeMillis());
         l.setElapsedRealtimeNanos(System.nanoTime());
         l.setAccuracy(0.5f);
-        lm.setTestProviderLocation(providerName, l);
+        try {
+            lm.setTestProviderLocation(providerName, l);
+        } catch(IllegalArgumentException ex) {
+            ex.printStackTrace(); // ignore it if the provider is unknown
+        }
     }
 
 }

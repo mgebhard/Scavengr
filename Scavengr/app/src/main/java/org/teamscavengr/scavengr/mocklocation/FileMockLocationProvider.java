@@ -34,8 +34,7 @@ public class FileMockLocationProvider extends AbstractMockLocationProvider {
 
         if(autoUpdate) {
             fo = new FileObserver(file.getPath(),
-                    FileObserver.ATTRIB | FileObserver.MODIFY |
-                    FileObserver.CLOSE_WRITE | FileObserver.CLOSE_NOWRITE) {
+                    FileObserver.ATTRIB | FileObserver.MODIFY | FileObserver.CLOSE_WRITE) {
                 @Override
                 public void onEvent(final int event, final String path) {
                     update();
