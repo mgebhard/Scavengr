@@ -23,7 +23,7 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_hunt);
         if (getIntent().hasExtra("huntObject")) {
-            Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
+            hunt = (getIntent().getParcelableExtra("huntObject"));
 
             // Grab and set hunt title
             TextView titleText = (TextView) findViewById(R.id.textView3);
@@ -79,9 +79,9 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm_hunt:
-                Intent hunt = new Intent(this, HuntActivity.class);
-                hunt.putExtra("huntObject", (Parcelable) hunt);
-                this.startActivity(hunt);
+                Intent huntIntent = new Intent(this, HuntActivity.class);
+                huntIntent.putExtra("huntObject", (Parcelable) hunt);
+                this.startActivity(huntIntent);
                 break;
             default:
                 break;

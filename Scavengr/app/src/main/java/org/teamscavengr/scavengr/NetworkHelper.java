@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A nice friendly network helper.
  * Created by zrneely on 4/4/15.
  */
 public class NetworkHelper {
@@ -33,12 +35,19 @@ public class NetworkHelper {
         conn.setConnectTimeout(10000);
         conn.setRequestMethod(type);
         conn.setDoOutput(output);
+        if(output)
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoInput(true);
+        conn.setRequestProperty("Content-Type","application/json");
 
         List<NameValuePair> params = new ArrayList<>();
+        JSONObject jsonParams = new JSONObject();
         for (String key : values.keySet()) {
             params.add(new BasicNameValuePair(key, values.get(key)));
+            jsonParams.put(key, values.get(key));
         }
+
+        conn.connect();
 
         OutputStream out = null;
         if(output)
@@ -46,12 +55,16 @@ public class NetworkHelper {
         InputStream in = conn.getInputStream();
 
         if(output) {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            bw.write(getQuery(params));
-            bw.flush();
-        }
+            DataOutputStream printout = new DataOutputStream(out);
+            //String encoded = URLEncoder.encode(jsonParams.toString(),"UTF-8");
+            printout.writeBytes(URLEncoder.encode(jsonParams.toString(),"UTF-8"));
+            printout.flush();
+            printout.close();
 
-        conn.connect();
+            /*BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            bw.write(getQuery(params));
+            bw.flush();*/
+        }
 
         // Get output
         BufferedReader br = new BufferedReader(new InputStreamReader(in));

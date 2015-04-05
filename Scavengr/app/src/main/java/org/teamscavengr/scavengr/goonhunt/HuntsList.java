@@ -65,12 +65,8 @@ public class HuntsList extends ListActivity {
                 "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
                 "Linux", "OS/2" };
 
-
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, values); */
-
-
-
 
         // For the cursor adapter, specify which columns go into which views
         // use static hunt objects for now
