@@ -2,6 +2,8 @@ package org.teamscavengr.scavengr;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -11,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,7 +21,7 @@ import java.net.URL;
 /**
  * A User is a user.
  */
-public class User {
+public class User implements Serializable {
 
     private final String name;
     private final Optional<String> gPlusId;
@@ -26,7 +29,7 @@ public class User {
     private final String email;
     private final String id;
 
-    private User(String name, Optional<String> gPlusId, Optional<String> fbId, String email, String id) {
+    public User(String name, Optional<String> gPlusId, Optional<String> fbId, String email, String id) {
         this.name = name;
         this.gPlusId = gPlusId;
         this.id = id;

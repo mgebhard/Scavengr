@@ -8,9 +8,12 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -27,13 +30,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
@@ -47,7 +51,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     ArrayList<Task> allPoints = new ArrayList<Task>();
 
 
-    // Defaults to Michigan
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
 
@@ -101,8 +104,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
             currentLongitude = mLastLocation.getLongitude();
         }
 
-
         buildGoogleApiClient();
+
     }
 
     /**
@@ -159,6 +162,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 reviewCreated.putExtra("currentHunt", currentHunt);
                 reviewCreated.putExtra("estimatedTime", hour * 60L + minute);
                 reviewCreated.putExtra("estimatedTimeUnit", TimeUnit.MINUTES);
+                reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
+                        Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
                 this.startActivity(reviewCreated);
                 break;
 

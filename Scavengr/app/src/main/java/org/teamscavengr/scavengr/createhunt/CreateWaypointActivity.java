@@ -2,18 +2,20 @@ package org.teamscavengr.scavengr.createhunt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,7 +24,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.Hunt;
@@ -51,6 +56,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     private InputMethodManager imm = null;
 
+    private final double defaultRadius = 10.0;
+    private final double maxRadius = 5000.0; //in meters
+    private Circle circle;
+
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
      */
@@ -69,10 +78,18 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         map.setMyLocationEnabled(true);
         LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 15));
-        map.addMarker(new MarkerOptions()
+        MarkerOptions marker = new MarkerOptions()
                 .title("Your Current Location")
                 .snippet("Task number.")
-                .position(usersLastKnownLocation));
+                .position(usersLastKnownLocation);
+        map.addMarker(marker);
+
+        circle = map.addCircle(new CircleOptions()
+                .center(usersLastKnownLocation)
+                .radius(defaultRadius)
+                .strokeColor(Color.argb(256, 0, 0, 256))
+                .fillColor(Color.argb(100, 0, 0, 256)));
+
     }
 
     @Override
@@ -112,9 +129,19 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         View map = findViewById(R.id.map);
         map.setOnTouchListener(this);
 
+        SeekBar slider = (SeekBar) findViewById(R.id.radius_bar);
+        slider.setOnSeekBarChangeListener(this);
+
         buildGoogleApiClient();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_review_hunt, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -199,16 +226,21 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { //progress max default is 100
-
+        Log.d("HELEN", "CHANGED PROGRESS");
+        circle.setRadius(maxRadius * (progress/100.0) * (progress/100.0));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        Log.d("HELEN", "START PROGRESS");
         int progress = seekBar.getProgress();
+        circle.setRadius(maxRadius * ((progress/100.0) * (progress/100.0)));
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        Log.d("HELEN", "STOP PROGRESS");
         int progress = seekBar.getProgress();
+        circle.setRadius(maxRadius * (progress/100.0) * (progress/100.0));
     }
 }

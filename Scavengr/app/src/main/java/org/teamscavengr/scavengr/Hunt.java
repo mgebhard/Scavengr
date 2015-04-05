@@ -16,7 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A hunt is a hunt.
  */
-public class Hunt implements Parcelable {
+public class Hunt implements Parcelable, Serializable {
 
     private static void run(boolean onUIThread, Runnable r) {
         if(onUIThread) {
@@ -107,7 +107,10 @@ public class Hunt implements Parcelable {
         }
         description = in.readString();
         creatorId = in.readString();
-        
+        estTime = in.readLong();
+        estTimeUnit = (TimeUnit) in.readSerializable();
+        timeCreated = in.readLong();
+
     }
 
     @Override
@@ -131,6 +134,10 @@ public class Hunt implements Parcelable {
             dest.writeInt(task.getTaskNumber());
         }
         dest.writeString(description);
+        dest.writeString(creatorId);
+        dest.writeLong(estTime);
+        dest.writeSerializable(estTimeUnit);
+        dest.writeLong(timeCreated);
     }
 
     @Override
@@ -408,4 +415,14 @@ public class Hunt implements Parcelable {
         }
         return ret;
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Hunt createFromParcel(Parcel in) {
+            return new Hunt(in);
+        }
+
+        public Hunt[] newArray(int size) {
+            return new Hunt[size];
+        }
+    };
 }
