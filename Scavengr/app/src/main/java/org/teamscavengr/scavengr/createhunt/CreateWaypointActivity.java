@@ -2,6 +2,7 @@ package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -28,8 +29,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by hzhou1235 on 3/15/15.
@@ -40,13 +39,12 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
-    protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
-
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = - 85.0102;
 
     public GoogleMap mapObject;
+    public Location mLastLocation;
 
     private InputMethodManager imm = null;
 
@@ -66,16 +64,12 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
-                                                                    currentLongitude), 20));
-        for (Task task : tasksForCurrentHunt){
-            Location taskLocation = task.getLocation();
-            map.addMarker(new MarkerOptions()
-                    .title(task.getAnswer())
-                    .snippet(task.getClue())
-                    .position(new LatLng(taskLocation.getLatitude(),
-                            taskLocation.getLongitude())));
-        }
+        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 15));
+        map.addMarker(new MarkerOptions()
+                .title("Your Current Location")
+                .snippet("Task number.")
+                .position(usersLastKnownLocation));
     }
 
     @Override
@@ -100,16 +94,14 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         setContentView(R.layout.activity_create_waypoint);
 
         // Gets the users last known location to set the flag on the map
-        Log.d("MEGAN", "On Create for create way point");
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
-        Location currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (currentLocation != null) {
-            currentLatitude = currentLocation.getLatitude();
-            currentLongitude = currentLocation.getLongitude();
+        mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (mLastLocation != null) {
+            currentLatitude = mLastLocation.getLatitude();
+            currentLongitude = mLastLocation.getLongitude();
             Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
         }
-
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -178,9 +170,17 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
+                Intent addTask = new Intent(this, CreateHuntActivity.class);
                 EditText clueText = (EditText)findViewById(R.id.clue);
+                EditText answerText = (EditText)findViewById(R.id.answer);
+                Double defaultRadius = 2.0;
+                // Need to get the radius after Helen adds bar
+                Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
+                                        answerText.getText().toString(), defaultRadius,
+                                        getIntent().getIntExtra("taskNumber", 0));
+                addTask.putExtra("task", taskAdded);
 
-                this.finish();
+                this.startActivity(addTask);
                 break;
             case R.id.cancel:
                 this.finish();

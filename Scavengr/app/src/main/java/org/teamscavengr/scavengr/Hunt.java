@@ -17,13 +17,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A hunt is a hunt.
- * TODO use async tasks for progress monitoring
  */
 public class Hunt {
 
@@ -62,8 +62,8 @@ public class Hunt {
         return id;
     }
 
-    public String[] getReviewIds() {
-        return reviewIds;
+    public List<String> getReviewIds() {
+        return Collections.unmodifiableList(Arrays.asList(reviewIds));
     }
 
     public Task[] getTasks() {
@@ -82,15 +82,14 @@ public class Hunt {
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
-                id = NetworkHelper.doRequest(url, "POST", requestMap).getString("_str");
+                id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
                 url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
-            // TODO Save the reviews
 
-            // TODO Save the tasks
+            // Save the tasks
             url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
-            NetworkHelper.doRequest(url, "DELETE", new HashMap<String, String>());
+            NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
                 t.saveToServer(url);
             }
@@ -110,7 +109,7 @@ public class Hunt {
     public static Hunt loadHunt(String id) throws IOException {
         try {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
-            JSONObject obj = NetworkHelper.doRequest(url, "GET", new HashMap<String, String>());
+            JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
                     tasksFromJSONArray(obj.getJSONArray("tasks")));
 

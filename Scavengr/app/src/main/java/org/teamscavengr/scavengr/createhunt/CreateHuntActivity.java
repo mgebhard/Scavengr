@@ -23,12 +23,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
+
+    protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
 
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
@@ -68,6 +75,15 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        Log.d("MEGAN", "Before it check if intent has extra");
+        if (getIntent().hasExtra("task")) {
+            Log.d("MEGAN", "Has task Parcelable extra");
+            Task taskAdded = (Task)getIntent().getParcelableExtra("task");
+            if (taskAdded != null) {
+                tasksForCurrentHunt.add(taskAdded);
+            }
+        }
+
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
@@ -93,15 +109,19 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap map) {
         Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
-        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 20));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
+                                                                    currentLongitude), 15));
 
-        map.addMarker(new MarkerOptions()
-                .title("Your Current Location")
-                .snippet("Task number.")
-                .position(usersLastKnownLocation));
+        for (Task task : tasksForCurrentHunt){
+            Location taskLocation = task.getLocation();
+            map.addMarker(new MarkerOptions()
+                    .title(task.getAnswer())
+                    .snippet(task.getClue())
+                    .position(new LatLng(taskLocation.getLatitude(),
+                            taskLocation.getLongitude())));
+        }
     }
 
     @Override
@@ -121,19 +141,24 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onConnectionFailed(final ConnectionResult connectionResult) {
 
     }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                EditText text = (EditText)findViewById(R.id.estimated_time);
-                String value = text.getText().toString(); //store this time
+                String estimatedTime = ((EditText)findViewById(R.id.estimated_time))
+                                        .getText().toString();
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                //store all waypoints
+                reviewCreated.putExtra("allTasks", tasksForCurrentHunt.toArray());
+                reviewCreated.putExtra("estimatedTime", estimatedTime);
                 this.startActivity(reviewCreated);
                 break;
+
             case R.id.add_waypoint:
-                Intent addWaypoint = new Intent(this, CreateWaypointActivity.class);
-                this.startActivity(addWaypoint);
+                Intent createTask = new Intent(this, CreateWaypointActivity.class);
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size());
+                this.startActivity(createTask);
                 break;
+
             default:
                 break;
         }

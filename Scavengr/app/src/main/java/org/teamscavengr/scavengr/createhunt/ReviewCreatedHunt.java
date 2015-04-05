@@ -19,10 +19,6 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_created_hunt);
-        Button confirm = (Button)findViewById(R.id.confirm);
-        Button back = (Button)findViewById(R.id.back);
-        confirm.setOnClickListener(this);
-        back.setOnClickListener(this);
     }
 
 
