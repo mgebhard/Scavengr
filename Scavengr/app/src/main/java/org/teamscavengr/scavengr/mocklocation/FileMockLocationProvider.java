@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  * Created by zrneely on 4/5/15.
  */
-public class FileMockLocationProvider extends AbstractMockLocationProvider {
+public class FileMockLocationProvider extends MockLocationProvider {
 
     private final File file;
     private FileObserver fo;
