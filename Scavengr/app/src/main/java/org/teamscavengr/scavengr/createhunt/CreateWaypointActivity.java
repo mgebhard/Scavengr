@@ -128,7 +128,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 // Need to get the radius after Helen adds bar
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
                                         answerText.getText().toString(), defaultRadius,
-                                        getIntent().getIntExtra("taskNumber", 0));
+                                        getIntent().getIntExtra("taskNumber", 1));
                 addTask.putExtra("task", taskAdded);
 
                 this.startActivity(addTask);

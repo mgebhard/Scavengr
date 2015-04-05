@@ -41,7 +41,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
-    protected double currentLongitude = - 85.0102;
+    protected double currentLongitude = -85.0102;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
@@ -139,7 +139,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
             map.addMarker(new MarkerOptions()
-                    .title(task.getAnswer())
+                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
                     .position(new LatLng(taskLocation.getLatitude(),
                             taskLocation.getLongitude())));
@@ -177,14 +177,12 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
-                createTask.putExtra("taskNumber", tasksForCurrentHunt.size());
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size()+1);
                 this.startActivity(createTask);
                 break;
 
             default:
                 break;
         }
-
     }
-
 }
