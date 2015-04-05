@@ -4,6 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
+    android:id="@+id/creat_hunt_layout"
     tools:context="org.teamscavengr.scavengr.createhunt.CreateHuntActivity">
 
     <TextView android:text="CREATE HUNT"
@@ -43,32 +44,5 @@
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="30dp" />
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignLeft="@+id/finish"
-        android:layout_alignStart="@+id/finish"
-        android:layout_alignRight="@+id/add_waypoint"
-        android:layout_alignEnd="@+id/add_waypoint"
-        android:layout_marginTop="450dp"
-        android:background="#c8ffffff"
-        android:backgroundTint="#ffffffff"
-        android:layout_above="@+id/add_waypoint">
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="time"
-            android:ems="10"
-            android:id="@+id/estimated_time"
-            android:clickable="true"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:autoText="false"
-            android:layout_above="@+id/add_waypoint"
-            android:layout_centerHorizontal="true"
-            android:hint="Estimated time (hr:min)"
-            android:layout_gravity="center_horizontal|bottom" />
-    </FrameLayout>
 
 </RelativeLayout>

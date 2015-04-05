@@ -43,8 +43,8 @@ public class Hunt implements Parcelable, Serializable {
 
     private String name;
     private String id;
-    private String[] reviewIds;
-    private Task[] tasks;
+    private List<String> reviewIds;
+    private List<Task> tasks;
     private String description;
     private String creatorId;
     private long estTime;
@@ -54,7 +54,7 @@ public class Hunt implements Parcelable, Serializable {
     /**
      * If we're creating the first hunt, id should be null.
      */
-    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, final String description,
+    public Hunt(final String id, final String name, List<String> reviewIds, List<Task> tasks, final String description,
         final String creatorId, final long estTime, final TimeUnit estTimeUnit, final long timeCreated) {
         this.name = name;
         this.id = id;
@@ -67,6 +67,34 @@ public class Hunt implements Parcelable, Serializable {
         this.timeCreated = timeCreated;
     }
 
+
+    public Hunt(final String name, List<Task> tasks, final long estTime,
+                final TimeUnit estTimeUnit, final long timeCreated) {
+        this.name = name;
+        this.id = null;
+        this.reviewIds = new ArrayList<String>();
+        this.tasks = tasks;
+        this.description = "";
+        this.creatorId = "";
+        this.estTime = 0;
+        this.estTimeUnit = TimeUnit.MINUTES;
+        this.timeCreated = 0;
+    }
+
+    //DEFAULT
+    public Hunt() {
+        this.name = "";
+        this.id = null;
+        this.reviewIds = new ArrayList<String>();
+        this.tasks = new ArrayList<Task>();
+        this.description = "";
+        this.creatorId = "";
+        this.estTime = estTime;
+        this.estTimeUnit = estTimeUnit;
+        this.timeCreated = timeCreated;
+    }
+
+
     public Hunt(Parcel in) {
         readFromParcel(in);
     }
@@ -75,12 +103,12 @@ public class Hunt implements Parcelable, Serializable {
         name = in.readString();
         id = in.readString();
         final int nReview = in.readInt();
-        reviewIds = new String[nReview];
+        reviewIds = new ArrayList<String>();
         for (int i = 0; i < nReview; i++) {
-            reviewIds[i] = in.readString();
+            reviewIds.add(in.readString());
         }
         final int nTasks = in.readInt();
-        tasks = new Task[nTasks];
+        tasks = new ArrayList<Task>();
         for (int i = 0; i < nTasks; i++) {
             String taskId = in.readString();
             Location taskLoc = Location.CREATOR.createFromParcel(in);
@@ -88,7 +116,7 @@ public class Hunt implements Parcelable, Serializable {
             String taskAnswer = in.readString();
             double taskRadius = in.readDouble();
             int taskNumber = in.readInt();
-            tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius, taskNumber);
+            tasks.add(new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius, taskNumber));
         }
         description = in.readString();
         creatorId = in.readString();
@@ -104,12 +132,12 @@ public class Hunt implements Parcelable, Serializable {
         dest.writeString(name);
         dest.writeString(id);
         // Write out reviewIds
-        dest.writeInt(reviewIds.length);
-        for (int i = 0; i < reviewIds.length; i++) {
-            dest.writeString(reviewIds[i]);
+        dest.writeInt(reviewIds.size());
+        for (int i = 0; i < reviewIds.size(); i++) {
+            dest.writeString(reviewIds.get(i));
         }
         // Write out tasks
-        dest.writeInt(tasks.length);
+        dest.writeInt(tasks.size());
         for (Task task : tasks) {
             dest.writeString(task.getId());
             task.getLocation().writeToParcel(dest, flags);
@@ -138,6 +166,10 @@ public class Hunt implements Parcelable, Serializable {
         this.name = name;
     }
 
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
     public String getId() {
         return id;
     }
@@ -146,11 +178,13 @@ public class Hunt implements Parcelable, Serializable {
         return description;
     }
 
+    public void setDescription(String desc) { description = desc; }
+
     public List<String> getReviewIds() {
-        return Collections.unmodifiableList(Arrays.asList(reviewIds));
+        return reviewIds;
     }
 
-    public Task[] getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 
@@ -385,18 +419,18 @@ public class Hunt implements Parcelable, Serializable {
 
     }
 
-    private static Task[] tasksFromJSONArray(final JSONArray tasks) throws JSONException {
-        Task[] ret = new Task[tasks.length()];
-        for(int i = 0; i < ret.length; i++) {
-            ret[i] = new Task(tasks.getJSONObject(i));
+    private static List<Task> tasksFromJSONArray(final JSONArray tasks) throws JSONException {
+        List<Task> ret = new ArrayList<Task>();
+        for(int i = 0; i < tasks.length(); i++) {
+            ret.add(new Task(tasks.getJSONObject(i)));
         }
         return ret;
     }
 
-    private static String[] fromJSONArray(JSONArray array) throws JSONException {
-        String[] ret = new String[array.length()];
-        for(int i = 0; i < ret.length; i++) {
-            ret[i] = array.getString(i);
+    private static List<String> fromJSONArray(JSONArray array) throws JSONException {
+        List<String> ret = new ArrayList<String>(); //[array.length()];
+        for(int i = 0; i < array.length(); i++) {
+            ret.add(array.getString(i));
         }
         return ret;
     }

@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.AlertDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
@@ -28,11 +30,14 @@ import java.util.concurrent.TimeUnit;
  * Created by hzhou1235 on 3/15/15.
  */
 public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
+    Hunt currentHunt;
+    private int hour, minute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_created_hunt);
+        currentHunt = getIntent().getParcelableExtra("currentHunt");
     }
 
 
@@ -62,70 +67,49 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm:
-                final StringBuilder huntName = new StringBuilder();
-                final StringBuilder huntDesc = new StringBuilder();
-                LayoutInflater linf = LayoutInflater.from(this);
-                final View inflator = linf.inflate(R.layout.stuff, null);
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                User user = (User) getIntent().getSerializableExtra("currentUser");
+                currentHunt.setName(((EditText)findViewById(R.id.huntName)).getText().toString());
+                currentHunt.setDescription(((EditText)findViewById(R.id.huntDescription)).getText().toString());
+                currentHunt.setCreatorId(user.getId());
+                currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
 
-                alert.setTitle("Name and Description");
-                alert.setView(inflator);
-
-                final EditText nameField = (EditText) inflator.findViewById(R.id.huntName);
-                final EditText descField = (EditText) inflator.findViewById(R.id.huntDescription);
-
-                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
+                new Thread(new Runnable() {
                     @Override
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        huntName.append(nameField.getText().toString());
-                        huntDesc.append(descField.getText().toString());
-
-                        Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
-                        long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
-                        TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
-                        User user = (User) getIntent().getSerializableExtra("currentUser");
-
-                        final Hunt h = new Hunt(null, huntName.toString(), new String[]{},
-                                tasks.toArray(new Task[tasks.size()]), huntDesc.toString(), user.getId(),
-                                estimatedTime, unit, System.currentTimeMillis() / 1000L);
-
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    h.saveHunt();
-                                    Log.d("SCV", "saveHunt returned");
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-
-                        dialog.dismiss();
-
-                        Intent myHunts = new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
-                        ReviewCreatedHunt.this.startActivity(myHunts);
+                    public void run() {
+                        try {
+                            currentHunt.saveHunt();
+                            Log.d("SCV", "saveHunt returned");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                });
+                }).start();
 
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        dialog.cancel();
-
-                        Intent myHunts =
-                                new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
-                        ReviewCreatedHunt.this.startActivity(myHunts);
-                    }
-                });
-
-                alert.show();
-
+                Intent myHunts = new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
+                ReviewCreatedHunt.this.startActivity(myHunts);
                 break;
+
             case R.id.back:
                 this.finish(); //not sure if this works/keeps old stuff
                 break;
+
+            case R.id.estimated_time:
+                EditText t = (EditText)view;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(ReviewCreatedHunt.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(final TimePicker view, final int hourOfDay,
+                                                  final int minute) {
+                                ReviewCreatedHunt.this.hour = hourOfDay;
+                                ReviewCreatedHunt.this.minute = minute;
+                                ((EditText) findViewById(R.id.estimated_time)).setText(hourOfDay +
+                                        ":" + String.format("%02d", minute));
+                            }
+                        }, 0, 0, true);
+                timePickerDialog.setTitle("Enter estimated length");
+                timePickerDialog.show();
+                currentHunt.setEstimatedTime(hour * 60L + minute, TimeUnit.MINUTES);
+
             default:
                 break;
         }

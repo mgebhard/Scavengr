@@ -2,11 +2,14 @@ package org.teamscavengr.scavengr.createhunt;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,71 +22,98 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.goonhunt.ConfirmHunt;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by hzhou1235 on 3/15/15.
  */
 public class MyHuntsActivity extends ListActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
-    SimpleCursorAdapter mAdapter;
+        View.OnClickListener {
+
+    ArrayAdapter mAdapter;
+    ArrayList<Hunt> mHuntsObj = new ArrayList<Hunt>();
+    ArrayList<String> mHuntNames = new ArrayList<String>();
+    ArrayList<String> huntsExtended = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("listview", "\n\n\nCreating list view\n\n\n");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_hunts);
-        //Button create = (Button) findViewById(R.id.create_new);
-        //create.setOnClickListener(this);
 
         // Create a progress bar to display while the list loads
         ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setLayoutParams(new LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        progressBar.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         progressBar.setIndeterminate(true);
         getListView().setEmptyView(progressBar);
-        //
-//        // Must add the progress bar to the root of the layout
+
+        // Must add the progress bar to the root of the layout
         ViewGroup root = (ViewGroup) findViewById(android.R.id.content);
         root.addView(progressBar);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
 
-        String[] values = new String[] {"+ CREATE NEW HUNT", "My First Hunt", "My Second Hunt", "My Third Hunt",
-                "BlahBlah", "BlahBlahBlah", "asdf", "jkl;", "anothername",
-                "anothername2"};
+        ArrayList<Hunt> hunts = new ArrayList<Hunt>();
+        huntsExtended.add("+ CREATE NEW HUNT");
+        Hunt.loadAllHuntsInBackground(
+                new Hunt.HuntLoadedCallback() {
 
+                    @Override
+                    public void numHuntsFound(int num) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "Loading " + num + " hunts...";
+                        int duration = Toast.LENGTH_LONG;
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, values);
-        setListAdapter(adapter);
+                        Toast toast = Toast.makeText(context, text, duration);
+                    }
+
+                    @Override
+                    public void huntLoaded(Hunt hunt) {
+                        mHuntNames.add(hunt.getName());
+                        huntsExtended.add(hunt.getName());
+                        mHuntsObj.add(hunt);
+                        mAdapter.notifyDataSetChanged();
+                        Log.d("HELEN", "LOADED");
+
+                    }
+
+                    @Override
+                    public void huntFailedToLoad(Exception e) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "Failed to load a hunt";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                    }
+                }, true);
+
+        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
+
+        // Create an empty adapter we will use to display the loaded data.
+        // We pass null for the cursor, then update it in onLoadFinished()
+
+        mAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, huntsExtended);
+        setListAdapter(mAdapter);
+//
+//        String[] values = new String[] {"+ CREATE NEW HUNT", "My First Hunt", "My Second Hunt", "My Third Hunt",
+//                "BlahBlah", "BlahBlahBlah", "asdf", "jkl;", "anothername",
+//                "anothername2"};
+//
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_list_item_1, values);
+//        setListAdapter(adapter);
 
         getActionBar().setIcon(R.drawable.scavengr_logo);
-    }
-
-    // Called when a new Loader needs to be created
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-//        return new CursorLoader(this, ContactsContract.Data.CONTENT_URI,
-//                PROJECTION, SELECTION, null, null);
-        return new CursorLoader(this);
-    }
-
-    // Called when a previously created loader has finished loading
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        // Swap the new cursor in.  (The framework will take care of closing the
-        // old cursor once we return.)
-        mAdapter.swapCursor(data);
-    }
-
-    // Called when a previously created loader is reset, making the data unavailable
-    public void onLoaderReset(Loader<Cursor> loader) {
-        // This is called when the last Cursor provided to onLoadFinished()
-        // above is about to be closed.  We need to make sure we are no
-        // longer using it.
-        mAdapter.swapCursor(null);
     }
 
     @Override
@@ -94,7 +124,10 @@ public class MyHuntsActivity extends ListActivity implements
         if (position == 0){
             hunt = new Intent(this, CreateHuntActivity.class);
         } else {
+            Log.d("HELEN", "GOIN TO HUNT DETAILS");
             hunt = new Intent(this, HuntDetailsActivity.class);
+            hunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position - 1));
+            //this.startActivity(hunt);
         }
         this.startActivity(hunt);
         // Put in ID for the hunt selected
