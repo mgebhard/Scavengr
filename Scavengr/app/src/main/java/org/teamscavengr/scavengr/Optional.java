@@ -1,9 +1,11 @@
 package org.teamscavengr.scavengr;
 
+import java.io.Serializable;
+
 /**
  * Shim for Java 8's optional
  */
-public class Optional<T> {
+public class Optional<T extends Serializable> implements Serializable {
 
     private final T object;
     private final boolean present;
@@ -17,7 +19,7 @@ public class Optional<T> {
      * @param thing A thing.
      * @return An optional containing that thing.
      */
-    public static <T> Optional<T> of(T thing) {
+    public static <T extends Serializable> Optional<T> of(T thing) {
         return new Optional<>(thing, true);
     }
 
@@ -25,11 +27,11 @@ public class Optional<T> {
      * @param thing A thing.
      * @return An optional containing that thing, or empty if it is null.
      */
-    public static <T> Optional<T> ofNullable(T thing) {
+    public static <T extends Serializable> Optional<T> ofNullable(T thing) {
         return new Optional<>(thing, thing != null);
     }
 
-    public static <T> Optional<T> empty() {
+    public static <T extends Serializable> Optional<T> empty() {
         return new Optional<>(null, false);
     }
 

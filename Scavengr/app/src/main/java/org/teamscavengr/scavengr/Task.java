@@ -58,6 +58,10 @@ public class Task implements Parcelable {
         return clue;
     }
 
+    public Integer getTaskNumber() {
+        return taskNumber;
+    }
+
     public double getRadius() {
         return radius;
     }

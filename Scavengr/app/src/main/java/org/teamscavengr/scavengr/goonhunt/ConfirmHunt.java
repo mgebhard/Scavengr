@@ -1,12 +1,16 @@
 package org.teamscavengr.scavengr.goonhunt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 
 
@@ -16,6 +20,35 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_hunt);
+        if (getIntent().hasExtra("huntObject")) {
+            Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
+
+            // Grab and set hunt title
+            TextView titleText = (TextView) findViewById(R.id.textView3);
+            titleText.setText(hunt.getName());
+
+            // Grab and set hunt description
+            TextView descriptionText = (TextView) findViewById(R.id.textView4);
+            descriptionText.setText(hunt.getDescription());
+        }
+        else {
+            Context context = getApplicationContext();
+            CharSequence text = "The cat is dead - Failed to load data";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
+        /*    Context context = getApplicationContext();
+            CharSequence text = "Im alive";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+        */
+            //(getIntent().getParcelableExtra("huntObject"));
+
+        //}*/
+
     }
 
 

@@ -1,18 +1,22 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,13 +28,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
@@ -39,31 +45,33 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     protected GoogleApiClient mGoogleApiClient;
 
-    protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
+    protected HashSet<Task> tasksForCurrentHunt = new HashSet<>();
 
     protected double currentLatitude = 43.6867;
-    protected double currentLongitude = - 85.0102;
+    protected double currentLongitude = -85.0102;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
 
+    private int hour, minute;
+
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         savedInstanceState.putParcelableArrayList("allTasksList",
-                new ArrayList<Task>(tasksForCurrentHunt));
+                new ArrayList<>(tasksForCurrentHunt));
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
-        tasksForCurrentHunt = new HashSet<Task>(allTasks);
+        tasksForCurrentHunt = new HashSet<>(allTasks);
     }
 
 
@@ -98,10 +106,30 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        final EditText t = (EditText) findViewById(R.id.estimated_time);
+        t.setGravity(Gravity.CENTER_HORIZONTAL);
+        t.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateHuntActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(final TimePicker view, final int hourOfDay,
+                                                  final int minute) {
+                                CreateHuntActivity.this.hour = hourOfDay;
+                                CreateHuntActivity.this.minute = minute;
+                                t.setText(hourOfDay + ":" + String.format("%02d", minute));
+                            }
+                        }, 0, 0, true);
+                timePickerDialog.setTitle("Enter estimated length");
+                timePickerDialog.show();
+            }
+        });
+
         Log.d("MEGAN", "Before it check if intent has extra");
         if (getIntent().hasExtra("task")) {
             Log.d("MEGAN", "Has task Parcelable extra");
-            Task taskAdded = (Task)getIntent().getParcelableExtra("task");
+            Task taskAdded = getIntent().getParcelableExtra("task");
             if (taskAdded != null) {
                 tasksForCurrentHunt.add(taskAdded);
             }
@@ -135,12 +163,13 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         mapObject = map;
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
-                                                                    currentLongitude), 15));
+                currentLongitude), 15));
 
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
+            Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
             map.addMarker(new MarkerOptions()
-                    .title(task.getAnswer())
+                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
                     .position(new LatLng(taskLocation.getLatitude(),
                             taskLocation.getLongitude())));
@@ -168,24 +197,23 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                String estimatedTime = ((EditText)findViewById(R.id.estimated_time))
-                                        .getText().toString();
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                reviewCreated.putExtra("allTasks", tasksForCurrentHunt.toArray());
-                reviewCreated.putExtra("estimatedTime", estimatedTime);
+                reviewCreated.putExtra("allTasks", tasksForCurrentHunt);
+                reviewCreated.putExtra("estimatedTime", hour * 60L + minute);
+                reviewCreated.putExtra("estimatedTimeUnit", TimeUnit.MINUTES);
+                reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
+                        Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
                 this.startActivity(reviewCreated);
                 break;
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
-                createTask.putExtra("taskNumber", tasksForCurrentHunt.size());
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size()+1);
                 this.startActivity(createTask);
                 break;
 
             default:
                 break;
         }
-
     }
-
 }

@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr.createhunt;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -204,7 +202,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 // Need to get the radius after Helen adds bar
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
                                         answerText.getText().toString(), defaultRadius,
-                                        getIntent().getIntExtra("taskNumber", 0));
+                                        getIntent().getIntExtra("taskNumber", 1));
                 addTask.putExtra("task", taskAdded);
 
                 this.startActivity(addTask);

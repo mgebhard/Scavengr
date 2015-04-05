@@ -58,6 +58,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             public void numHuntsFound(final int i) {}
 
         }, true);*/
+
         switch(view.getId()) {
             case R.id.go_on_hunt:
                 //Intent hunt = new Intent(this, HuntsList.class);
