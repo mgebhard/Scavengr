@@ -18,7 +18,10 @@
   <div id="homePage" class="container page">
     {{> restStats }}
     {{> restApi }}
-    {{> databaseCollection }}
+    {{> databaseCollectionPosts }}
+    {{> databaseCollectionHunts }}
+    {{> databaseCollectionReviews }}
+    {{> databaseCollectionUsers }}
   </div>
 </template>
 
@@ -105,10 +108,10 @@
 
 
 
-<template name="databaseCollection">
+<template name="databaseCollectionPosts">
   <div id="databaseCollectionPanel" class="panel panel-default panel-success {{isDatabasePanelVisible}}">
     <div class="panel-heading">
-      <h4>DATABASE COLLECTION</h4>
+      <h4>DATABASE COLLECTION POSTS</h4>
     </div>
     <div class="panel-body">
       <table class="table table-bordered">
@@ -134,6 +137,140 @@
           </td>
           <td width="33%">
             {{text}}
+          </td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="databaseCollectionHunts">
+  <div id="databaseCollectionPanel" class="panel panel-default panel-success {{isDatabasePanelVisible}}">
+    <div class="panel-heading">
+      <h4>DATABASE COLLECTION HUNTS</h4>
+    </div>
+    <div class="panel-body">
+      <table class="table table-bordered">
+        <thead class="bold">
+        <td>
+          ID
+        </td>
+        <td>
+          Name
+        </td>
+        <td>
+          #Reviews
+        </td>
+        <td>
+          Task Names
+        </td>
+        </thead>
+        <tbody>
+        {{#each huntsList }}
+        <tr>
+          <td width="33%">
+            {{ _id._str }}
+          </td>
+          <td width="20%">
+            {{name}}
+          </td>
+          <td width="13%">
+            {{reviews.length}}
+          </td>
+          <td width="33%">
+            <ol>
+              {{#each tasks}}
+                <li>
+                  {{text}}
+                </li>
+              {{/each}}
+            </ol>
+          </td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="databaseCollectionReviews">
+  <div id="databaseCollectionPanel" class="panel panel-default panel-success {{isDatabasePanelVisible}}">
+    <div class="panel-heading">
+      <h4>DATABASE COLLECTION REVIEWS</h4>
+    </div>
+    <div class="panel-body">
+      <table class="table table-bordered">
+        <thead class="bold">
+        <td>
+          ID
+        </td>
+        <td>
+          Author
+        </td>
+        <td>
+          Rating
+        </td>
+        <td>
+          Text
+        </td>
+        </thead>
+        <tbody>
+        {{#each reviewsList }}
+        <tr>
+          <td width="33%">
+            {{ _id._str }}
+          </td>
+          <td width="20%">
+            {{author._str}}
+          </td>
+          <td width="13%">
+            {{rating}}
+          </td>
+          <td width="33%">
+            {{text}}
+          </td>
+        </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template name="databaseCollectionUsers">
+  <div id="databaseCollectionPanel" class="panel panel-default panel-success {{isDatabasePanelVisible}}">
+    <div class="panel-heading">
+      <h4>DATABASE COLLECTION USERS</h4>
+    </div>
+    <div class="panel-body">
+      <table class="table table-bordered">
+        <thead class="bold">
+        <td>
+          ID
+        </td>
+        <td>
+          Name
+        </td>
+        <td>
+          Created HuntIDs
+        </td>
+        </thead>
+        <tbody>
+        {{#each usersList }}
+        <tr>
+          <td width="33%">
+            {{ _id._str }}
+          </td>
+          <td width="33%">
+            {{name}}
+          </td>
+          <td width="33%">
+            {{#each createdHunts}}
+              {{_str}}
+            {{/each}}
           </td>
         </tr>
         {{/each}}
