@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,12 +19,17 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 public class HuntsList extends ListActivity {
@@ -44,6 +50,7 @@ public class HuntsList extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         Log.d("listview", "\n\n\nCreating list view\n\n\n");
         super.onCreate(savedInstanceState);
 
@@ -78,6 +85,8 @@ public class HuntsList extends ListActivity {
 
         }
         Hunt basicHunt = new Hunt("basicHunt", "1234567890", reviewId, tasks);*/
+
+        /*//load hunts as they come in
         ArrayList<Hunt> hunts = new ArrayList<Hunt>();
         Hunt.loadAllHuntsInBackground(
             new Hunt.HuntLoadedCallback() {
@@ -103,6 +112,7 @@ public class HuntsList extends ListActivity {
                    @Override
                    public void huntFailedToLoad(Exception e) {
                        Context context = getApplicationContext();
+                       Context context = getApplicationContext();
                        CharSequence text = "Failed to load a hunt";
                        int duration = Toast.LENGTH_SHORT;
 
@@ -113,7 +123,22 @@ public class HuntsList extends ListActivity {
         //mHuntNames.add("Loading Hunts");
         //String[] fromColumns = {hunts.get(0).getId() , hunts.get(0).getName()};
         //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
-        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
+        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1 */
+
+
+        //TODO: REMOVE THIS; JUST FOR TESTING PURPOSES
+        List<String> revIds = new ArrayList<String>();
+        revIds.add("4.5");
+        List<Task> tasks = new ArrayList<Task>();
+        Task task = new Task(null, new Location("network"), "It's a cool place.",
+        "Simmons", 30.0, 1);
+        tasks.add(task);
+
+        Hunt h = new Hunt(null, "FakeHunt", revIds, tasks, "The best hunt ever!!",
+        "reallySmartRabbit", 2L, TimeUnit.HOURS, 20L);
+
+        mHuntNames.add(h.getName());
+        mHuntsObj.add(h);
 
         // Create an empty adapter we will use to display the loaded data.
         // We pass null for the cursor, then update it in onLoadFinished()
@@ -155,6 +180,7 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
         Intent hunt = new Intent(this, ConfirmHunt.class);
+        Log.d("Null?", mHuntsObj.get(position).toString());
         hunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
         this.startActivity(hunt);
         // Put in ID for the hunt selected

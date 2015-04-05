@@ -74,11 +74,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             //Toast toast = Toast.makeText(context, text, duration);
             //toast.show();
-            Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
+            hunt = (getIntent().getParcelableExtra("huntObject"));
 
             // Grab and set hunt title
-            TextView titleText = (TextView) findViewById(R.id.textView3);
-            titleText.setText("HUNT: " + hunt.getName());
+            //TextView titleText = (TextView) findViewById(R.id.textView3);
+            //titleText.setText("HUNT: " + hunt.getName());
 
             // Grab and set hunt description
             //TextView descriptionText = (TextView) findViewById(R.id.textView4);

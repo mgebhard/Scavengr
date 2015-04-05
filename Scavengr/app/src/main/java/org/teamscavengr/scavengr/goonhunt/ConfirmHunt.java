@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,6 +87,7 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
             case R.id.confirm_hunt:
                 Intent huntIntent = new Intent(this, HuntActivity.class);
                 huntIntent.putExtra("huntObject", (Parcelable) hunt);
+                Log.d("NULL?", hunt.getName());
                 this.startActivity(huntIntent);
                 break;
             default:
