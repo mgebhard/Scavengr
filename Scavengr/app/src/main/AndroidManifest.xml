@@ -62,7 +62,7 @@
             <!--android:label="@string/title_activity_hunt_conformation" >-->
         <!--</activity>-->
         <activity
-            android:name=".goonhunt.RateHunt"
+            android:name=".goonhunt.RateHuntActivity"
             android:label="@string/title_activity_review_hunt" >
         </activity>
         <activity
@@ -76,11 +76,11 @@
 
         </activity>
         <activity
-            android:name=".createhunt.ReviewCreatedHunt"
+            android:name=".createhunt.ReviewCreatedHuntActivity"
             android:label="Review Your Created Hunt" >
         </activity>
         <activity
-            android:name=".goonhunt.HuntRecap"
+            android:name=".goonhunt.HuntRecapActivity"
             android:label="@string/title_activity_hunt_recap" >
 
         </activity>

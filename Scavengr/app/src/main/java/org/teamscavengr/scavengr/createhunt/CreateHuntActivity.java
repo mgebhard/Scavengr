@@ -143,7 +143,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
+                Intent reviewCreated = new Intent(this, ReviewCreatedHuntActivity.class);
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
                 reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
                         Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
