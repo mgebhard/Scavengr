@@ -24,17 +24,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.ServerGetHunt;
 import org.teamscavengr.scavengr.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HuntsList extends ListActivity {
 
     // This is the Adapter being used to display the list's data cursor -> XML fields
     ArrayAdapter mAdapter;
+    Map<String, Hunt> mHuntsMap = new HashMap<String, Hunt>();
     ArrayList<String> mHuntNames = new ArrayList<String>();
 
     // These are the Hunt rows that we will retrieve from DB
@@ -101,6 +103,7 @@ public class HuntsList extends ListActivity {
                    @Override
                    public void huntLoaded(Hunt hunt) {
                        mHuntNames.add(hunt.getName());
+                       mHuntsMap.put(hunt.getName(), hunt);
                        mAdapter.notifyDataSetChanged();
 
 
@@ -161,6 +164,7 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
         Intent hunt = new Intent(this, ConfirmHunt.class);
+        hunt.putExtra("huntObject", mHuntsMap.get(mHuntNames.get(position)));
         this.startActivity(hunt);
         // Put in ID for the hunt selected
     }
