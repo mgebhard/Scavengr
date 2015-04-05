@@ -40,6 +40,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public GoogleMap mapObject;
 
     protected Hunt hunt;
+    private int tasksCompleted = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +100,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             mapFragment.getMapAsync(this);
         } catch (Exception e){
             e.printStackTrace();
-            Log.d("HELEN EXCEPTION", e.toString());
         }
 
         // If not in radius show start screen
@@ -108,7 +108,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         buildGoogleApiClient();
 
-//        loadTask();
     }
 
     /**
@@ -236,13 +235,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 loadTask();
                 break;
             case R.id.next_task:
+                tasksCompleted += 1;
                 loadTask();
                 break;
             case R.id.camera:
                 // Run a camera intent
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent, 420);
-                finishedPuzzle();
                 break;
             case R.id.get_hint:
                 // Call method with two geo points to get the distance between them then add toast
@@ -260,6 +259,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             case 420: // got a result from the camera button
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
+                //TODO: load the next task instead; also add in detection for completed hunt
+                if (tasksCompleted >= hunt.getTasks().size()){
+                    finishedPuzzle();
+                } else {
+                    loadTask();
+                }
+
         }
     }
 }
