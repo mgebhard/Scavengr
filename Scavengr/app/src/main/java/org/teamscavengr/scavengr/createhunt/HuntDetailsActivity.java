@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,37 +111,19 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap map) {
-        double radius = 0.0;
-        double centroidLat = 0.0;
-        double centroidLng = 0.0;
-
-        ArrayList<Double> lats = new ArrayList<Double>();
-        ArrayList<Double> lngs = new ArrayList<Double>();
+        Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
+        LatLng centroid = geoFence.first;
+        Double radius = geoFence.second;
 
         for (Task task : hunt.getTasks()){
             Location taskLocation = task.getLocation();
             double lat = taskLocation.getLatitude();
             double lng = taskLocation.getLongitude();
-            centroidLat += lat;
-            centroidLng += lng;
-            lats.add(lat);
-            lngs.add(lng);
             Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
             map.addMarker(new MarkerOptions()
                     .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
                     .position(new LatLng(lat, lng)));
-        }
-
-        centroidLat = centroidLat/hunt.getTasks().size();
-        centroidLng = centroidLng/hunt.getTasks().size();
-        LatLng centroid = new LatLng(centroidLat, centroidLng);
-
-        for (int i = 0; i < hunt.getTasks().size(); i++){
-            double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)), centroid);
-            if (potentialRadius > radius){
-                radius = potentialRadius;
-            }
         }
 
         mapObject = map;

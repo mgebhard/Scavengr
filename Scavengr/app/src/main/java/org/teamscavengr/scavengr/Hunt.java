@@ -180,6 +180,8 @@ public class Hunt implements Parcelable, Serializable {
         return description;
     }
 
+    public int getNumberOfTasks() {return tasks.size();}
+
     public void setDescription(String desc) { description = desc; }
 
     public List<String> getReviewIds() {
