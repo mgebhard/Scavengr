@@ -133,6 +133,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
                                         answerText.getText().toString(), defaultRadius);
                 addTask.putExtra("task", taskAdded);
+                Log.d("MEGAN", "Put task object into extra");
                 this.startActivity(addTask);
                 break;
             case R.id.cancel:

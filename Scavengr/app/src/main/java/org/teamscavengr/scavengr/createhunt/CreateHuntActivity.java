@@ -73,8 +73,13 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         if (getIntent().hasExtra("task")) {
-            tasksForCurrentHunt.add((Task)getIntent().getParcelableExtra("task"));
+            Log.d("MEGAN", "Has task Parcelable extra");
+            Task taskAdded = (Task)getIntent().getParcelableExtra("task");
+            if (taskAdded != null) {
+                tasksForCurrentHunt.add(taskAdded);
+            }
         }
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);

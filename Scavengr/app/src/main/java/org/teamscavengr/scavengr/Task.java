@@ -127,7 +127,7 @@ public class Task implements Parcelable {
         }
     };
 
-    private void readFromParcel(Parcel in ) {
+    private void readFromParcel(Parcel in) {
         location=Location.CREATOR.createFromParcel(in);
         clue = in.readString();
         answer = in.readString();
