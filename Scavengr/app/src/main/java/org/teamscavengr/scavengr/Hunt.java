@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A hunt is a hunt.
+ *
+ * Features to add at some point: number of times hunted
  */
 public class Hunt implements Parcelable, Serializable {
 

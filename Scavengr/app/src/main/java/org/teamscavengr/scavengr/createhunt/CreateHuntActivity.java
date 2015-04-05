@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,13 +35,14 @@ import org.teamscavengr.scavengr.User;
 import java.util.concurrent.TimeUnit;
 
 
-public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
+public class CreateHuntActivity extends ActionBarActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
     Hunt currentHunt;
+    private boolean editMode = false;
 
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
@@ -87,6 +89,10 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
             currentHunt = new Hunt();
         }
 
+        if (getIntent().hasExtra("editMode")){
+            editMode = getIntent().getBooleanExtra("editMode", true);
+        }
+
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
@@ -95,6 +101,10 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         }
 
         buildGoogleApiClient();
+
+        if (editMode){
+            setTitle("Edit Your Hunt");
+        }
 
     }
 

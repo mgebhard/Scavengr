@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,10 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
+
+        ImageButton image = (ImageButton) (findViewById(R.id.imageButton));
+        image.setBackgroundResource(R.drawable.treasuremap);
+
         /*    Context context = getApplicationContext();
             CharSequence text = "Im alive";
             int duration = Toast.LENGTH_LONG;

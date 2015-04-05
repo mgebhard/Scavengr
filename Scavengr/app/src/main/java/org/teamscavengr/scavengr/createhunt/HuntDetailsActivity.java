@@ -146,12 +146,19 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
         mapObject = map;
         map.setMyLocationEnabled(true);
 
-        
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 6));
-        /*LatLngBounds bounds = new LatLngBounds(new LatLng(centroidLat-radius, centroidLng - radius),
+
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 6));
+        //COMMENTED OUT CODE BELOW SHOULD ZOOM OUT TO INCLUDE ALL WAYPOINTS; DEBUG LATER....
+        /*if (radius < 0.0002){
+            radius = 0.0002;
+        }
+
+        Log.d("CENTROID LAT", Double.toString(centroidLat));
+        Log.d("CENTROID LNG", Double.toString(centroidLng));
+        Log.d("RADIUS", Double.toString(radius));
+        LatLngBounds bounds = new LatLngBounds(new LatLng(centroidLat-radius, centroidLng - radius),
                 new LatLng(centroidLat+radius, centroidLng + radius));
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds (bounds, findViewById(R.id.map).getWidth(),
-                findViewById(R.id.map).getHeight(), (int)(((double) findViewById(R.id.map).getWidth())/10)))*/;
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds (bounds, 10));*/
     }
 
     @Override
@@ -178,7 +185,9 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.edit:
-                Intent editHunt = new Intent(this, HuntDetailsActivity.class);
+                Intent editHunt = new Intent(this, CreateHuntActivity.class);
+                editHunt.putExtra("editMode", true);
+                editHunt.putExtra("currentHunt", (Parcelable) hunt);
                 //TODO: edit page
                 this.startActivity(editHunt);
                 break;
