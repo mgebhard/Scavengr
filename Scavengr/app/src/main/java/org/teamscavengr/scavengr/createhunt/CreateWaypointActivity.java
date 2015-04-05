@@ -89,10 +89,11 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         Log.d("MEGAN", "On Create for create way point");
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
-        Location currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (currentLocation != null) {
-            currentLatitude = currentLocation.getLatitude();
-            currentLongitude = currentLocation.getLongitude();
+        mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (mLastLocation != null) {
+            Log.d("MEGAN", "Put task object into extra");
+            currentLatitude = mLastLocation.getLatitude();
+            currentLongitude = mLastLocation.getLongitude();
             Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
         }
 

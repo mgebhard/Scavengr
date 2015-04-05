@@ -74,6 +74,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        Log.d("MEGAN", "Before it check if intent has extra");
         if (getIntent().hasExtra("task")) {
             Log.d("MEGAN", "Has task Parcelable extra");
             Task taskAdded = (Task)getIntent().getParcelableExtra("task");
