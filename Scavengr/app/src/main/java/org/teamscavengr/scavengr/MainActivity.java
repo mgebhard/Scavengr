@@ -122,12 +122,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Location l = new Location("");
                 l.setLatitude(42.358801d); // The coords of the stud
                 l.setLongitude(-71.094635d);
-                manager.addGeofence("testGeofenceInNigeria", l, 100, Geofence.NEVER_EXPIRE, this,
+                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
                         new GeofenceManager.GeofenceListener() {
                             @Override
                             public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
                                 Toast.makeText(MainActivity.this,
-                                        event.geofenceId, Toast.LENGTH_SHORT).show();
+                                        event.geofenceId + ": " + ((event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) ? "entered" : "exited"),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
             default:
