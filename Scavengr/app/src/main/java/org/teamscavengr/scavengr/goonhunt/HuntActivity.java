@@ -29,6 +29,8 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
+import java.util.List;
+
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -176,7 +178,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         LatLng avgLocation = new LatLng(42.3736, -71.1106);
-        /*Task[] tasks = hunt.getTasks();
+
+       /* List<Task> tasks = hunt.getTasks();
 
         int total = 0;
         double totalLat = 0;

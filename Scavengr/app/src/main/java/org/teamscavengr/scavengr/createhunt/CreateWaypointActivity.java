@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -30,8 +31,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 
 /**
@@ -69,7 +74,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     @Override
     public void onMapReady(GoogleMap map) {
-        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
+//        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
         LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
@@ -195,16 +200,18 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
-                Intent addTask = new Intent(this, CreateHuntActivity.class);
                 EditText clueText = (EditText)findViewById(R.id.clue);
                 EditText answerText = (EditText)findViewById(R.id.answer);
                 Double defaultRadius = 2.0;
                 // Need to get the radius after Helen adds bar
+
+                Hunt currentHunt = getIntent().getParcelableExtra("currentHunt");
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
                                         answerText.getText().toString(), defaultRadius,
-                                        getIntent().getIntExtra("taskNumber", 1));
-                addTask.putExtra("task", taskAdded);
-
+                                        currentHunt.getTasks().size() + 1);
+                currentHunt.addTask(taskAdded);
+                Intent addTask = new Intent(this, CreateHuntActivity.class);
+                addTask.putExtra("currentHunt", (Parcelable)currentHunt);
                 this.startActivity(addTask);
                 break;
             case R.id.cancel:
