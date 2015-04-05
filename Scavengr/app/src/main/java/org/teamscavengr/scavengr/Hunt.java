@@ -92,7 +92,10 @@ public class Hunt implements Parcelable, Serializable {
         }
         description = in.readString();
         creatorId = in.readString();
-        
+        estTime = in.readLong();
+        estTimeUnit = (TimeUnit) in.readSerializable();
+        timeCreated = in.readLong();
+
     }
 
     @Override
@@ -116,6 +119,10 @@ public class Hunt implements Parcelable, Serializable {
             dest.writeInt(task.getTaskNumber());
         }
         dest.writeString(description);
+        dest.writeString(creatorId);
+        dest.writeLong(estTime);
+        dest.writeSerializable(estTimeUnit);
+        dest.writeLong(timeCreated);
     }
 
     @Override
@@ -393,4 +400,14 @@ public class Hunt implements Parcelable, Serializable {
         }
         return ret;
     }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Hunt createFromParcel(Parcel in) {
+            return new Hunt(in);
+        }
+
+        public Hunt[] newArray(int size) {
+            return new Hunt[size];
+        }
+    };
 }
