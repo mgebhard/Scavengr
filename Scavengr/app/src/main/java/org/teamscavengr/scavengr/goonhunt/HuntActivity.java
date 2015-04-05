@@ -4,8 +4,10 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -193,6 +195,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.camera:
                 // Run a camera intent
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 420);
                 finishedPuzzle();
                 break;
             case R.id.get_hint:
@@ -202,6 +206,15 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             default:
                 break;
         }
+    }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+        switch(requestCode) {
+            case 420: // got a result from the camera button
+                // do something with it
+                Log.d("SCV", "got a picture, woo: " + data.getData().toString());
+        }
     }
 }
