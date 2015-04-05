@@ -8,14 +8,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TimePicker;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,12 +31,25 @@ import java.util.concurrent.TimeUnit;
 public class ReviewCreatedHuntActivity extends ActionBarActivity implements View.OnClickListener {
     Hunt currentHunt;
     private int hour, minute;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_created_hunt);
         currentHunt = getIntent().getParcelableExtra("currentHunt");
+
+        listView = (ListView) findViewById(R.id.list);
+        List<String> values = new ArrayList<String>();
+        for (Task task: currentHunt.getTasks()) {
+            values.add("Task Number: " + task.getTaskNumber() +
+                    " Task Location: " + task.getAnswer());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+        listView.setAdapter(adapter);
     }
 
 

@@ -4,80 +4,120 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <EditText
-        android:id="@+id/huntName"
-        android:inputType="text"
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="name"
-        android:layout_alignLeft="@+id/huntDescription"
-        android:layout_alignStart="@+id/huntDescription" />
+        android:layout_height="fill_parent">
 
-    <EditText
-        android:id="@+id/huntDescription"
-        android:inputType="textMultiLine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/huntName"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
-        android:hint="description"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4">
 
+            <EditText
+                android:id="@+id/huntName"
+                android:inputType="text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="name"
+                android:layout_alignLeft="@+id/huntDescription"
+                android:layout_alignStart="@+id/huntDescription" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Confirm"
-        android:id="@+id/confirm"
-        android:onClick="onClick"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="30dp" />
+            <EditText
+                android:id="@+id/huntDescription"
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/huntName"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="sans-serif"
+                android:hint="description"/>
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#c8ffffff"
-        android:backgroundTint="#ffffffff"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/huntName"
-        android:layout_alignStart="@+id/huntName">
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#c8ffffff"
+                android:backgroundTint="#ffffffff"
+                android:layout_alignParentTop="true"
+                android:layout_alignLeft="@+id/huntName"
+                android:layout_alignStart="@+id/huntName">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:inputType="time"
-            android:onClick="onClick"
-            android:ems="10"
-            android:id="@+id/estimated_time"
-            android:clickable="true"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:autoText="false"
-            android:layout_above="@+id/add_waypoint"
-            android:layout_centerHorizontal="true"
-            android:hint="Estimated time (hr:min)"
-            android:layout_gravity="center" />
-    </FrameLayout>
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:inputType="time"
+                    android:onClick="onClick"
+                    android:ems="10"
+                    android:id="@+id/estimated_time"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:autoText="false"
+                    android:layout_above="@+id/add_waypoint"
+                    android:layout_centerHorizontal="true"
+                    android:hint="Estimated time (hr:min)"
+                    android:layout_gravity="center" />
 
+            </FrameLayout>
+        </LinearLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/back"
-        android:onClick="onClick"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="30dp"
-        android:layout_marginBottom="30dp" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Way Points:"
+                android:id="@+id/textView" />
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+            </ListView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:weightSum="1"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:id="@+id/back"
+                android:onClick="onClick"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm"
+                android:id="@+id/confirm"
+                android:onClick="onClick"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </RelativeLayout>
