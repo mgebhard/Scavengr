@@ -34,8 +34,7 @@ public class ConfirmHuntActivity extends ActionBarActivity implements View.OnCli
             // Grab and set hunt description
             TextView descriptionText = (TextView) findViewById(R.id.textView4);
             descriptionText.setText(hunt.getDescription());
-        }
-        else {
+        } else {
             Context context = getApplicationContext();
             CharSequence text = "The cat is dead - Failed to load data";
             int duration = Toast.LENGTH_LONG;
@@ -44,18 +43,9 @@ public class ConfirmHuntActivity extends ActionBarActivity implements View.OnCli
             toast.show();
         }
 
+        // Default image for hunt
         ImageButton image = (ImageButton) (findViewById(R.id.imageButton));
         image.setBackgroundResource(R.drawable.treasuremap);
-
-        /*    Context context = getApplicationContext();
-            CharSequence text = "Im alive";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-        */
-            //(getIntent().getParcelableExtra("huntObject"));
-
-        //}*/
 
     }
 
@@ -90,6 +80,10 @@ public class ConfirmHuntActivity extends ActionBarActivity implements View.OnCli
                 Log.d("NULL?", hunt.getName());
                 this.startActivity(huntIntent);
                 break;
+
+            case R.id.back:
+                this.finish();
+
             default:
                 break;
         }
