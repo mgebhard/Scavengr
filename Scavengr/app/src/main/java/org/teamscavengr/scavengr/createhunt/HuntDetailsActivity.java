@@ -132,11 +132,11 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
                     .position(new LatLng(lat, lng)));
         }
 
-        centroidLat = centroidLat/hunt.getTasks().length;
-        centroidLng = centroidLng/hunt.getTasks().length;
+        centroidLat = centroidLat/hunt.getTasks().size();
+        centroidLng = centroidLng/hunt.getTasks().size();
         LatLng centroid = new LatLng(centroidLat, centroidLng);
 
-        for (int i = 0; i < hunt.getTasks().length; i++){
+        for (int i = 0; i < hunt.getTasks().size(); i++){
             double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)), centroid);
             if (potentialRadius > radius){
                 radius = potentialRadius;
@@ -145,11 +145,13 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
         mapObject = map;
         map.setMyLocationEnabled(true);
+
+        
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 6));
         /*LatLngBounds bounds = new LatLngBounds(new LatLng(centroidLat-radius, centroidLng - radius),
                 new LatLng(centroidLat+radius, centroidLng + radius));
         map.moveCamera(CameraUpdateFactory.newLatLngBounds (bounds, findViewById(R.id.map).getWidth(),
-                findViewById(R.id.map).getHeight(), (int)(((double) findViewById(R.id.map).getWidth())/10)));*/
+                findViewById(R.id.map).getHeight(), (int)(((double) findViewById(R.id.map).getWidth())/10)))*/;
     }
 
     @Override
