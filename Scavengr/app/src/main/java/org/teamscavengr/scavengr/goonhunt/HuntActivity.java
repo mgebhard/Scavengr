@@ -70,16 +70,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_test);
-        if (getIntent().hasExtra("huntObject")) {
+        /*if (getIntent().hasExtra("huntObject")) {
+            Context context = getApplicationContext();
+            CharSequence text = "The cat is alive";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
             Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
 
             // Grab and set hunt title
-            TextView titleText = (TextView) findViewById(R.id.textView3);
-            titleText.setText(hunt.getName());
+            //TextView titleText = (TextView) findViewById(R.id.textView3);
+            //titleText.setText(hunt.getName());
 
             // Grab and set hunt description
-            TextView descriptionText = (TextView) findViewById(R.id.textView4);
-            descriptionText.setText(hunt.getDescription());
+            //TextView descriptionText = (TextView) findViewById(R.id.textView4);
+            //descriptionText.setText(hunt.getDescription());
         }
         else {
             Context context = getApplicationContext();
@@ -88,7 +94,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-        }
+        } */
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -170,7 +176,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap map) {
         LatLng avgLocation = new LatLng(42.3736, -71.1106);
-        Task[] tasks = hunt.getTasks();
+        /*Task[] tasks = hunt.getTasks();
 
         int total = 0;
         double totalLat = 0;
@@ -183,6 +189,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
         double avgLat = totalLat / total;
         double avgLng = totalLng / total;
+        */
+        double avgLat = 10;
+        double avgLng = 10;
 
         avgLocation = new LatLng(avgLat, avgLng);
         mapObject = map;
