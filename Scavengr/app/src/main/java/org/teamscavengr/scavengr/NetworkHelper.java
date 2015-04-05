@@ -1,5 +1,7 @@
 package org.teamscavengr.scavengr;
 
+import android.util.Log;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -30,6 +32,7 @@ public class NetworkHelper {
     public static JSONObject doRequest(URL url, String type, boolean output, Map<String, String> values) throws
             IOException,
             JSONException {
+        System.setProperty("http.keepAlive", "false");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000);
         conn.setConnectTimeout(10000);
@@ -38,28 +41,36 @@ public class NetworkHelper {
         if(output)
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoInput(true);
-        conn.setRequestProperty("Content-Type","application/json");
+        //if (output)
+        //    conn.setRequestProperty("Content-Type","application/json");
 
-        List<NameValuePair> params = new ArrayList<>();
-        JSONObject jsonParams = new JSONObject();
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        //JSONObject jsonParams = new JSONObject();
         for (String key : values.keySet()) {
             params.add(new BasicNameValuePair(key, values.get(key)));
-            jsonParams.put(key, values.get(key));
+            //jsonParams.put(key, values.get(key));
         }
 
         conn.connect();
 
         OutputStream out = null;
-        if(output)
-            out = conn.getOutputStream();
-        InputStream in = conn.getInputStream();
-
+        //if(output)
+        //    out = conn.getOutputStream();
+        Log.d("EVER", "Output is " + output);
         if(output) {
-            DataOutputStream printout = new DataOutputStream(out);
+            Log.d("EVER", "Sent request to server");
+            Log.d("EVER", URLEncoder.encode(params.toString(), "UTF-8"));
+            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
+
             //String encoded = URLEncoder.encode(jsonParams.toString(),"UTF-8");
-            printout.writeBytes(URLEncoder.encode(jsonParams.toString(),"UTF-8"));
+
+            printout.writeBytes(URLEncoder.encode(getQuery(params), "UTF-8"));
+
             printout.flush();
             printout.close();
+
+
 
             /*BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
             bw.write(getQuery(params));
@@ -67,6 +78,7 @@ public class NetworkHelper {
         }
 
         // Get output
+        InputStream in = conn.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -76,8 +88,6 @@ public class NetworkHelper {
         }
 
         in.close();
-        if(output)
-            out.close();
 
         return new JSONObject(sb.toString());
     }
