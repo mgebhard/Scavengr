@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,7 +25,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -37,6 +41,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     public Location mLastLocation;
     public GoogleMap mapObject;
+
+    protected Hunt hunt;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,6 +70,25 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map_test);
+        if (getIntent().hasExtra("huntObject")) {
+            Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
+
+            // Grab and set hunt title
+            TextView titleText = (TextView) findViewById(R.id.textView3);
+            titleText.setText(hunt.getName());
+
+            // Grab and set hunt description
+            TextView descriptionText = (TextView) findViewById(R.id.textView4);
+            descriptionText.setText(hunt.getDescription());
+        }
+        else {
+            Context context = getApplicationContext();
+            CharSequence text = "The cat is dead - Failed to load data";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
@@ -144,16 +169,30 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(42.3736, -71.1106);
-        sydney = new LatLng(10., 10.);
+        LatLng avgLocation = new LatLng(42.3736, -71.1106);
+        Task[] tasks = hunt.getTasks();
+
+        int total = 0;
+        double totalLat = 0;
+        double totalLng = 0;
+        for (Task task : tasks) {
+            Location loc = task.getLocation();
+            total += 1;
+            totalLat += loc.getLatitude();
+            totalLng += loc.getLongitude();
+        }
+        double avgLat = totalLat / total;
+        double avgLng = totalLng / total;
+
+        avgLocation = new LatLng(avgLat, avgLng);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 6));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(avgLocation, 6));
 
         map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+                .title(hunt.getName())
+                .snippet(hunt.getDescription())
+                .position(avgLocation));
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import org.teamscavengr.scavengr.R;
 
 
 public class ConfirmHunt extends ActionBarActivity implements View.OnClickListener {
+    private Hunt hunt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
         switch(view.getId()) {
             case R.id.confirm_hunt:
                 Intent hunt = new Intent(this, HuntActivity.class);
+                hunt.putExtra("huntObject", (Parcelable) hunt);
                 this.startActivity(hunt);
                 break;
             default:
