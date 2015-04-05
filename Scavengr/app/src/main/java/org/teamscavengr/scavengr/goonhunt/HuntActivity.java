@@ -4,7 +4,9 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -38,7 +40,7 @@ import org.teamscavengr.scavengr.Task;
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener, LocationListener {
 
     protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
 
@@ -47,10 +49,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
 
+    public final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
+
     protected LatLng centroid;
     protected Double boundingRadius;
     protected Circle circle;
     protected double distanceFromCentroid;
+    protected double distanceFromAnswer;
     protected LocationManager lm;
 
     protected Task currentTask;
@@ -113,7 +119,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         } */
 
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        Criteria cr = new Criteria();
+        lm.requestLocationUpdates(
+                lm.getBestProvider(cr, true),
+                REQUEST_LOCATION_UPDATE_TIMER,
+                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
+                this,
+                getMainLooper());
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
@@ -154,6 +166,34 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("MEGAN", "Location changed to: " + location);
+        distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+
+        if (distanceFromAnswer < currentTask.getRadius()) {
+            Log.d("MEGAN", "FOUND WAYPOINT");
+            completedTask();
+        }
+
+        // TODO(Gebhard): Update the map to move camera with your location
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
      */
@@ -185,8 +225,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void completedTask(){
         CompletedTaskFragment newFragment = new CompletedTaskFragment();
         Bundle args = new Bundle();
-//        args.putInt(TaskFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+        args.putParcelable("task", currentTask);
+        newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -197,13 +237,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
+
+        // Advance task if no more task show winner stage
+        currentTaskNumber ++;
+        if (currentTaskNumber < hunt.getNumberOfTasks()) {
+            currentTask = hunt.getTasks().get(currentTaskNumber);
+        } else {
+            finishedPuzzle();
+        }
+
     }
 
     public void finishedPuzzle(){
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();
-//        args.putInt(TaskFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+        args.putParcelable("hunt", hunt);
+        newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -215,7 +264,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         // Commit the transaction
         transaction.commit();
     }
-
 
     @Override
     public void onMapReady(GoogleMap map) {;
