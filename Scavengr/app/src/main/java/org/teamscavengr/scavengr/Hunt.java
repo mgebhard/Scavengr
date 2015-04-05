@@ -329,6 +329,7 @@ public class Hunt implements Parcelable, Serializable {
                 try {
                     ret.add(Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
                 } catch(JSONException | RuntimeException ex) {
+                    ex.printStackTrace();
                     ret.add(Optional.<Hunt>empty());
                 }
             }

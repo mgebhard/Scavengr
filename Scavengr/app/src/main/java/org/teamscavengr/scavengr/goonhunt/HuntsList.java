@@ -95,13 +95,11 @@ public class HuntsList extends ListActivity {
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
-
                    }
 
                    @Override
                    public void huntFailedToLoad(Exception e) {
                        int duration = Toast.LENGTH_SHORT;
-
                        Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);
