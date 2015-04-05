@@ -45,10 +45,6 @@
             android:value="AIzaSyDY7LxaXicRIUcpuI5h51UQo2rEeGvs1SM" />
 
         <activity
-            android:name=".MapTestActivity"
-            android:label="@string/title_activity_map_test" >
-        </activity>
-        <activity
             android:name=".goonhunt.HuntsList"
             android:label="@string/title_activity_hunts_list" >
         </activity>
