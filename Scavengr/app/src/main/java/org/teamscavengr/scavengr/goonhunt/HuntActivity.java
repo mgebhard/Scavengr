@@ -24,11 +24,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.goonhunt.CompletedHuntFragment;
-import org.teamscavengr.scavengr.goonhunt.CompletedTaskFragment;
-import org.teamscavengr.scavengr.goonhunt.HuntRecap;
-import org.teamscavengr.scavengr.goonhunt.StartHuntFragment;
-import org.teamscavengr.scavengr.goonhunt.TaskFragment;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
