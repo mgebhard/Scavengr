@@ -64,10 +64,11 @@ Router.route('/hunts/:huntId/tasks/', function() {
         );
         this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'POST') {
-        this.response.end(JSON.stringify(Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+        Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
                     { $push: {
                         tasks: objectMerge({ _id: new Meteor.Collection.ObjectID() }, this.request.body)
-                    }})));
+                    }});
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "POST, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
