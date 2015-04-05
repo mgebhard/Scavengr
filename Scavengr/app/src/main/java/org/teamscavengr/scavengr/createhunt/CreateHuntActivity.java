@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
@@ -41,7 +43,9 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     protected GoogleApiClient mGoogleApiClient;
 
-    protected HashSet<Task> tasksForCurrentHunt = new HashSet<>();
+    Hunt currentHunt;
+    ArrayList<Task> allPoints = new ArrayList<Task>();
+
 
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
@@ -51,26 +55,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public GoogleMap mapObject;
 
     private int hour, minute;
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
-        savedInstanceState.putParcelableArrayList("allTasksList",
-                new ArrayList<Task>(tasksForCurrentHunt));
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
-        tasksForCurrentHunt = new HashSet<Task>(allTasks);
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,39 +81,17 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_hunt);
 
+        setContentView(R.layout.activity_create_hunt);
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        final EditText t = (EditText) findViewById(R.id.estimated_time);
-        t.setGravity(Gravity.CENTER_HORIZONTAL);
-        t.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateHuntActivity.this,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(final TimePicker view, final int hourOfDay,
-                                                  final int minute) {
-                                CreateHuntActivity.this.hour = hourOfDay;
-                                CreateHuntActivity.this.minute = minute;
-                                t.setText(hourOfDay + ":" + String.format("%02d", minute));
-                            }
-                        }, 0, 0, true);
-                timePickerDialog.setTitle("Enter estimated length");
-                timePickerDialog.show();
-            }
-        });
-
-        Log.d("MEGAN", "Before it check if intent has extra");
-        if (getIntent().hasExtra("task")) {
+        if (getIntent().hasExtra("currentHunt")) {
             Log.d("MEGAN", "Has task Parcelable extra");
-            Task taskAdded = getIntent().getParcelableExtra("task");
-            if (taskAdded != null) {
-                tasksForCurrentHunt.add(taskAdded);
-            }
+            currentHunt = getIntent().getParcelableExtra("currentHunt");
+        } else {
+
         }
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -156,13 +118,12 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
-        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
                 currentLongitude), 15));
 
-        for (Task task : tasksForCurrentHunt){
+        for (Task task : allPoints){
             Location taskLocation = task.getLocation();
             Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
             map.addMarker(new MarkerOptions()
@@ -195,7 +156,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         switch(view.getId()) {
             case R.id.finish:
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                reviewCreated.putExtra("allTasks", tasksForCurrentHunt);
+                reviewCreated.putExtra("currentHunt", currentHunt);
                 reviewCreated.putExtra("estimatedTime", hour * 60L + minute);
                 reviewCreated.putExtra("estimatedTimeUnit", TimeUnit.MINUTES);
                 this.startActivity(reviewCreated);
@@ -203,10 +164,25 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
-                createTask.putExtra("taskNumber", tasksForCurrentHunt.size()+1);
+                createTask.putExtra("currentHunt", currentHunt);
                 this.startActivity(createTask);
                 break;
 
+            case R.id.estimated_time:
+                EditText t = (EditText)view;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateHuntActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(final TimePicker view, final int hourOfDay,
+                                                  final int minute) {
+                                CreateHuntActivity.this.hour = hourOfDay;
+                                CreateHuntActivity.this.minute = minute;
+                                ((EditText) findViewById(R.id.estimated_time)).setText(hourOfDay +
+                                        ":" + String.format("%02d", minute));
+                            }
+                        }, 0, 0, true);
+                timePickerDialog.setTitle("Enter estimated length");
+                timePickerDialog.show();
             default:
                 break;
         }

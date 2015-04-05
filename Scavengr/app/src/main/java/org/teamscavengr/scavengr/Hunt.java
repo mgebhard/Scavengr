@@ -43,8 +43,8 @@ public class Hunt implements Parcelable {
 
     private String name;
     private String id;
-    private String[] reviewIds;
-    private Task[] tasks;
+    private ArrayList<Task> reviewIds;
+    private ArrayList<Task> tasks;
     private String description;
     private String creatorId;
     private long estTime;
@@ -66,6 +66,21 @@ public class Hunt implements Parcelable {
         this.estTimeUnit = estTimeUnit;
         this.timeCreated = timeCreated;
     }
+
+
+    public Hunt(final String name, Task[] tasks, final long estTime,
+                final TimeUnit estTimeUnit, final long timeCreated) {
+        this.name = name;
+        this.id = null;
+        this.reviewIds = new String[0];
+        this.tasks = tasks;
+        this.description = "";
+        this.creatorId = "";
+        this.estTime = estTime;
+        this.estTimeUnit = estTimeUnit;
+        this.timeCreated = timeCreated;
+    }
+
 
     public Hunt(Parcel in) {
         readFromParcel(in);
