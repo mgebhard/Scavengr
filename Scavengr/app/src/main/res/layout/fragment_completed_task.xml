@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.teamscavengr.scavengr.goonhunt.CompletedTaskFragment"
-    android:id="@+id/fragment_completed_task">
+    android:id="@+id/fragment_completed_task"
+    android:background="#ffffffff">
 
     <!-- TODO: Update blank fragment layout -->
 

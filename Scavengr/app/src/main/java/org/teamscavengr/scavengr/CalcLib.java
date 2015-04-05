@@ -1,9 +1,12 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
+import android.util.Log;
 import android.util.Pair;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -112,8 +115,10 @@ public class CalcLib {
         LatLng centroid = new LatLng(centroidLat, centroidLng);
 
         for (int i = 0; i < hunt.getNumberOfTasks(); i++){
+            Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));
             double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)),
                     centroid);
+
             if (potentialRadius > radius){
                 radius = potentialRadius;
             }
