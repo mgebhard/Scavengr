@@ -17,13 +17,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A hunt is a hunt.
- * TODO use async tasks for progress monitoring
  */
 public class Hunt {
 
@@ -62,8 +62,8 @@ public class Hunt {
         return id;
     }
 
-    public String[] getReviewIds() {
-        return reviewIds;
+    public List<String> getReviewIds() {
+        return Collections.unmodifiableList(Arrays.asList(reviewIds));
     }
 
     public Task[] getTasks() {
@@ -86,9 +86,8 @@ public class Hunt {
                 requestMap.clear();
                 url = new URL("http://scavengr.meteor.com/hunts/" + id);
             }
-            // TODO Save the reviews
 
-            // TODO Save the tasks
+            // Save the tasks
             url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
