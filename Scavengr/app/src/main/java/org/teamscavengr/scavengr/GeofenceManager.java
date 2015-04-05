@@ -116,7 +116,7 @@ public class GeofenceManager  {
     public String addGeofence(String name, Location center, float radius, long timeToLive,
                               ResultCallback<Status> statusCallback,
                               GeofenceListener geofenceListener) {
-        if(!client.isConnected()) {
+        if(!client.isConnected() || pi == null) {
             throw new IllegalStateException("Google API Client not connected yet...");
         }
 
@@ -141,17 +141,23 @@ public class GeofenceManager  {
     /**
      * Remove every active geofence.
      */
-    public void removeGeofences() {
+    public void removeGeofences(boolean restart) {
+        if(pi == null) return;
         LocationServices.GeofencingApi.removeGeofences(client, pi);
         pi.cancel();
-        Intent intent = new Intent(activity, GeofenceTransitionsService.class);
-        pi = PendingIntent.getService(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(restart) {
+            Intent intent = new Intent(activity, GeofenceTransitionsService.class);
+            pi = PendingIntent.getService(activity, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            pi = null;
+        }
     }
 
     /**
      * @param names Remove all these geofences (by name).
      */
     public void removeGeofences(String... names) {
+        if(pi == null) return;
         LocationServices.GeofencingApi.removeGeofences(client, Arrays.asList(names));
     }
 

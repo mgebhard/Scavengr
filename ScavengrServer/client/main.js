@@ -284,9 +284,48 @@ Template.restStats.helpers({
 //----------------------------------------------------------
 // DATABASE COLLECTION
 
-Template.databaseCollection.helpers({
+Template.databaseCollectionPosts.helpers({
   postsList: function(){
     return Posts.find();
+  },
+  isDatabasePanelVisible: function () {
+    if(Session.get('isDatabasePanelVisible')){
+      return "hidden";
+    }else{
+      return "visible";
+    }
+  }
+});
+
+Template.databaseCollectionHunts.helpers({
+  huntsList: function(){
+    return Hunts.find();
+  },
+  isDatabasePanelVisible: function () {
+    if(Session.get('isDatabasePanelVisible')){
+      return "hidden";
+    }else{
+      return "visible";
+    }
+  }
+});
+
+Template.databaseCollectionReviews.helpers({
+  reviewsList: function(){
+    return Reviews.find();
+  },
+  isDatabasePanelVisible: function () {
+    if(Session.get('isDatabasePanelVisible')){
+      return "hidden";
+    }else{
+      return "visible";
+    }
+  }
+});
+
+Template.databaseCollectionUsers.helpers({
+  usersList: function(){
+    return Users.find();
   },
   isDatabasePanelVisible: function () {
     if(Session.get('isDatabasePanelVisible')){

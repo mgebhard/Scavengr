@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +55,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         googleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        manager.removeGeofences();
     }
 
     @Override
@@ -115,13 +120,15 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     break;
                 }
                 Location l = new Location("");
-                l.setLatitude(10d);
-                l.setLongitude(10d);
-                manager.addGeofence("testGeofenceInNigeria", l, 1000, Geofence.NEVER_EXPIRE, this,
+                l.setLatitude(42.358801d); // The coords of the stud
+                l.setLongitude(-71.094635d);
+                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
                         new GeofenceManager.GeofenceListener() {
                             @Override
                             public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
-                                Log.d("SCV", event.geofenceId);
+                                Toast.makeText(MainActivity.this,
+                                        event.geofenceId + ": " + ((event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) ? "entered" : "exited"),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
             default:
@@ -132,7 +139,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnected(final Bundle bundle) {
-
+        Toast.makeText(this, "gapi client connected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -143,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "gapi client connection failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
