@@ -44,6 +44,7 @@ public class Hunt implements Parcelable {
     private String id;
     private String[] reviewIds;
     private Task[] tasks;
+    private String description;
     private String creatorId;
     private long estTime;
     private TimeUnit estTimeUnit;
@@ -52,12 +53,13 @@ public class Hunt implements Parcelable {
     /**
      * If we're creating the first hunt, id should be null.
      */
-    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, final
-    String creatorId, final long estTime, final TimeUnit estTimeUnit, final long timeCreated) {
+    public Hunt(final String id, final String name, String[] reviewIds, Task[] tasks, final String description,
+        final String creatorId, final long estTime, final TimeUnit estTimeUnit, final long timeCreated) {
         this.name = name;
         this.id = id;
         this.reviewIds = reviewIds;
         this.tasks = tasks;
+        this.description = description;
         this.creatorId = creatorId;
         this.estTime = estTime;
         this.estTimeUnit = estTimeUnit;
@@ -77,15 +79,19 @@ public class Hunt implements Parcelable {
             reviewIds[i] = in.readString();
         }
         final int nTasks = in.readInt();
-        Task[] tasks = new Task[nTasks];
+        tasks = new Task[nTasks];
         for (int i = 0; i < nTasks; i++) {
             String taskId = in.readString();
             Location taskLoc = Location.CREATOR.createFromParcel(in);
             String taskClue = in.readString();
             String taskAnswer = in.readString();
             double taskRadius = in.readDouble();
-            tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius);
+            int taskNumber = in.readInt();
+            tasks[0] = new Task(taskId, taskLoc, taskClue, taskAnswer, taskRadius, taskNumber);
         }
+        description = in.readString();
+        creatorId = in.readString();
+        
     }
 
     @Override
@@ -106,7 +112,9 @@ public class Hunt implements Parcelable {
             dest.writeString(task.getClue());
             dest.writeString(task.getAnswer());
             dest.writeDouble(task.getRadius());
+            dest.writeInt(task.getTaskNumber());
         }
+        dest.writeString(description);
     }
 
     @Override
@@ -124,6 +132,10 @@ public class Hunt implements Parcelable {
 
     public String getId() {
         return id;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public List<String> getReviewIds() {
@@ -192,11 +204,12 @@ public class Hunt implements Parcelable {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
-                    tasksFromJSONArray(obj.getJSONArray("tasks")), obj.getString("creatorId"),
+                    tasksFromJSONArray(obj.getJSONArray("tasks")),
+                    obj.getString("description"),
+                    obj.getString("creatorId"),
                     Long.parseLong(obj.getString("estimatedTime")),
                     TimeUnit.valueOf(obj.getString("estimatedTimeUnit")),
                     Long.parseLong(obj.getString("timeCreated")));
-
 
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("id \"" + id + "\" leads to Malformed URL", e);
