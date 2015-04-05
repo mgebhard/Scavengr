@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="name"
-        android:layout_below="@+id/huntDescription"
         android:layout_alignLeft="@+id/huntDescription"
         android:layout_alignStart="@+id/huntDescription" />
 
@@ -19,6 +18,7 @@
         android:inputType="textMultiLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/huntName"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
@@ -43,14 +43,11 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignLeft="@+id/finish"
-        android:layout_alignStart="@+id/finish"
-        android:layout_alignRight="@+id/add_waypoint"
-        android:layout_alignEnd="@+id/add_waypoint"
-        android:layout_marginTop="450dp"
         android:background="#c8ffffff"
         android:backgroundTint="#ffffffff"
-        android:layout_above="@+id/add_waypoint">
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/huntName"
+        android:layout_alignStart="@+id/huntName">
 
         <EditText
             android:layout_width="wrap_content"
@@ -67,7 +64,7 @@
             android:layout_above="@+id/add_waypoint"
             android:layout_centerHorizontal="true"
             android:hint="Estimated time (hr:min)"
-            android:layout_gravity="center_horizontal|bottom" />
+            android:layout_gravity="center" />
     </FrameLayout>
 
 
