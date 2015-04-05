@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -127,7 +126,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                         new GeofenceManager.GeofenceListener() {
                             @Override
                             public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
-                                Log.d("SCV", event.geofenceId);
+                                Toast.makeText(MainActivity.this,
+                                        event.geofenceId, Toast.LENGTH_SHORT).show();
                             }
                         });
             default:
@@ -138,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnected(final Bundle bundle) {
-
+        Toast.makeText(this, "gapi client connected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -149,7 +149,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "gapi client connection failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
