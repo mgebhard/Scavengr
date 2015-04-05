@@ -1,4 +1,4 @@
-package org.teamscavengr.scavengr;
+package org.teamscavengr.scavengr.createhunt;
 
 import android.content.Intent;
 import android.location.Location;
@@ -20,7 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.R;
 
 /**
  * Created by hzhou1235 on 3/30/15.
@@ -40,6 +40,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_create_hunt, menu);
+
         return true;
     }
 
@@ -72,6 +73,8 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
         edit.setOnClickListener(this);
 
         buildGoogleApiClient();
+        getActionBar().setIcon(R.drawable.scavengr_logo);
+
     }
 
     /**
