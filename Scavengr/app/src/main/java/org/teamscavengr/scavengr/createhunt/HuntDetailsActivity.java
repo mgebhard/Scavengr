@@ -20,13 +20,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
-import org.teamscavengr.scavengr.CalcLib;
 
 import java.util.ArrayList;
 
