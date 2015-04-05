@@ -97,8 +97,8 @@ public class Task implements Parcelable {
     }
 
     public void saveToServer(final URL baseUrl) throws IOException, JSONException {
-        URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
-        Map<String, String> requestMap = new HashMap<>();
+        URL url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
+        Map<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("latitude", Double.toString(location.getLatitude()));
         requestMap.put("longitude", Double.toString(location.getLongitude()));
         requestMap.put("clue", clue);

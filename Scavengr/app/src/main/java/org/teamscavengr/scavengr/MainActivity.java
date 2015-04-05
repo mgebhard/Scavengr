@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         fmlp = new FileMockLocationProvider("network", this,
                 new File("/storage/emulated/legacy/mocklocation.txt"), true);
 
-        ((LocationManager) getSystemService(Context.LOCATION_SERVICE))
+        /*((LocationManager) getSystemService(Context.LOCATION_SERVICE))
                 .requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
 
             @Override
@@ -67,7 +67,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
             @Override
             public void onProviderDisabled(final String provider) {}
-        });
+        });*/
 
         // production build
         if((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {

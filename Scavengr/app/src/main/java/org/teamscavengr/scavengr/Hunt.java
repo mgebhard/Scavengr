@@ -222,10 +222,12 @@ public class Hunt implements Parcelable, Serializable {
                 requestMap.put("estimatedTimeUnit", estTimeUnit.name());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
+                Log.d("ID_ID", id);
             }
 
             // Save the tasks
             url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
+            Log.d("URL",url.toString());
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
                 t.saveToServer(url);

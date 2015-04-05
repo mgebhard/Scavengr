@@ -93,10 +93,15 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void huntLoaded(Hunt hunt) {
+                       Context context = getApplicationContext();
+                       CharSequence text = "Loading hunt.";
+                       int duration = Toast.LENGTH_LONG;
+
+                       Toast toast = Toast.makeText(context, text, duration);
+                       Log.d("LoadHunt", "Rendering Hunt" + hunt.toString());
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
-
 
                    }
 
