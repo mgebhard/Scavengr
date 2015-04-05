@@ -19,6 +19,7 @@ import java.io.IOException;
 public class FileMockLocationProvider extends AbstractMockLocationProvider {
 
     private final File file;
+    private FileObserver fo;
 
     /**
      * @param providerName The name of this provider (should be unique among mlps)
@@ -32,15 +33,22 @@ public class FileMockLocationProvider extends AbstractMockLocationProvider {
         this.file = file;
 
         if(autoUpdate) {
-            new FileObserver(file.getPath(),
+            fo = new FileObserver(file.getPath(),
                     FileObserver.ATTRIB | FileObserver.MODIFY |
                     FileObserver.CLOSE_WRITE | FileObserver.CLOSE_NOWRITE) {
                 @Override
                 public void onEvent(final int event, final String path) {
                     update();
                 }
-            }.startWatching();
+            };
+            fo.startWatching();
         }
+    }
+
+    @Override
+    public void close() {
+        fo.stopWatching();
+        super.close();
     }
 
     @Override
