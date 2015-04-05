@@ -90,7 +90,7 @@ public class Task {
         requestMap.put("clue", clue);
         requestMap.put("radius", Double.toString(radius));
         requestMap.put("answer", answer);
-        id = NetworkHelper.doRequest(url, "POST", requestMap).getString("_str");
+        id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
 
     }
 

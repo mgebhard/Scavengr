@@ -25,14 +25,14 @@ import java.util.Map;
  */
 public class NetworkHelper {
 
-    public static JSONObject doRequest(URL url, String type, Map<String, String> values) throws
+    public static JSONObject doRequest(URL url, String type, boolean output, Map<String, String> values) throws
             IOException,
             JSONException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setReadTimeout(1000);
-        conn.setConnectTimeout(1000);
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(10000);
         conn.setRequestMethod(type);
-        conn.setDoOutput(true);
+        conn.setDoOutput(output);
         conn.setDoInput(true);
 
         List<NameValuePair> params = new ArrayList<>();
@@ -40,12 +40,16 @@ public class NetworkHelper {
             params.add(new BasicNameValuePair(key, values.get(key)));
         }
 
-        OutputStream out = conn.getOutputStream();
+        OutputStream out = null;
+        if(output)
+            out = conn.getOutputStream();
         InputStream in = conn.getInputStream();
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-        bw.write(getQuery(params));
-        bw.flush();
+        if(output) {
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            bw.write(getQuery(params));
+            bw.flush();
+        }
 
         conn.connect();
 
@@ -59,7 +63,8 @@ public class NetworkHelper {
         }
 
         in.close();
-        out.close();
+        if(output)
+            out.close();
 
         return new JSONObject(sb.toString());
     }
