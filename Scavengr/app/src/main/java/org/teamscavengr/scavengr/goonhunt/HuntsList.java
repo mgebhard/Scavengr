@@ -103,6 +103,7 @@ public class HuntsList extends ListActivity {
                        mHuntNames.add(hunt.getName());
                        mAdapter.notifyDataSetChanged();
 
+
                    }
 
                    @Override
@@ -115,7 +116,7 @@ public class HuntsList extends ListActivity {
                    }
                }, true);
         //hunts.add(basicHunt);
-        mHuntNames.add("Loading Hunts");
+        //mHuntNames.add("Loading Hunts");
         //String[] fromColumns = {hunts.get(0).getId() , hunts.get(0).getName()};
         //String[] fromColumns = {ContactsContract.Data.DISPLAY_NAME};
         int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1

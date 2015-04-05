@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     public void onClick(View view) {
-        Hunt.loadHuntInBackground("e4dbb85d17ea96e135b58a4a", new Hunt.HuntLoadedCallback() {
+        /*Hunt.loadHuntInBackground("e4dbb85d17ea96e135b58a4a", new Hunt.HuntLoadedCallback() {
             @Override
             public void huntLoaded(final Hunt hunt) {
                 Toast.makeText(MainActivity.this, "loaded hunt " + hunt.getId(), Toast.LENGTH_SHORT).show();
@@ -58,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void numHuntsFound(final int i) {}
 
-        }, true);
+        }, true);*/
         switch(view.getId()) {
             case R.id.go_on_hunt:
                 //Intent hunt = new Intent(this, HuntsList.class);
