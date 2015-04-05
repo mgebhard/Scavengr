@@ -59,6 +59,12 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        manager.removeGeofences();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -115,9 +121,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     break;
                 }
                 Location l = new Location("");
-                l.setLatitude(10d);
-                l.setLongitude(10d);
-                manager.addGeofence("testGeofenceInNigeria", l, 1000, Geofence.NEVER_EXPIRE, this,
+                l.setLatitude(42.358801d); // The coords of the stud
+                l.setLongitude(-71.094635d);
+                manager.addGeofence("testGeofenceInNigeria", l, 100, Geofence.NEVER_EXPIRE, this,
                         new GeofenceManager.GeofenceListener() {
                             @Override
                             public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
