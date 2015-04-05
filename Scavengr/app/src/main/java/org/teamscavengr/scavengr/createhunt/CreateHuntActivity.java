@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -25,8 +26,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,22 +55,22 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     private int hour, minute;
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         savedInstanceState.putParcelableArrayList("allTasksList",
-                new ArrayList<Task>(tasksForCurrentHunt));
+                new ArrayList<>(tasksForCurrentHunt));
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
         List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
-        tasksForCurrentHunt = new HashSet<Task>(allTasks);
+        tasksForCurrentHunt = new HashSet<>(allTasks);
     }
 
 
@@ -197,6 +200,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 reviewCreated.putExtra("allTasks", tasksForCurrentHunt);
                 reviewCreated.putExtra("estimatedTime", hour * 60L + minute);
                 reviewCreated.putExtra("estimatedTimeUnit", TimeUnit.MINUTES);
+                reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
+                        Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
                 this.startActivity(reviewCreated);
                 break;
 

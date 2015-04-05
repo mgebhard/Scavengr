@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -155,7 +156,7 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
         Intent hunt = new Intent(this, ConfirmHunt.class);
-        hunt.putExtra("huntObject", mHuntsMap.get(mHuntNames.get(position)));
+        hunt.putExtra("huntObject", (Parcelable) mHuntsMap.get(mHuntNames.get(position)));
         this.startActivity(hunt);
         // Put in ID for the hunt selected
     }
