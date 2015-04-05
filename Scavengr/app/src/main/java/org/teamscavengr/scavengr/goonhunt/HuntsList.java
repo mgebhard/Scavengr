@@ -81,21 +81,17 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void numHuntsFound(int num) {
-                       Context context = getApplicationContext();
                        CharSequence text = "Loading " + num + " hunts...";
                        int duration = Toast.LENGTH_LONG;
 
-                       Toast toast = Toast.makeText(context, text, duration);
+                       Toast.makeText(HuntsList.this, text, duration).show();
                    }
 
                    @Override
                    public void huntLoaded(Hunt hunt) {
-                       Context context = getApplicationContext();
-                       CharSequence text = "Loading hunt.";
                        int duration = Toast.LENGTH_LONG;
 
-                       Toast toast = Toast.makeText(context, text, duration);
-                       Log.d("LoadHunt", "Rendering Hunt" + hunt.toString());
+                       Toast.makeText(HuntsList.this, "Loaded " + hunt.getId(), duration).show();
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
@@ -104,11 +100,9 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void huntFailedToLoad(Exception e) {
-                       Context context = getApplicationContext();
-                       CharSequence text = "Failed to load a hunt";
                        int duration = Toast.LENGTH_SHORT;
 
-                       Toast toast = Toast.makeText(context, text, duration);
+                       Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);
         //hunts.add(basicHunt);
