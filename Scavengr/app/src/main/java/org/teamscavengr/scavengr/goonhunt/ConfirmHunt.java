@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import org.teamscavengr.scavengr.MapTestActivity;
 import org.teamscavengr.scavengr.R;
 
 
@@ -45,7 +44,7 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm_hunt:
-                Intent hunt = new Intent(this, MapTestActivity.class);
+                Intent hunt = new Intent(this, HuntActivity.class);
                 this.startActivity(hunt);
                 break;
             default:

@@ -25,12 +25,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -38,10 +41,30 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     // Defaults to Michigan
     protected double currentLatitude = 43.6867;
-    protected double currentLongitude = - 85.0102;
+    protected double currentLongitude = -85.0102;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putParcelableArrayList("allTasksList",
+                new ArrayList<Task>(tasksForCurrentHunt));
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
+        tasksForCurrentHunt = new HashSet<Task>(allTasks);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,6 +97,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        Log.d("MEGAN", "Before it check if intent has extra");
         if (getIntent().hasExtra("task")) {
             Log.d("MEGAN", "Has task Parcelable extra");
             Task taskAdded = (Task)getIntent().getParcelableExtra("task");
@@ -115,7 +139,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
             map.addMarker(new MarkerOptions()
-                    .title(task.getAnswer())
+                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
                     .position(new LatLng(taskLocation.getLatitude(),
                             taskLocation.getLongitude())));
@@ -143,20 +167,22 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                EditText text = (EditText)findViewById(R.id.estimated_time);
-                String value = text.getText().toString(); //store this time
+                String estimatedTime = ((EditText)findViewById(R.id.estimated_time))
+                                        .getText().toString();
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                //store all waypoints
+                reviewCreated.putExtra("allTasks", tasksForCurrentHunt.toArray());
+                reviewCreated.putExtra("estimatedTime", estimatedTime);
                 this.startActivity(reviewCreated);
                 break;
+
             case R.id.add_waypoint:
-                Intent addWaypoint = new Intent(this, CreateWaypointActivity.class);
-                this.startActivity(addWaypoint);
+                Intent createTask = new Intent(this, CreateWaypointActivity.class);
+                createTask.putExtra("taskNumber", tasksForCurrentHunt.size()+1);
+                this.startActivity(createTask);
                 break;
+
             default:
                 break;
         }
-
     }
-
 }
