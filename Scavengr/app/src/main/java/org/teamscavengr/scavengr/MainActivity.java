@@ -1,7 +1,13 @@
 package org.teamscavengr.scavengr;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -18,6 +24,9 @@ import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
+import org.teamscavengr.scavengr.mocklocation.FileMockLocationProvider;
+
+import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,
@@ -26,6 +35,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     private GoogleApiClient googleApiClient;
     private GeofenceManager manager;
+    private FileMockLocationProvider fmlp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +45,37 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buildApiClient();
 
         manager = new GeofenceManager(this, googleApiClient);
+
+        fmlp = new FileMockLocationProvider("network", this,
+                new File("/storage/emulated/legacy/mocklocation.txt"), true);
+
+        ((LocationManager) getSystemService(Context.LOCATION_SERVICE))
+                .requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
+
+            @Override
+            public void onLocationChanged(final Location location) {
+                Toast.makeText(MainActivity.this, "Location changed: " + location.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStatusChanged(final String provider, final int status,
+                                        final Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(final String provider) {}
+
+            @Override
+            public void onProviderDisabled(final String provider) {}
+        });
+
+        // production build
+        if((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
+            if(checkCallingOrSelfPermission("android.permission.ACCESS_MOCK_LOCATION") ==
+               PackageManager.PERMISSION_GRANTED) {
+                throw new RuntimeException("In production mode with mock location enabled, idiots!");
+            }
+        }
     }
 
     private synchronized void buildApiClient() {
@@ -60,6 +101,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        fmlp.close();
         manager.removeGeofences();
     }
 

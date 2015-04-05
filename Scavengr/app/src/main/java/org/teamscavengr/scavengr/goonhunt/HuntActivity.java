@@ -31,7 +31,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
 
-    protected GoogleApiClient mGoogleApiClient;
+    protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
 
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
@@ -217,7 +217,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionSuspended(final int i) {
-
+        mGoogleApiClient.connect(); // attempt to reconnect
     }
 
     @Override
