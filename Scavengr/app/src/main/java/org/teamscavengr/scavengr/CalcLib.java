@@ -1,6 +1,12 @@
 package org.teamscavengr.scavengr;
 
+import android.location.Location;
+import android.util.Log;
+import android.util.Pair;
+
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -85,5 +91,38 @@ public class CalcLib {
             }
         }
        return new LatLng(avgLat, avgLng);
+    }
+
+    public static Pair<LatLng, Double> calculateCentroidAndRadius (Hunt hunt) {
+        double radius = 0.0;
+        double centroidLat = 0.0;
+        double centroidLng = 0.0;
+        ArrayList<Double> lats = new ArrayList<Double>();
+        ArrayList<Double> lngs = new ArrayList<Double>();
+
+        for (Task task : hunt.getTasks()){
+            Location taskLocation = task.getLocation();
+            double lat = taskLocation.getLatitude();
+            double lng = taskLocation.getLongitude();
+            centroidLat += lat;
+            centroidLng += lng;
+            lats.add(lat);
+            lngs.add(lng);
+        }
+
+        centroidLat = centroidLat/hunt.getNumberOfTasks();
+        centroidLng = centroidLng/hunt.getNumberOfTasks();
+        LatLng centroid = new LatLng(centroidLat, centroidLng);
+
+        for (int i = 0; i < hunt.getNumberOfTasks(); i++){
+            Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));
+            double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)),
+                    centroid);
+
+            if (potentialRadius > radius){
+                radius = potentialRadius;
+            }
+        }
+        return  new Pair<LatLng, Double>(centroid, radius);
     }
 }

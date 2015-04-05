@@ -2,8 +2,6 @@ package org.teamscavengr.scavengr;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;

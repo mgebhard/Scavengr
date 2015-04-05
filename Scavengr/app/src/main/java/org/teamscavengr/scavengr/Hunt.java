@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +179,8 @@ public class Hunt implements Parcelable, Serializable {
         return description;
     }
 
+    public int getNumberOfTasks() {return tasks.size();}
+
     public void setDescription(String desc) { description = desc; }
 
     public List<String> getReviewIds() {
@@ -231,6 +232,7 @@ public class Hunt implements Parcelable, Serializable {
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
                 t.saveToServer(url);
+
             }
 
         } catch(MalformedURLException ex) {

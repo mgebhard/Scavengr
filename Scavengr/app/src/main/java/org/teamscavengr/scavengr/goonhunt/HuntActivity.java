@@ -1,13 +1,17 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +24,12 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 
@@ -35,6 +42,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    protected double currentLatitude = 43.6867;
+    protected double currentLongitude = -85.0102;
+
+    protected LatLng centroid;
+    protected Double boundingRadius;
+    protected Circle circle;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
@@ -67,19 +80,16 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_map_test);
+        setContentView(R.layout.activity_main_hunt);
         if (getIntent().hasExtra("huntObject")) {
-            //Context context = getApplicationContext();
-            //CharSequence text = "The cat is alive";
-            //int duration = Toast.LENGTH_LONG;
 
-            //Toast toast = Toast.makeText(context, text, duration);
-            //toast.show();
             hunt = (getIntent().getParcelableExtra("huntObject"));
 
             // Grab and set hunt title
-            //TextView titleText = (TextView) findViewById(R.id.textView3);
-            //titleText.setText("HUNT: " + hunt.getName());
+
+            // TODO (Gebhard): This is not an actual text view
+//            TextView titleText = (TextView) findViewById(R.id.textView3);
+//            titleText.setText("HUNT: " + hunt.getName());
 
             // Grab and set hunt description
             //TextView descriptionText = (TextView) findViewById(R.id.textView4);
@@ -94,6 +104,15 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
         } */
 
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (mLastLocation != null) {
+            currentLatitude = mLastLocation.getLatitude();
+            currentLongitude = mLastLocation.getLongitude();
+            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
+        }
+
         try{
             MapFragment mapFragment = (MapFragment) getFragmentManager()
                     .findFragmentById(R.id.map);
@@ -103,8 +122,21 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         // If not in radius show start screen
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, new StartHuntFragment()).commit();
+
+        Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
+        centroid = geoFence.first;
+        boundingRadius = geoFence.second;
+
+        double distanceFromCentroid = CalcLib.distanceFromLatLng(
+                 new LatLng(currentLatitude, currentLongitude), centroid);
+
+        if (distanceFromCentroid > boundingRadius) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new StartHuntFragment()).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new TaskFragment()).commit();
+        }
 
         buildGoogleApiClient();
 
@@ -174,35 +206,20 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        LatLng avgLocation = new LatLng(42.3736, -71.1106);
-
-       /* List<Task> tasks = hunt.getTasks();
-
-        int total = 0;
-        double totalLat = 0;
-        double totalLng = 0;
-        for (Task task : tasks) {
-            Location loc = task.getLocation();
-            total += 1;
-            totalLat += loc.getLatitude();
-            totalLng += loc.getLongitude();
-        }
-        double avgLat = totalLat / total;
-        double avgLng = totalLng / total;
-        */
-        double avgLat = 10;
-        double avgLng = 10;
-
-        avgLocation = new LatLng(avgLat, avgLng);
+    public void onMapReady(GoogleMap map) {;
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(avgLocation, 6));
-
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 20));
         map.addMarker(new MarkerOptions()
                 .title(hunt.getName())
                 .snippet(hunt.getDescription())
-                .position(avgLocation));
+                .position(centroid));
+
+        circle = map.addCircle(new CircleOptions()
+                .center(centroid)
+                .radius(100)
+                .strokeColor(Color.argb(256, 0, 0, 256))
+                .fillColor(Color.argb(100, 0, 0, 256)));
     }
 
     @Override

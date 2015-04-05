@@ -66,11 +66,18 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1.5"
             >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Back"
+                android:onClick="onClick"
+                android:id="@+id/back" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -80,8 +87,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="36dp"
-                android:onClick="onClick"
-                android:layout_gravity="center_horizontal" />
+                android:onClick="onClick" />
         </LinearLayout>
     </LinearLayout>
 
