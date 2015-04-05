@@ -6,7 +6,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 
 
@@ -16,6 +18,16 @@ public class ConfirmHunt extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_hunt);
+        Hunt hunt = getIntent().getParcelableExtra("hunt");
+
+        // Grab and set hunt title
+        TextView titleText = (TextView)findViewById(R.id.textView3);
+        titleText.setText(hunt.getName());
+
+        // Grab and set hunt description
+        TextView descriptionText = (TextView)findViewById(R.id.textView4);
+        descriptionText.setText(hunt.getDescription());
+
     }
 
 
