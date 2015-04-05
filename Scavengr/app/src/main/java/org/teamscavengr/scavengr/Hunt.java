@@ -16,7 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A hunt is a hunt.
  */
-public class Hunt implements Parcelable {
+public class Hunt implements Parcelable, Serializable {
 
     private static void run(boolean onUIThread, Runnable r) {
         if(onUIThread) {

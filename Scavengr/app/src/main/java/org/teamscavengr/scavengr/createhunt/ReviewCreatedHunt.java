@@ -1,15 +1,24 @@
 package org.teamscavengr.scavengr.createhunt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
+import java.io.IOException;
+import java.lang.ref.Reference;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -51,11 +60,48 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm:
+                final StringBuilder huntName = new StringBuilder();
+                final StringBuilder huntDesc = new StringBuilder();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                LayoutInflater inflater = getLayoutInflater();
+                builder.setView(inflater.inflate(R.layout.stuff, null))
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                huntName.append(
+                                        ((EditText) findViewById(R.id.huntName)).getText().toString());
+                                huntDesc.append(
+                                        ((EditText) findViewById(R.id.huntDescription)).getText().toString());
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, final int which) {
+                                dialog.cancel();
+                            }
+                        });
+                builder.show();
+
+
                 Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
                 long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
                 TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
+                User user = (User) getIntent().getSerializableExtra("currentUser");
 
-                // Hunt h = new Hunt();
+                final Hunt h = new Hunt(null, huntName.toString(), new String[]{},
+                        tasks.toArray(new Task[tasks.size()]), huntDesc.toString(), user.getId(),
+                        estimatedTime, unit, System.currentTimeMillis() / 1000L);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            h.saveHunt();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
 
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(myHunts);

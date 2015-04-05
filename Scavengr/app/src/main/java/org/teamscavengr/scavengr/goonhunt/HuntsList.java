@@ -159,9 +159,7 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
         Intent hunt = new Intent(this, ConfirmHunt.class);
-        Log.d("listView", mHuntsMap.get(mHuntNames.get(position)).toString());
-        hunt.putExtra("huntObject", mHuntsMap.get(mHuntNames.get(position)));
-        System.out.println(hunt.getParcelableExtra("huntObject"));
+        hunt.putExtra("huntObject", (Parcelable) mHuntsMap.get(mHuntNames.get(position)));
         this.startActivity(hunt);
         // Put in ID for the hunt selected
     }
