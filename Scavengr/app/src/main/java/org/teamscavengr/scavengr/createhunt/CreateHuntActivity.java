@@ -138,6 +138,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
         for (Task task : tasksForCurrentHunt){
             Location taskLocation = task.getLocation();
+            Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
             map.addMarker(new MarkerOptions()
                     .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
