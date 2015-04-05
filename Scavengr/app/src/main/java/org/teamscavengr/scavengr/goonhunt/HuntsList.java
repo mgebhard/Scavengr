@@ -4,6 +4,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,6 +44,7 @@ public class HuntsList extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("listview", "\n\n\nCreating list view\n\n\n");
         super.onCreate(savedInstanceState);
 
         // Create a progress bar to display while the list loads
@@ -155,7 +159,9 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {
         // Do something when a list item is clicked
         Intent hunt = new Intent(this, ConfirmHunt.class);
+        Log.d("listView", mHuntsMap.get(mHuntNames.get(position)).toString());
         hunt.putExtra("huntObject", mHuntsMap.get(mHuntNames.get(position)));
+        System.out.println(hunt.getParcelableExtra("huntObject"));
         this.startActivity(hunt);
         // Put in ID for the hunt selected
     }
@@ -182,4 +188,6 @@ public class HuntsList extends ListActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
