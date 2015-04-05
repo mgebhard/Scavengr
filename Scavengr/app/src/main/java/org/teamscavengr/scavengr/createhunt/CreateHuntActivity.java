@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.annotation.NonNull;
+import android.os.Parcelable;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -35,9 +31,6 @@ import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -48,8 +41,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     protected GoogleApiClient mGoogleApiClient;
 
     Hunt currentHunt;
-    ArrayList<Task> allPoints = new ArrayList<Task>();
-
 
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
@@ -94,7 +85,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
             Log.d("MEGAN", "Has task Parcelable extra");
             currentHunt = getIntent().getParcelableExtra("currentHunt");
         } else {
-
+            // Default constructor for hunt
+            currentHunt = new Hunt();
         }
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -126,7 +118,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
                 currentLongitude), 15));
 
-        for (Task task : allPoints){
+        for (Task task : currentHunt.getTasks()){
             Location taskLocation = task.getLocation();
             Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
             map.addMarker(new MarkerOptions()
@@ -159,9 +151,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
         switch(view.getId()) {
             case R.id.finish:
                 Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
-                reviewCreated.putExtra("currentHunt", currentHunt);
-                reviewCreated.putExtra("estimatedTime", hour * 60L + minute);
-                reviewCreated.putExtra("estimatedTimeUnit", TimeUnit.MINUTES);
+                reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
                 reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
                         Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
                 this.startActivity(reviewCreated);
@@ -169,7 +159,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
-                createTask.putExtra("currentHunt", currentHunt);
+                createTask.putExtra("currentHunt", (Parcelable) currentHunt);
                 this.startActivity(createTask);
                 break;
 
@@ -188,6 +178,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                         }, 0, 0, true);
                 timePickerDialog.setTitle("Enter estimated length");
                 timePickerDialog.show();
+                currentHunt.setEstimatedTime(hour * 60L + minute, TimeUnit.MINUTES);
             default:
                 break;
         }

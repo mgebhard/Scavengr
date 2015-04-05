@@ -81,20 +81,20 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
                         huntName.append(nameField.getText().toString());
                         huntDesc.append(descField.getText().toString());
 
-                        Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
-                        long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
-                        TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
+                        final Hunt currentHunt = getIntent().getParcelableExtra("allTasks");
                         User user = (User) getIntent().getSerializableExtra("currentUser");
 
-                        final Hunt h = new Hunt(null, huntName.toString(), new String[]{},
-                                tasks.toArray(new Task[tasks.size()]), huntDesc.toString(), user.getId(),
-                                estimatedTime, unit, System.currentTimeMillis() / 1000L);
+                        currentHunt.setName(huntName.toString());
+                        currentHunt.setDescription(huntDesc.toString());
+                        currentHunt.setCreatorId(user.getId());
+                        currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
+
 
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    h.saveHunt();
+                                    currentHunt.saveHunt();
                                     Log.d("SCV", "saveHunt returned");
                                 } catch (IOException e) {
                                     e.printStackTrace();

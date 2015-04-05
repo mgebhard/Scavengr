@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -207,11 +208,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 Hunt currentHunt = getIntent().getParcelableExtra("currentHunt");
                 Task taskAdded = new Task(null, mLastLocation, clueText.getText().toString(),
                                         answerText.getText().toString(), defaultRadius,
-                                        currentHunt.getTasks().length + 1);
-                allPoints.add(taskAdded);
+                                        currentHunt.getTasks().size() + 1);
+                currentHunt.addTask(taskAdded);
                 Intent addTask = new Intent(this, CreateHuntActivity.class);
-                addTask.putExtra("taskList", allPoints);
-
+                addTask.putExtra("currentHunt", (Parcelable)currentHunt);
                 this.startActivity(addTask);
                 break;
             case R.id.cancel:
