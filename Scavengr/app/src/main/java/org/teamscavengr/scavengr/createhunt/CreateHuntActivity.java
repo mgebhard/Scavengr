@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -39,7 +41,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     protected Set<Task> tasksForCurrentHunt = new HashSet<Task>();
 
-    // Defaults to Michigan
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = - 85.0102;
 
@@ -113,8 +114,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
             currentLongitude = mLastLocation.getLongitude();
         }
 
-
         buildGoogleApiClient();
+
     }
 
     /**

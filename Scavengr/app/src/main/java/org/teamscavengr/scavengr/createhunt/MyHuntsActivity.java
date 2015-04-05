@@ -20,7 +20,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 
-import org.teamscavengr.scavengr.HuntDetailsActivity;
 import org.teamscavengr.scavengr.R;
 
 /**
@@ -59,6 +58,8 @@ public class MyHuntsActivity extends ListActivity implements
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(adapter);
+
+        getActionBar().setIcon(R.drawable.scavengr_logo);
     }
 
     // Called when a new Loader needs to be created
