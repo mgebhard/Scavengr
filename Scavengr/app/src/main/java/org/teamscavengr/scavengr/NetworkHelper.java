@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A nice friendly network helper.
  * Created by zrneely on 4/4/15.
  */
 public class NetworkHelper {
@@ -33,12 +34,16 @@ public class NetworkHelper {
         conn.setConnectTimeout(10000);
         conn.setRequestMethod(type);
         conn.setDoOutput(output);
+        if(output)
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoInput(true);
 
         List<NameValuePair> params = new ArrayList<>();
         for (String key : values.keySet()) {
             params.add(new BasicNameValuePair(key, values.get(key)));
         }
+
+        conn.connect();
 
         OutputStream out = null;
         if(output)
@@ -50,8 +55,6 @@ public class NetworkHelper {
             bw.write(getQuery(params));
             bw.flush();
         }
-
-        conn.connect();
 
         // Get output
         BufferedReader br = new BufferedReader(new InputStreamReader(in));

@@ -18,11 +18,12 @@ import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
 import java.io.IOException;
-import java.lang.ref.Reference;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Activity to review a hunt, once created.
+ *
  * Created by hzhou1235 on 3/15/15.
  */
 public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
@@ -62,49 +63,64 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
             case R.id.confirm:
                 final StringBuilder huntName = new StringBuilder();
                 final StringBuilder huntDesc = new StringBuilder();
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                LayoutInflater inflater = getLayoutInflater();
-                builder.setView(inflater.inflate(R.layout.stuff, null))
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int id) {
-                                huntName.append(
-                                        ((EditText) findViewById(R.id.huntName)).getText().toString());
-                                huntDesc.append(
-                                        ((EditText) findViewById(R.id.huntDescription)).getText().toString());
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(final DialogInterface dialog, final int which) {
-                                dialog.cancel();
-                            }
-                        });
-                builder.show();
+                LayoutInflater linf = LayoutInflater.from(this);
+                final View inflator = linf.inflate(R.layout.stuff, null);
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
+                alert.setTitle("Name and Description");
+                alert.setView(inflator);
 
-                Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
-                long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
-                TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
-                User user = (User) getIntent().getSerializableExtra("currentUser");
+                final EditText nameField = (EditText) inflator.findViewById(R.id.huntName);
+                final EditText descField = (EditText) inflator.findViewById(R.id.huntDescription);
 
-                final Hunt h = new Hunt(null, huntName.toString(), new String[]{},
-                        tasks.toArray(new Task[tasks.size()]), huntDesc.toString(), user.getId(),
-                        estimatedTime, unit, System.currentTimeMillis() / 1000L);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
-                new Thread(new Runnable() {
                     @Override
-                    public void run() {
-                        try {
-                            h.saveHunt();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        huntName.append(nameField.getText().toString());
+                        huntDesc.append(descField.getText().toString());
 
-                Intent myHunts = new Intent(this, MyHuntsActivity.class);
-                this.startActivity(myHunts);
+                        Set<Task> tasks = (Set<Task>) getIntent().getSerializableExtra("allTasks");
+                        long estimatedTime = getIntent().getLongExtra("estimatedTime", 0);
+                        TimeUnit unit = (TimeUnit) getIntent().getSerializableExtra("estimatedTimeUnit");
+                        User user = (User) getIntent().getSerializableExtra("currentUser");
+
+                        final Hunt h = new Hunt(null, huntName.toString(), new String[]{},
+                                tasks.toArray(new Task[tasks.size()]), huntDesc.toString(), user.getId(),
+                                estimatedTime, unit, System.currentTimeMillis() / 1000L);
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    h.saveHunt();
+                                    Log.d("SCV", "saveHunt returned");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+
+                        dialog.dismiss();
+
+                        Intent myHunts = new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
+                        ReviewCreatedHunt.this.startActivity(myHunts);
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        dialog.cancel();
+
+                        Intent myHunts =
+                                new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
+                        ReviewCreatedHunt.this.startActivity(myHunts);
+                    }
+                });
+
+                alert.show();
+
                 break;
             case R.id.back:
                 this.finish(); //not sure if this works/keeps old stuff
