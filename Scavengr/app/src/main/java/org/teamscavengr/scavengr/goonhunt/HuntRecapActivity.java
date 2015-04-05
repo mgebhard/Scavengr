@@ -7,22 +7,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 
 
-public class RateHunt extends ActionBarActivity implements View.OnClickListener {
+public class HuntRecapActivity extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_review_hunt);
+        setContentView(R.layout.activity_hunt_recap);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_review_hunt, menu);
+        getMenuInflater().inflate(R.menu.menu_hunt_recap, menu);
         return true;
     }
 
@@ -40,12 +41,15 @@ public class RateHunt extends ActionBarActivity implements View.OnClickListener 
 
         return super.onOptionsItemSelected(item);
     }
-
     public void onClick(View view) {
         switch(view.getId()) {
-            case R.id.submit_review:
-                Intent recap = new Intent(this, HuntRecap.class);
-                this.startActivity(recap);
+            case R.id.review:
+                Intent hunt = new Intent(this, RateHuntActivity.class);
+                this.startActivity(hunt);
+                break;
+            case R.id.home:
+                Intent createHuntIntent = new Intent(this, MainActivity.class);
+                this.startActivity(createHuntIntent);
                 break;
             default:
                 break;
