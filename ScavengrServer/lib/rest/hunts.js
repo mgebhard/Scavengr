@@ -26,10 +26,11 @@ Router.route('/hunts/:huntId', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })));
     } else if(this.request.method == 'PUT') {
-        this.response.end(JSON.stringify(Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
-                { $set: this.request.body })));
+        Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) }, { $set: this.request.body });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(Hunts.remove({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })));
+        Hunts.remove({ _id: new Meteor.Collection.ObjectID(this.params.huntId) });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "PUT, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
@@ -56,11 +57,12 @@ Router.route('/hunts/:huntId/tasks/', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })['tasks']))
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(
-            Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
-                { $pull: {
-                    tasks: {}
-                }})));
+        Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+            { $pull: {
+                tasks: {}
+            }}
+        );
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'POST') {
         this.response.end(JSON.stringify(Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
                     { $push: {
@@ -93,12 +95,11 @@ Router.route('/hunts/:huntId/tasks/:taskId/', function() {
                 })[0]
         ));
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(
-            Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
-                { $pull: {
-                    tasks: { _id: new Meteor.Collection.ObjectID(this.params.taskId) }
-                }})
-        ));
+        Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+            { $pull: {
+                tasks: { _id: new Meteor.Collection.ObjectID(this.params.taskId) }
+            }});
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
@@ -116,15 +117,14 @@ Router.route('/hunts/:huntId/reviews/', function() {
 
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(
-                Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })['reviews']
-                    //.map(function(x) { return { id: x._str }; })
+            Hunts.findOne({ _id: new Meteor.Collection.ObjectID(this.params.huntId) })['reviews']
         ));
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(
-            Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
-                { $pull: {
-                    reviews: { id: this.request.body.id }
-                }})));
+        Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
+            { $pull: {
+                reviews: { id: this.request.body.id }
+            }});
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'POST') {
         this.response.end(JSON.stringify(Hunts.update({ _id: new Meteor.Collection.ObjectID(this.params.huntId) },
                 { $push: {
