@@ -1,6 +1,8 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -15,13 +17,13 @@ import java.util.Map;
 /**
  * A task on a hunt.
  */
-public class Task {
+public class Task implements Parcelable {
 
     private String id;
     private Location location;
     private String clue;
-    private double radius; // in meters
     private String answer;
+    private double radius; // in meters
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -33,11 +35,17 @@ public class Task {
         this.answer = obj.getString("answer");
     }
 
-    public Task(final String id, final Location location, final String clue, final double radius) {
+    public Task(final String id, final Location location, final String clue,
+                final String answer, final double radius) {
         this.id = id;
         this.location = location;
         this.clue = clue;
+        this.answer = answer;
         this.radius = radius;
+    }
+
+    public Task(Parcel in ) {
+        readFromParcel(in);
     }
 
     public String getId() {
@@ -94,4 +102,36 @@ public class Task {
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        location.writeToParcel(dest, flags);
+        dest.writeString(clue);
+        dest.writeString(answer);
+        dest.writeDouble(radius);
+        dest.writeString(id);
+    }
+
+    // NOT SURE IF BELOW IS NEEDED COPYING EXAMPLE
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Task createFromParcel(Parcel in) {
+            return new Task(in);
+        }
+
+        public Task[] newArray(int size) {
+            return new Task[size];
+        }
+    };
+
+    private void readFromParcel(Parcel in ) {
+        location=Location.CREATOR.createFromParcel(in);
+        clue = in.readString();
+        answer = in.readString();
+        radius = in.readDouble();
+        id = in.readString();
+    }
 }
