@@ -21,13 +21,13 @@ import java.io.Closeable;
  *
  * Created by zrneely on 4/5/15.
  */
-public abstract class AbstractMockLocationProvider implements Closeable {
+public abstract class MockLocationProvider implements Closeable {
 
     protected final String providerName;
     private final Context ctx;
 
 
-    protected AbstractMockLocationProvider(final String providerName, final Context ctx) {
+    protected MockLocationProvider(final String providerName, final Context ctx) {
         this.providerName = providerName;
         this.ctx = ctx;
 
@@ -59,7 +59,11 @@ public abstract class AbstractMockLocationProvider implements Closeable {
         l.setTime(System.currentTimeMillis());
         l.setElapsedRealtimeNanos(System.nanoTime());
         l.setAccuracy(0.5f);
-        lm.setTestProviderLocation(providerName, l);
+        try {
+            lm.setTestProviderLocation(providerName, l);
+        } catch(IllegalArgumentException ex) {
+            ex.printStackTrace(); // ignore it if the provider is unknown
+        }
     }
 
 }

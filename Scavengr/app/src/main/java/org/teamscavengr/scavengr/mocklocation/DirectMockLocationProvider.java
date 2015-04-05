@@ -7,7 +7,7 @@ import android.content.Context;
  *
  * Created by zrneely on 4/5/15.
  */
-public class DirectMockLocationProvider extends AbstractMockLocationProvider {
+public class DirectMockLocationProvider extends MockLocationProvider {
 
     private double lat, lon;
 

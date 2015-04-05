@@ -111,14 +111,12 @@ public class GeofenceManager  {
      * @param timeToLive How long to stay alive. Maybe Geofence.NEVER_EXPIRE
      * @param statusCallback Called when the geofence is added or not or something.
      * @param geofenceListener A listener. Gr8 m8.
-     * @return The name of the geofence again.
+     * @return True if it worked.
      */
-    public String addGeofence(String name, Location center, float radius, long timeToLive,
+    public boolean addGeofence(String name, Location center, float radius, long timeToLive,
                               ResultCallback<Status> statusCallback,
                               GeofenceListener geofenceListener) {
-        if(!client.isConnected() || pi == null) {
-            throw new IllegalStateException("Google API Client not connected yet...");
-        }
+        if(!client.isConnected() || pi == null) return false;
 
         listenerHashMap.put(name, geofenceListener);
 
@@ -135,14 +133,16 @@ public class GeofenceManager  {
 
         LocationServices.GeofencingApi.addGeofences(client, gfr, pi).setResultCallback(statusCallback);
 
-        return name;
+        return true;
     }
 
     /**
      * Remove every active geofence.
+     * @param restart If false, doesn't recreate the service.
+     * @return True if it worked.
      */
-    public void removeGeofences(boolean restart) {
-        if(pi == null) return;
+    public boolean removeGeofences(boolean restart) {
+        if(!client.isConnected() || pi == null) return false;
         LocationServices.GeofencingApi.removeGeofences(client, pi);
         pi.cancel();
         if(restart) {
@@ -151,14 +151,17 @@ public class GeofenceManager  {
         } else {
             pi = null;
         }
+        return true;
     }
 
     /**
      * @param names Remove all these geofences (by name).
+     * @return True if it worked.
      */
-    public void removeGeofences(String... names) {
-        if(pi == null) return;
+    public boolean removeGeofences(String... names) {
+        if(!client.isConnected() || pi == null) return false;
         LocationServices.GeofencingApi.removeGeofences(client, Arrays.asList(names));
+        return true;
     }
 
 }

@@ -16,9 +16,10 @@ import java.io.IOException;
  *
  * Created by zrneely on 4/5/15.
  */
-public class FileMockLocationProvider extends AbstractMockLocationProvider {
+public class FileMockLocationProvider extends MockLocationProvider {
 
     private final File file;
+    private FileObserver fo;
 
     /**
      * @param providerName The name of this provider (should be unique among mlps)
@@ -32,15 +33,21 @@ public class FileMockLocationProvider extends AbstractMockLocationProvider {
         this.file = file;
 
         if(autoUpdate) {
-            new FileObserver(file.getPath(),
-                    FileObserver.ATTRIB | FileObserver.MODIFY |
-                    FileObserver.CLOSE_WRITE | FileObserver.CLOSE_NOWRITE) {
+            fo = new FileObserver(file.getPath(),
+                    FileObserver.ATTRIB | FileObserver.MODIFY | FileObserver.CLOSE_WRITE) {
                 @Override
                 public void onEvent(final int event, final String path) {
                     update();
                 }
-            }.startWatching();
+            };
+            fo.startWatching();
         }
+    }
+
+    @Override
+    public void close() {
+        fo.stopWatching();
+        super.close();
     }
 
     @Override
