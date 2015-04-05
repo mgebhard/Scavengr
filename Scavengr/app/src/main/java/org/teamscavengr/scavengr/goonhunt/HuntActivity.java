@@ -29,9 +29,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.Task;
-
-import java.util.ArrayList;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -77,6 +74,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_hunt);
         if (getIntent().hasExtra("huntObject")) {
+
             hunt = (getIntent().getParcelableExtra("huntObject"));
 
             // Grab and set hunt title

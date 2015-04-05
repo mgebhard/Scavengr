@@ -44,6 +44,7 @@
         </activity>
         <activity
             android:name=".goonhunt.HuntActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:label="Go On a Hunt" >
         </activity>
 

@@ -38,7 +38,7 @@ public class NetworkHelper {
         conn.setConnectTimeout(10000);
         conn.setRequestMethod(type);
         conn.setDoOutput(output);
-        if(output)
+        if (output)
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoInput(true);
         //if (output)
@@ -57,8 +57,8 @@ public class NetworkHelper {
         OutputStream out = null;
         //if(output)
         //    out = conn.getOutputStream();
-        Log.d("EVER", "Output is " + output);
-        if(output) {
+        //Log.d("EVER", "Output is " + output);
+        if (output) {
             Log.d("EVER", "Sent request to server");
             Log.d("EVER", params.toString());
             DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
@@ -82,14 +82,19 @@ public class NetworkHelper {
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         StringBuilder sb = new StringBuilder();
         String line;
-        while((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null) {
             sb.append(line);
             sb.append("\n");
         }
 
         in.close();
-
-        return new JSONObject(sb.toString());
+        try {
+            Log.d("JSONObject", sb.toString());
+            return new JSONObject(sb.toString());
+        } catch (JSONException e) {
+            Log.d("JSONParseError", sb.toString());
+            return new JSONObject("{\"status\": \"okay\"}");
+        }
     }
 
     private static String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException {

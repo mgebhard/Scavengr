@@ -20,7 +20,10 @@ import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
+import org.teamscavengr.scavengr.mocklocation.FileMockLocationProvider;
 import org.teamscavengr.scavengr.mocklocation.MockLocationProvider;
+
+import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener,
@@ -39,6 +42,30 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         buildApiClient();
 
         manager = new GeofenceManager(this, googleApiClient);
+
+        fmlp = new FileMockLocationProvider("network", this,
+                new File("/storage/emulated/legacy/mocklocation.txt"), true);
+
+        /*((LocationManager) getSystemService(Context.LOCATION_SERVICE))
+                .requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
+
+            @Override
+            public void onLocationChanged(final Location location) {
+                Toast.makeText(MainActivity.this, "Location changed: " + location.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStatusChanged(final String provider, final int status,
+                                        final Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(final String provider) {}
+
+            @Override
+            public void onProviderDisabled(final String provider) {}
+        });*/
+
 
         // production build
         if((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {

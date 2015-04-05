@@ -24,7 +24,7 @@ public class Task implements Parcelable {
     private String clue;
     private String answer;
     private double radius; // in meters
-    private int taskNumber;
+    private int taskNumber; //starts 1
 
     public Task(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
@@ -97,8 +97,8 @@ public class Task implements Parcelable {
     }
 
     public void saveToServer(final URL baseUrl) throws IOException, JSONException {
-        URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
-        Map<String, String> requestMap = new HashMap<>();
+        URL url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
+        Map<String, String> requestMap = new HashMap<String, String>();
         requestMap.put("latitude", Double.toString(location.getLatitude()));
         requestMap.put("longitude", Double.toString(location.getLongitude()));
         requestMap.put("clue", clue);
