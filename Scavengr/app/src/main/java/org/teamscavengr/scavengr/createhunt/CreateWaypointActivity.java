@@ -1,5 +1,6 @@
 package org.teamscavengr.scavengr.createhunt;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -7,8 +8,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,7 +35,8 @@ import java.util.Set;
  * Created by hzhou1235 on 3/15/15.
  */
 public class CreateWaypointActivity extends ActionBarActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener,
+        View.OnTouchListener, SeekBar.OnSeekBarChangeListener{
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -41,6 +47,8 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     protected double currentLongitude = - 85.0102;
 
     public GoogleMap mapObject;
+
+    private InputMethodManager imm = null;
 
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
@@ -107,6 +115,8 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        View map = findViewById(R.id.map);
+        map.setOnTouchListener(this);
 
         buildGoogleApiClient();
     }
@@ -127,6 +137,44 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         return super.onOptionsItemSelected(item);
     }
 
+    /*public void onFocusChange(View view, boolean bool){
+        Log.d("HELEN", "ASDF");
+        switch(view.getId()){
+            case R.id.clue:
+                EditText clueText = (EditText) findViewById(R.id.clue);
+                Log.d("HELEN", "AFSL;SFAL;KSFDLJFSADJLKFASDL;FDSA");
+                imm = (InputMethodManager) view.getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(clueText.getWindowToken(), 0);
+            case R.id.answer:
+                EditText editText = (EditText) findViewById(R.id.clue);
+                Log.d("HELEN","AFSL;SFAL;KSFDLJFSADJLKFASDL;FDSA");
+                imm = (InputMethodManager) view.getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+    }*/
+
+    public boolean onTouch(View view, MotionEvent me){ //implement eventually
+        switch(view.getId()) {
+            case R.id.map:
+                Log.d("HELEN", "SHOULD PRINT THIS");
+                EditText cText = (EditText) findViewById(R.id.clue);
+                EditText aText = (EditText) findViewById(R.id.answer);
+                if (cText.requestFocus()){
+                    imm = (InputMethodManager) view.getContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(cText.getWindowToken(), 0);
+                }
+                if (aText.requestFocus()){
+                    imm = (InputMethodManager) view.getContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(aText.getWindowToken(), 0);
+                }
+        }
+        return true;
+    }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
@@ -137,10 +185,25 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
             case R.id.cancel:
                 this.finish();
                 break;
+
             default:
                 break;
         }
 
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { //progress max default is 100
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        int progress = seekBar.getProgress();
+    }
 }
