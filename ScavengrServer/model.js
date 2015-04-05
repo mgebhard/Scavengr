@@ -1,39 +1,66 @@
 
-Users = new Meteor.Collection("users", { idGeneration :'MONGO' });
+Statistics = new Meteor.Collection("statistics", {idGeneration : 'MONGO'});
+Statistics.allow({
+  insert: function(){
+    return true;
+  },
+  update: function () {
+    return true;
+  },
+  remove: function(){
+    return true;
+  }
+});
+
+
+Posts = new Meteor.Collection("posts", {idGeneration : 'MONGO'});
+Posts.allow({
+  insert: function(){
+    return true;
+  },
+  update: function () {
+    return true;
+  },
+  remove: function(){
+    return true;
+  }
+});
+
+Users = new Meteor.Collection("users", {idGeneration: 'MONGO'});
 Users.allow({
-  insert: function(){
+  insert: function() {
     return true;
   },
-  update: function () {
+  update: function() {
     return true;
   },
-  remove: function(){
+  remove: function() {
     return true;
   }
 });
 
-Hunts = new Meteor.Collection("hunts", { idGeneration: 'MONGO' })
+Hunts = new Meteor.Collection("hunts", {idGeneration: 'MONGO'});
 Hunts.allow({
-  insert: function(){
+  insert: function() {
     return true;
   },
-  update: function () {
+  update: function() {
     return true;
   },
-  remove: function(){
+  remove: function() {
     return true;
   }
 });
 
-Reviews = new Meteor.Collection("reviews", { idGeneration: 'MONGO' })
+Reviews = new Meteor.Collection("reviews", {idGeneration: 'MONGO'});
 Reviews.allow({
-  insert: function(){
+  insert: function() {
     return true;
   },
-  update: function () {
+  update: function() {
     return true;
   },
-  remove: function(){
+  remove: function() {
     return true;
   }
 });
