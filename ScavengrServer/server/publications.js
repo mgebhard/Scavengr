@@ -80,31 +80,25 @@ Meteor.startup(function(){
 
   if(Hunts.find().count() == 0) {
       Hunts.insert({
-          name: "Boston Hunt 1",
-          description: "This is totally not a Boston Hunt",
+          name: "MIT Hunt!",
+          description: "wow such mit very amaze",
           estimatedTime: "100",
-          estimatedTimeUnit: "YEARS",
+          estimatedTimeUnit: "DAYS",
+          creatorId: "SOMEUSERID",
           reviews: [
             { "_id" : new Meteor.Collection.ObjectID() },
             { "_id" : new Meteor.Collection.ObjectID() },
             { "_id" : new Meteor.Collection.ObjectID() }
           ],
+          timeCreated: 1428262288,
           tasks: [
               {
                   _id: new Meteor.Collection.ObjectID(),
-                  latitude: 10,
-                  longitude: 10,
-                  clue: "Go to Nigeria",
-                  answer: "Its Nigeria"
-                  radius: 1000.0,
-              },
-              {
-                  _id: new Meteor.Collection.ObjectID(),
-                  latitude: 10,
-                  longitude: 11,
-                  text: "Go to Somewhere Else",
-                  answer: "Its not Nigeria"
-                  radius: 1000.0,
+                  latitude: 42.358801,
+                  longitude: -71.094635,
+                  clue: "Where MIT students get cheap food",
+                  answer: "The STUD",
+                  radius: 100.0,
               },
           ],
       });
