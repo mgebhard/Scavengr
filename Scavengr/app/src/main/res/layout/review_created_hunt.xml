@@ -4,14 +4,28 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <ListView
+    <EditText
+        android:id="@+id/huntName"
+        android:inputType="text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listView2"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="wrap_content"
+        android:hint="name"
+        android:layout_below="@+id/huntDescription"
+        android:layout_alignLeft="@+id/huntDescription"
+        android:layout_alignStart="@+id/huntDescription" />
+
+    <EditText
+        android:id="@+id/huntDescription"
+        android:inputType="textMultiLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:hint="description"/>
+
 
     <Button
         android:layout_width="wrap_content"
@@ -25,6 +39,37 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="30dp"
         android:layout_marginBottom="30dp" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignLeft="@+id/finish"
+        android:layout_alignStart="@+id/finish"
+        android:layout_alignRight="@+id/add_waypoint"
+        android:layout_alignEnd="@+id/add_waypoint"
+        android:layout_marginTop="450dp"
+        android:background="#c8ffffff"
+        android:backgroundTint="#ffffffff"
+        android:layout_above="@+id/add_waypoint">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:inputType="time"
+            android:onClick="onClick"
+            android:ems="10"
+            android:id="@+id/estimated_time"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:autoText="false"
+            android:layout_above="@+id/add_waypoint"
+            android:layout_centerHorizontal="true"
+            android:hint="Estimated time (hr:min)"
+            android:layout_gravity="center_horizontal|bottom" />
+    </FrameLayout>
+
 
     <Button
         android:layout_width="wrap_content"

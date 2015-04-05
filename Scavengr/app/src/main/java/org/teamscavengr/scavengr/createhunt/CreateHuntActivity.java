@@ -48,8 +48,6 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     public Location mLastLocation;
     public GoogleMap mapObject;
 
-    private int hour, minute;
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -75,8 +73,8 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_create_hunt);
+
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -163,22 +161,7 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
                 this.startActivity(createTask);
                 break;
 
-            case R.id.estimated_time:
-                EditText t = (EditText)view;
-                TimePickerDialog timePickerDialog = new TimePickerDialog(CreateHuntActivity.this,
-                        new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(final TimePicker view, final int hourOfDay,
-                                                  final int minute) {
-                                CreateHuntActivity.this.hour = hourOfDay;
-                                CreateHuntActivity.this.minute = minute;
-                                ((EditText) findViewById(R.id.estimated_time)).setText(hourOfDay +
-                                        ":" + String.format("%02d", minute));
-                            }
-                        }, 0, 0, true);
-                timePickerDialog.setTitle("Enter estimated length");
-                timePickerDialog.show();
-                currentHunt.setEstimatedTime(hour * 60L + minute, TimeUnit.MINUTES);
+
             default:
                 break;
         }
