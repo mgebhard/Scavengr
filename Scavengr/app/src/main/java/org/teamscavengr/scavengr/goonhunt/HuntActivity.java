@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -48,6 +50,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected LatLng centroid;
     protected Double boundingRadius;
     protected Circle circle;
+    protected double distanceFromCentroid;
+    protected LocationManager lm;
+
+    protected Task currentTask;
+    protected int currentTaskNumber = 0;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
@@ -84,6 +91,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (getIntent().hasExtra("huntObject")) {
 
             hunt = (getIntent().getParcelableExtra("huntObject"));
+            currentTask = hunt.getTasks().get(currentTaskNumber);
 
             // Grab and set hunt title
 
@@ -104,7 +112,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
         } */
 
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
@@ -126,14 +134,18 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
         centroid = geoFence.first;
         boundingRadius = geoFence.second;
+        Log.d("MEGAN", "BOUNDING RADIUS: " + boundingRadius);
 
-        double distanceFromCentroid = CalcLib.distanceFromLatLng(
+
+        distanceFromCentroid = CalcLib.distanceFromLatLng(
                  new LatLng(currentLatitude, currentLongitude), centroid);
 
         if (distanceFromCentroid > boundingRadius) {
+            Log.d("MEGAN", "YEAH inside hunt boundaries");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new StartHuntFragment()).commit();
         } else {
+            Log.d("MEGAN", "Not inside hunt boundaries");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new TaskFragment()).commit();
         }
@@ -209,17 +221,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap map) {;
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 20));
-        map.addMarker(new MarkerOptions()
-                .title(hunt.getName())
-                .snippet(hunt.getDescription())
-                .position(centroid));
+        // Based on stack overflow post
+        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
+        int zoomLevel =(int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
 
         circle = map.addCircle(new CircleOptions()
                 .center(centroid)
-                .radius(100)
+                .radius(boundingRadius * 1.05)
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
+
     }
 
     @Override
@@ -242,6 +254,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(final ConnectionResult connectionResult) {
 
     }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.get_photo_recap:
@@ -254,6 +267,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.next_task:
                 tasksCompleted += 1;
                 loadTask();
+//                completedTask();
                 break;
             case R.id.camera:
                 // Run a camera intent
@@ -261,9 +275,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityForResult(intent, 420);
                 break;
             case R.id.get_hint:
-                // Call method with two geo points to get the distance between them then add toast
-                completedTask();
+                double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
+                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER),
+                        currentTask.getLocation());
+                Toast toast = Toast.makeText(this,
+                        "You are " + distanceFromAnswerInMeters +
+                        " meters away from finding the waypoint",
+                        Toast.LENGTH_LONG);
+                toast.show();
+
                 break;
+
             default:
                 break;
         }
