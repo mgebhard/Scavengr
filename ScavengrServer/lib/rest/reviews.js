@@ -47,10 +47,12 @@ Router.route('/reviews/:reviewId', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(Reviews.findOne({ _id: new Meteor.Collection.ObjectID(this.params.reviewId) })));
     } else if(this.request.method == 'PUT') {
-        this.response.end(JSON.stringify(Reviews.update({ _id: new Meteor.Collection.ObjectID(this.params.reviewId) },
-                { $set: this.request.body })));
+        Reviews.update({ _id: new Meteor.Collection.ObjectID(this.params.reviewId) },
+                { $set: this.request.body });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(Reviews.remove({ _id: new Meteor.Collection.ObjectID(this.params.reviewId) })));
+        Reviews.remove({ _id: new Meteor.Collection.ObjectID(this.params.reviewId) });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "PUT, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");
