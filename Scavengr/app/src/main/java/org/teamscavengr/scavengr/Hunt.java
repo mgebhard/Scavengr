@@ -226,12 +226,16 @@ public class Hunt implements Parcelable, Serializable {
                 Log.d("ID_ID", id);
             }
 
+            // Make an empty review array.
+            url = new URL("http//scavenger.meteor.com/hunts/" + id + "/reviews");
+            NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
+
             // Save the tasks
             url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
             Log.d("URL",url.toString());
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
-                t.saveToServer(url);
+                t.saveToServer(url, id);
 
             }
 

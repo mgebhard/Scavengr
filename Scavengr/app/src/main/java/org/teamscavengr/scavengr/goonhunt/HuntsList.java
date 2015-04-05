@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;

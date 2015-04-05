@@ -218,7 +218,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     }
 
-    @Override
+   @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { //progress max default is 100
         Log.d("HELEN", "CHANGED PROGRESS");
         circle.setRadius(maxRadius * (progress/100.0) * (progress/100.0) + 10.0);
