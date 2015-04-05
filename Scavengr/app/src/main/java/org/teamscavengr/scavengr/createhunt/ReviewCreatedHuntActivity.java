@@ -1,15 +1,11 @@
 package org.teamscavengr.scavengr.createhunt;
 
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -17,11 +13,9 @@ import android.widget.TimePicker;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  *
  * Created by hzhou1235 on 3/15/15.
  */
-public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClickListener {
+public class ReviewCreatedHuntActivity extends ActionBarActivity implements View.OnClickListener {
     Hunt currentHunt;
     private int hour, minute;
 
@@ -85,8 +79,8 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
                     }
                 }).start();
 
-                Intent myHunts = new Intent(ReviewCreatedHunt.this, MyHuntsActivity.class);
-                ReviewCreatedHunt.this.startActivity(myHunts);
+                Intent myHunts = new Intent(ReviewCreatedHuntActivity.this, MyHuntsActivity.class);
+                ReviewCreatedHuntActivity.this.startActivity(myHunts);
                 break;
 
             case R.id.back:
@@ -95,13 +89,13 @@ public class ReviewCreatedHunt extends ActionBarActivity implements View.OnClick
 
             case R.id.estimated_time:
                 EditText t = (EditText)view;
-                TimePickerDialog timePickerDialog = new TimePickerDialog(ReviewCreatedHunt.this,
+                TimePickerDialog timePickerDialog = new TimePickerDialog(ReviewCreatedHuntActivity.this,
                         new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(final TimePicker view, final int hourOfDay,
                                                   final int minute) {
-                                ReviewCreatedHunt.this.hour = hourOfDay;
-                                ReviewCreatedHunt.this.minute = minute;
+                                ReviewCreatedHuntActivity.this.hour = hourOfDay;
+                                ReviewCreatedHuntActivity.this.minute = minute;
                                 ((EditText) findViewById(R.id.estimated_time)).setText(hourOfDay +
                                         ":" + String.format("%02d", minute));
                             }

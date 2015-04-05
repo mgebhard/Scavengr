@@ -1,7 +1,6 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,9 +25,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.Task;
-
-import java.util.List;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -232,7 +227,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.get_photo_recap:
-                Intent photoRecap = new Intent(this, HuntRecap.class);
+                Intent photoRecap = new Intent(this, HuntRecapActivity.class);
                 this.startActivity(photoRecap);
                 break;
             case R.id.begin_hunt:

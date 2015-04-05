@@ -36,4 +36,14 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Geofence!"
+        android:id="@+id/geofenceButton"
+        android:layout_below="@+id/textView"
+        android:onClick="onClick"
+        android:layout_toLeftOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageView"/>
+
 </RelativeLayout>

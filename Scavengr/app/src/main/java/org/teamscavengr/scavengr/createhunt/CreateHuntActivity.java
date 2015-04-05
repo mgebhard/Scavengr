@@ -1,7 +1,6 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -13,8 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,8 +28,6 @@ import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
-
-import java.util.concurrent.TimeUnit;
 
 
 public class CreateHuntActivity extends ActionBarActivity implements OnMapReadyCallback,
@@ -158,7 +153,7 @@ public class CreateHuntActivity extends ActionBarActivity implements OnMapReadyC
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.finish:
-                Intent reviewCreated = new Intent(this, ReviewCreatedHunt.class);
+                Intent reviewCreated = new Intent(this, ReviewCreatedHuntActivity.class);
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
                 reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
                         Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));

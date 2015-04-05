@@ -10,7 +10,7 @@
 
 
 
-Router.route('/login/:loginToken/users', function(){
+Router.route('/login/:loginToken/posts', function(){
   // console.log('################################################');
   // console.log(this.request.method);
   // console.log(this.request.headers);
@@ -67,7 +67,7 @@ Router.route('/login/:loginToken/users', function(){
 }, {where: 'server'});
 
 
-Router.route('/login/:loginToken/users/:userId', function(){
+Router.route('/login/:loginToken/posts/:postId', function(){
   // console.log('################################################');
   // console.log(this.request.method);
   // console.log(this.request.headers);

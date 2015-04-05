@@ -1,22 +1,66 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
+public class MainActivity extends ActionBarActivity implements View.OnClickListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        ResultCallback<Status> {
+
+    private GoogleApiClient googleApiClient;
+    private GeofenceManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        buildApiClient();
+
+        manager = new GeofenceManager(this, googleApiClient);
+    }
+
+    private synchronized void buildApiClient() {
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        manager.removeGeofences();
     }
 
     @Override
@@ -70,9 +114,51 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(createHuntIntent);
                 break;
+            case R.id.geofenceButton:
+                if(!googleApiClient.isConnected()) {
+                    Toast.makeText(this, "client not connected", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                Location l = new Location("");
+                l.setLatitude(42.358801d); // The coords of the stud
+                l.setLongitude(-71.094635d);
+                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
+                        new GeofenceManager.GeofenceListener() {
+                            @Override
+                            public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
+                                Toast.makeText(MainActivity.this,
+                                        event.geofenceId + ": " + ((event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) ? "entered" : "exited"),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
             default:
                 break;
         }
 
+    }
+
+    @Override
+    public void onConnected(final Bundle bundle) {
+        Toast.makeText(this, "gapi client connected", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onConnectionSuspended(final int i) {
+        // Reconnect?
+        googleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(final ConnectionResult connectionResult) {
+        Toast.makeText(this, "gapi client connection failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResult(final Status status) {
+        if(status.isSuccess()) {
+            Toast.makeText(this, "W00T", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Awwww... :(", Toast.LENGTH_SHORT).show();
+        }
     }
 }
