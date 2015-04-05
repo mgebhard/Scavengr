@@ -110,12 +110,11 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void huntFailedToLoad(Exception e) {
-<<<<<<< HEAD
+
                        Context context = getApplicationContext();
                        Context context = getApplicationContext();
                        CharSequence text = "Failed to load a hunt";
-=======
->>>>>>> 55ade6a2389636274989763033c7bddfc244585f
+
                        int duration = Toast.LENGTH_SHORT;
                        Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }

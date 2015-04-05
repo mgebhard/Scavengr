@@ -231,6 +231,7 @@ public class Hunt implements Parcelable, Serializable {
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
                 t.saveToServer(url);
+
             }
 
         } catch(MalformedURLException ex) {
