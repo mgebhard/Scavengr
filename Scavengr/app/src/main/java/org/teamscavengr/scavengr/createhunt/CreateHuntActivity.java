@@ -1,7 +1,6 @@
 package org.teamscavengr.scavengr.createhunt;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -12,8 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TimePicker;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,8 +27,6 @@ import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
-
-import java.util.concurrent.TimeUnit;
 
 
 public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
