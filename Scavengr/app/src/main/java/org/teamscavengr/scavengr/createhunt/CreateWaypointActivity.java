@@ -87,7 +87,6 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         Log.d("MEGAN", "onConnected getting called");
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

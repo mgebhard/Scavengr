@@ -25,7 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -43,6 +45,26 @@ public class CreateHuntActivity extends Activity implements OnMapReadyCallback,
 
     public Location mLastLocation;
     public GoogleMap mapObject;
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putParcelableArrayList("allTasksList",
+                new ArrayList<Task>(tasksForCurrentHunt));
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        List<Task> allTasks = savedInstanceState.getParcelableArrayList("allTasksList");
+        tasksForCurrentHunt = new HashSet<Task>(allTasks);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
