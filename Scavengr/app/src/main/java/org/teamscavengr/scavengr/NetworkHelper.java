@@ -60,12 +60,12 @@ public class NetworkHelper {
         Log.d("EVER", "Output is " + output);
         if(output) {
             Log.d("EVER", "Sent request to server");
-            Log.d("EVER", URLEncoder.encode(params.toString(), "UTF-8"));
+            Log.d("EVER", params.toString());
             DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
 
             //String encoded = URLEncoder.encode(jsonParams.toString(),"UTF-8");
 
-            printout.writeBytes(URLEncoder.encode(getQuery(params), "UTF-8"));
+            printout.writeBytes(getQuery(params));
 
             printout.flush();
             printout.close();
