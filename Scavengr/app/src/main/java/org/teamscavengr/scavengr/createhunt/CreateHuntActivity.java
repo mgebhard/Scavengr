@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr.createhunt;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
