@@ -369,10 +369,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.next_task:
                 tasksCompleted += 1;
                 currentTaskNumber +=1;
-                currentTask = hunt.getTasks().get(tasksCompleted);
                 if (tasksCompleted >= hunt.getTasks().size()){
                     finishedPuzzle();
                 } else {
+                    currentTask = hunt.getTasks().get(tasksCompleted);
                     loadTask(tasksCompleted);
                 }
                 break;
