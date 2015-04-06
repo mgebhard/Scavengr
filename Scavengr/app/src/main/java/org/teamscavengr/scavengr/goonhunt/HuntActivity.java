@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -51,10 +52,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
 
-    protected TextView mLatitudeText;
-    protected TextView mLongitudeText;
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
+    private Location mLastLocation;
 
     public final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
     public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
@@ -69,8 +69,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected Task currentTask;
     protected int currentTaskNumber = 0;
 
-    public Location mLastLocation;
-    public GoogleMap mapObject;
+    private GoogleMap mapObject;
 
     protected Hunt hunt;
     private int tasksCompleted = 0;
@@ -194,11 +193,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Criteria cr = new Criteria();
         lm.requestLocationUpdates(
-                lm.getBestProvider(cr, true),
+                "network",
                 REQUEST_LOCATION_UPDATE_TIMER,
                 REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
-                this,
-                getMainLooper());
+                this);
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
@@ -243,18 +241,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
         Log.d("MEGAN", "Location changed to: " + location);
+        mLastLocation = location;
         distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
 
         if (distanceFromAnswer < currentTask.getRadius()) {
             Log.d("MEGAN", "FOUND WAYPOINT");
             loadCompletedTask(currentTaskNumber);
         }
+        
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
         //mapObject.setMyLocationEnabled(true);
 
 
-        // TODO(Gebhard): Update the map to move camera with your location
+        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
+                location.getLongitude()), 13));
+
     }
 
     @Override
@@ -352,8 +354,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch(view.getId()) {
             case R.id.get_photo_recap:
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
+                photoRecap.putExtra("huntObject", (Parcelable)hunt);
                 this.startActivity(photoRecap);
                 break;
+
             case R.id.begin_hunt:
                 if (tasksCompleted >= hunt.getTasks().size()){
                     finishedPuzzle();
@@ -361,6 +365,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     loadTask(tasksCompleted);
                 }
                 break;
+
             case R.id.next_task:
                 tasksCompleted += 1;
                 if (tasksCompleted >= hunt.getTasks().size()){
@@ -369,22 +374,31 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     loadTask(tasksCompleted);
                 }
                 break;
+
             case R.id.camera:
                 // Run a camera intent
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent, 420);
                 break;
+
             case R.id.get_hint:
+                String hintText = "";
                 // Call method with two geo points to get the distance between them then add toast
-                double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
-                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER),
-                        currentTask.getLocation());
+                if (mLastLocation != null) {
+                    double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
+                            mLastLocation,
+                            currentTask.getLocation());
+                    hintText = String.format("You are %.2f meters away from finding the waypoint",
+                            distanceFromAnswerInMeters);
+                } else {
+                    hintText = "Sorry your location dropped.";
+                }
                 Toast toast = Toast.makeText(this,
-                        "You are " + distanceFromAnswerInMeters +
-                                " meters away from finding the waypoint",
+                        hintText,
                         Toast.LENGTH_LONG);
                 toast.show();
                 break;
+
             case R.id.found_it:
                 loadCompletedTask(tasksCompleted); //TODO: shift over to options menu stuff for MVP, geofencing for actual
 
@@ -452,10 +466,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnected(Bundle connectionHint) {
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-        }
 
     }
 
