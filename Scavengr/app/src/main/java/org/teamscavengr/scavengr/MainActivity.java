@@ -19,6 +19,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.goonhunt.HuntActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
@@ -40,6 +41,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         manager = new GeofenceManager(this, googleApiClient);
 
         BaseActivity.dmlp = new DirectMockLocationProvider("network", this);
+        //HuntActivity.dmlp = BaseActivity.dmlp;
 
         /*((LocationManager) getSystemService(Context.LOCATION_SERVICE))
                 .requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
@@ -66,13 +68,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             public void onLocationChanged(final Location location) {
                 Toast.makeText(MainActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
             }
+
             @Override
             public void onStatusChanged(final String provider, final int status,
-                                        final Bundle extras) {}
+                                        final Bundle extras) {
+            }
+
             @Override
-            public void onProviderEnabled(final String provider) {}
+            public void onProviderEnabled(final String provider) {
+            }
+
             @Override
-            public void onProviderDisabled(final String provider) {}
+            public void onProviderDisabled(final String provider) {
+            }
         });
 
 
