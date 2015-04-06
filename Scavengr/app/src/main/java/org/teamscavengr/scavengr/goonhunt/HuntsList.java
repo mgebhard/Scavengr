@@ -108,9 +108,11 @@ public class HuntsList extends ListActivity {
 
                        //Context context = getApplicationContext();
                        //Context context = getApplicationContext();
-                       CharSequence text = "Failed to load a hunt";
 
+                       CharSequence text = "Failed to load a hunt";
                        int duration = Toast.LENGTH_SHORT;
+                       Toast.makeText(HuntsList.this, text, duration).show();
+                       Log.d("JSONError", e.toString());
                        Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);

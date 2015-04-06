@@ -4,7 +4,9 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -16,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,11 +35,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener, LocationListener {
 
     protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
 
@@ -45,9 +49,18 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected double currentLatitude = 43.6867;
     protected double currentLongitude = -85.0102;
 
+    public final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
+
     protected LatLng centroid;
     protected Double boundingRadius;
     protected Circle circle;
+    protected double distanceFromCentroid;
+    protected double distanceFromAnswer;
+    protected LocationManager lm;
+
+    protected Task currentTask;
+    protected int currentTaskNumber = 0;
 
     public Location mLastLocation;
     public GoogleMap mapObject;
@@ -84,6 +97,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (getIntent().hasExtra("huntObject")) {
 
             hunt = (getIntent().getParcelableExtra("huntObject"));
+            currentTask = hunt.getTasks().get(currentTaskNumber);
 
             // Grab and set hunt title
 
@@ -104,8 +118,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
         } */
 
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Criteria cr = new Criteria();
+        lm.requestLocationUpdates(
+                lm.getBestProvider(cr, true),
+                REQUEST_LOCATION_UPDATE_TIMER,
+                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
+                this,
+                getMainLooper());
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
@@ -126,19 +146,51 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
         centroid = geoFence.first;
         boundingRadius = geoFence.second;
+        Log.d("MEGAN", "BOUNDING RADIUS: " + boundingRadius);
 
-        double distanceFromCentroid = CalcLib.distanceFromLatLng(
+
+        distanceFromCentroid = CalcLib.distanceFromLatLng(
                  new LatLng(currentLatitude, currentLongitude), centroid);
 
         if (distanceFromCentroid > boundingRadius) {
+            Log.d("MEGAN", "YEAH inside hunt boundaries");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new StartHuntFragment()).commit();
         } else {
+            Log.d("MEGAN", "Not inside hunt boundaries");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new TaskFragment()).commit();
         }
 
         buildGoogleApiClient();
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("MEGAN", "Location changed to: " + location);
+        distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+
+        if (distanceFromAnswer < currentTask.getRadius()) {
+            Log.d("MEGAN", "FOUND WAYPOINT");
+            completedTask();
+        }
+
+        // TODO(Gebhard): Update the map to move camera with your location
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
 
     }
 
@@ -173,8 +225,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void completedTask(){
         CompletedTaskFragment newFragment = new CompletedTaskFragment();
         Bundle args = new Bundle();
-//        args.putInt(TaskFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+        args.putParcelable("task", currentTask);
+        newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -185,13 +237,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
+
+        // Advance task if no more task show winner stage
+        currentTaskNumber ++;
+        if (currentTaskNumber < hunt.getNumberOfTasks()) {
+            currentTask = hunt.getTasks().get(currentTaskNumber);
+        } else {
+            finishedPuzzle();
+        }
+
     }
 
     public void finishedPuzzle(){
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();
-//        args.putInt(TaskFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
+        args.putParcelable("hunt", hunt);
+        newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -204,22 +265,21 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         transaction.commit();
     }
 
-
     @Override
     public void onMapReady(GoogleMap map) {;
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 20));
-        map.addMarker(new MarkerOptions()
-                .title(hunt.getName())
-                .snippet(hunt.getDescription())
-                .position(centroid));
+        // Based on stack overflow post
+        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
+        int zoomLevel =(int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
 
         circle = map.addCircle(new CircleOptions()
                 .center(centroid)
-                .radius(100)
+                .radius(boundingRadius * 1.05)
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
+
     }
 
     @Override
@@ -242,6 +302,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onConnectionFailed(final ConnectionResult connectionResult) {
 
     }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.get_photo_recap:
@@ -254,6 +315,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.next_task:
                 tasksCompleted += 1;
                 loadTask();
+//                completedTask();
                 break;
             case R.id.camera:
                 // Run a camera intent
@@ -261,9 +323,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivityForResult(intent, 420);
                 break;
             case R.id.get_hint:
-                // Call method with two geo points to get the distance between them then add toast
-                completedTask();
+                double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
+                        lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER),
+                        currentTask.getLocation());
+                Toast toast = Toast.makeText(this,
+                        "You are " + distanceFromAnswerInMeters +
+                        " meters away from finding the waypoint",
+                        Toast.LENGTH_LONG);
+                toast.show();
+
                 break;
+
             default:
                 break;
         }

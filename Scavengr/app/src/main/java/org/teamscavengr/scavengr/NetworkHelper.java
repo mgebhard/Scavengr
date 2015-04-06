@@ -91,7 +91,7 @@ public class NetworkHelper {
             return new JSONObject(sb.toString());
         } catch (JSONException e) {
             Log.d("JSONParseError", sb.toString());
-            return new JSONObject("{\"status\": \"okay\"}");
+            return new JSONObject();
         }
     }
 
