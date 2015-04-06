@@ -260,7 +260,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
             loadCompletedTask(currentTaskNumber);
         }
-        
+
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
         //mapObject.setMyLocationEnabled(true);
