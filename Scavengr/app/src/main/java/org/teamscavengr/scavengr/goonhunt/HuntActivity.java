@@ -244,7 +244,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
 
         if (distanceFromAnswer < currentTask.getRadius()) {
-            Log.d("MEGAN", "FOUND WAYPOINT");
+            Toast toast = Toast.makeText(this,
+                    "FOUND WAYPOINT",
+                    Toast.LENGTH_LONG);
+
+            toast.show();
             loadCompletedTask(currentTaskNumber);
         }
 
@@ -298,6 +302,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         transaction.commit();
 
         Log.d("HELEN", "LOADING TASK");
+        Toast toast = Toast.makeText(this,
+                "LOADING TASK",
+                Toast.LENGTH_LONG);
+        toast.show();
 
         /*TextView taskText = (TextView) newFragment.getView().findViewById(R.id.taskText);
         TextView progressText= (TextView) newFragment.getView().findViewById(R.id.progressText);
@@ -307,6 +315,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadCompletedTask(int taskNum){
+        Toast toast = Toast.makeText(this,
+                "LOADING COMPLETED TASK",
+                Toast.LENGTH_LONG);
+        toast.show();
         CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
         Bundle args = new Bundle();
         args.putParcelable("task", currentTask);
