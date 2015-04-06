@@ -468,7 +468,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
-                loadTask(tasksCompleted);
+                //loadTask(tasksCompleted);
                 /*if (tasksCompleted >= hunt.getTasks().size()){ //TODO
                     finishedPuzzle();
                 } else {
