@@ -1,13 +1,13 @@
 package org.teamscavengr.scavengr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,19 +20,15 @@ import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
-import org.teamscavengr.scavengr.mocklocation.FileMockLocationProvider;
-import org.teamscavengr.scavengr.mocklocation.MockLocationProvider;
-
-import java.io.File;
+import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener,
+public class MainActivity extends BaseActivity implements View.OnClickListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<Status> {
 
     private GoogleApiClient googleApiClient;
     private GeofenceManager manager;
-    private MockLocationProvider fmlp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +39,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
         manager = new GeofenceManager(this, googleApiClient);
 
-        fmlp = new FileMockLocationProvider("network", this,
-                new File("/storage/emulated/legacy/mocklocation.txt"), true);
+        BaseActivity.dmlp = new DirectMockLocationProvider("network", this);
 
         /*((LocationManager) getSystemService(Context.LOCATION_SERVICE))
                 .requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
@@ -65,6 +60,20 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onProviderDisabled(final String provider) {}
         });*/
+
+        ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
+            @Override
+            public void onLocationChanged(final Location location) {
+                Toast.makeText(MainActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onStatusChanged(final String provider, final int status,
+                                        final Bundle extras) {}
+            @Override
+            public void onProviderEnabled(final String provider) {}
+            @Override
+            public void onProviderDisabled(final String provider) {}
+        });
 
 
         // production build
@@ -99,31 +108,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(fmlp != null)
-            fmlp.close();
+        if(dmlp != null)
+            dmlp.close();
         manager.removeGeofences();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View view) {
