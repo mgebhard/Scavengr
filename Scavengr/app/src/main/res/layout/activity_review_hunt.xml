@@ -13,7 +13,7 @@
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ratingBar2"
+        android:id="@+id/reviewRatingBar"
         android:layout_marginBottom="196dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -23,10 +23,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Comments:"
-        android:id="@+id/textView6"
-        android:layout_alignTop="@+id/ratingBar2"
-        android:layout_alignLeft="@+id/ratingBar2"
-        android:layout_alignStart="@+id/ratingBar2"
+        android:id="@+id/reviewComments"
+        android:layout_alignTop="@+id/reviewRatingBar"
+        android:layout_alignLeft="@+id/reviewRatingBar"
+        android:layout_alignStart="@+id/reviewRatingBar"
         android:layout_marginTop="77dp" />
 
     <EditText
@@ -35,9 +35,9 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/editText"
-        android:layout_below="@+id/textView6"
-        android:layout_alignLeft="@+id/textView6"
-        android:layout_alignStart="@+id/textView6"
+        android:layout_below="@+id/reviewComments"
+        android:layout_alignLeft="@+id/reviewComments"
+        android:layout_alignStart="@+id/reviewComments"
         android:layout_alignRight="@+id/submit_review"
         android:layout_alignEnd="@+id/submit_review" />
 
