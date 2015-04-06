@@ -173,7 +173,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (distanceFromAnswer < currentTask.getRadius()) {
             Log.d("MEGAN", "FOUND WAYPOINT");
-            completedTask();
+            loadCompletedTask(currentTaskNumber);
         }
 
         // TODO(Gebhard): Update the map to move camera with your location
@@ -222,8 +222,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         transaction.commit();
     }
 
-    public void completedTask(){
-        CompletedTaskFragment newFragment = new CompletedTaskFragment();
+    public void loadCompletedTask(int taskNum){
+        CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
         Bundle args = new Bundle();
         args.putParcelable("task", currentTask);
         newFragment.setArguments(args);
