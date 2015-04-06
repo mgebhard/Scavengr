@@ -260,7 +260,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {;
+    public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
         // Based on stack overflow post
