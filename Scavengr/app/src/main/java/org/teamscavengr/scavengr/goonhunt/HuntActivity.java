@@ -203,6 +203,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
             currentLongitude = mLastLocation.getLongitude();
+            mLastLocation.setAccuracy(1);
             Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
         }
 
@@ -250,7 +251,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
-        mapObject.setMyLocationEnabled(true);
+        //mapObject.setMyLocationEnabled(true);
 
 
         // TODO(Gebhard): Update the map to move camera with your location
