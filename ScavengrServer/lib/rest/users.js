@@ -45,10 +45,12 @@ Router.route('/users/:userId', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(Users.findOne({ _id: new Meteor.Collection.ObjectID(this.params.userId) })));
     } else if(this.request.method == 'PUT') {
-        this.response.end(JSON.stringify(Users.update({ _id: new Meteor.Collection.ObjectID(this.params.userId) },
-                { $set: this.request.body })));
+        Users.update({ _id: new Meteor.Collection.ObjectID(this.params.userId) },
+                { $set: this.request.body });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'DELETE') {
-        this.response.end(JSON.stringify(Users.remove({ _id: new Meteor.Collection.ObjectID(this.params.userId) })));
+        Users.remove({ _id: new Meteor.Collection.ObjectID(this.params.userId) });
+        this.response.end(JSON.stringify({}));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "PUT, GET, DELETE, OPTIONS");
         this.response.end("OPTIONS Response");

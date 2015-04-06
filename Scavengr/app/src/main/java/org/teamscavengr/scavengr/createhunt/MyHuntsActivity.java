@@ -37,7 +37,7 @@ public class MyHuntsActivity extends ListActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("listview", "\n\n\nCreating list view\n\n\n");
-        super.onCreate(savedInstanceState);
+        //super.onCreate(savedInstanceState);
 
         // Create a progress bar to display while the list loads
         ProgressBar progressBar = new ProgressBar(this);
@@ -51,10 +51,72 @@ public class MyHuntsActivity extends ListActivity implements
         root.addView(progressBar);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.custom_list_activity_view);
+        //setContentView(R.layout.custom_list_activity_view);
 
-        ArrayList<Hunt> hunts = new ArrayList<Hunt>();
+        //ArrayList<Hunt> hunts = new ArrayList<Hunt>();
+        //huntsExtended.add("+ CREATE NEW HUNT");
+        /*Hunt.loadAllHuntsInBackground(
+                new Hunt.HuntLoadedCallback() {
+
+                    @Override
+                    public void numHuntsFound(int num) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "Loading " + num + " hunts...";
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                    }
+
+                    @Override
+                    public void huntLoaded(Hunt hunt) {
+                        mHuntNames.add(hunt.getName());
+                        huntsExtended.add(hunt.getName());
+                        mHuntsObj.add(hunt);
+                        mAdapter.notifyDataSetChanged();
+                        Log.d("HELEN", "LOADED");
+
+                    }
+
+                    @Override
+                    public void huntFailedToLoad(Exception e) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "Failed to load a hunt";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                    }
+                }, true);*/
+
+        //int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
+
+        // Create an empty adapter we will use to display the loaded data.
+        // We pass null for the cursor, then update it in onLoadFinished()
+
+        /*mAdapter = new ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, huntsExtended);
+        setListAdapter(mAdapter);*/
+//
+//        String[] values = new String[] {"+ CREATE NEW HUNT", "My First Hunt", "My Second Hunt", "My Third Hunt",
+//                "BlahBlah", "BlahBlahBlah", "asdf", "jkl;", "anothername",
+//                "anothername2"};
+//
+//
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+//                android.R.layout.simple_list_item_1, values);
+//        setListAdapter(adapter);
+
+        getActionBar().setIcon(R.drawable.scavengr_logo);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mHuntsObj = new ArrayList<Hunt>();
+        mHuntNames = new ArrayList<String>();
+        huntsExtended = new ArrayList<String>();
+
         huntsExtended.add("+ CREATE NEW HUNT");
+        setContentView(R.layout.custom_list_activity_view);
         Hunt.loadAllHuntsInBackground(
                 new Hunt.HuntLoadedCallback() {
 
@@ -87,25 +149,15 @@ public class MyHuntsActivity extends ListActivity implements
                     }
                 }, true);
 
-        int[] toViews = {R.id.hunt_icon, R.id.hunt_label}; // The TextView in simple_list_item_1
-
-        // Create an empty adapter we will use to display the loaded data.
-        // We pass null for the cursor, then update it in onLoadFinished()
-
         mAdapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, huntsExtended);
+
         setListAdapter(mAdapter);
-//
-//        String[] values = new String[] {"+ CREATE NEW HUNT", "My First Hunt", "My Second Hunt", "My Third Hunt",
-//                "BlahBlah", "BlahBlahBlah", "asdf", "jkl;", "anothername",
-//                "anothername2"};
-//
-//
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_list_item_1, values);
-//        setListAdapter(adapter);
+        mAdapter.notifyDataSetChanged();
 
         getActionBar().setIcon(R.drawable.scavengr_logo);
+
+
     }
 
     @Override

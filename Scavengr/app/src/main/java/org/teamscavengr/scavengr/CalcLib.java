@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
 import android.util.Pair;
 
@@ -24,7 +25,7 @@ public class CalcLib {
      * @param endLng ending longitude.
      * @return distance between both points in meters.
      */
-    public static double distanceFromLatLng(float startLat ,float startLng, float endLat, float endLng) {
+    public static double distanceFromLatLng(double startLat ,double startLng, double endLat, double endLng) {
         int R = 6371000; // metres
         double phi1 = Math.toRadians(startLat);
         double phi2 = Math.toRadians(endLat);
@@ -65,6 +66,12 @@ public class CalcLib {
 
         double d = R * c;
         return d;
+    }
+
+    public static double distanceFromLatLng(Location start, Location end) {
+        return distanceFromLatLng(start.getLatitude(), start.getLongitude(),
+                end.getLatitude(),
+                end.getLongitude());
     }
 
     /**
@@ -113,14 +120,17 @@ public class CalcLib {
         centroidLat = centroidLat/hunt.getNumberOfTasks();
         centroidLng = centroidLng/hunt.getNumberOfTasks();
         LatLng centroid = new LatLng(centroidLat, centroidLng);
+        if (hunt.getNumberOfTasks() == 1) {
+            radius = hunt.getTasks().get(0).getRadius();
+        } else {
+            for (int i = 0; i < hunt.getNumberOfTasks(); i++) {
+                Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));
+                double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)),
+                        centroid);
 
-        for (int i = 0; i < hunt.getNumberOfTasks(); i++){
-            Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));
-            double potentialRadius = CalcLib.distanceFromLatLng(new LatLng(lats.get(i), lngs.get(i)),
-                    centroid);
-
-            if (potentialRadius > radius){
-                radius = potentialRadius;
+                if (potentialRadius > radius) {
+                    radius = potentialRadius;
+                }
             }
         }
         return  new Pair<LatLng, Double>(centroid, radius);

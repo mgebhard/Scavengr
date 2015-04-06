@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
@@ -97,8 +98,8 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                     }
                 }).start();
 
-                Intent myHunts = new Intent(ReviewCreatedHuntActivity.this, MyHuntsActivity.class);
-                ReviewCreatedHuntActivity.this.startActivity(myHunts);
+                Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                this.startActivity(myHunts);
                 break;
 
             case R.id.back:

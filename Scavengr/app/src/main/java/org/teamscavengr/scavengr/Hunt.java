@@ -218,6 +218,7 @@ public class Hunt implements Parcelable, Serializable {
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
                 requestMap.put("creatorId", creatorId);
+                requestMap.put("description", description);
                 requestMap.put("timeCreated", Long.toString(timeCreated));
                 requestMap.put("estimatedTime", Long.toString(estTime));
                 requestMap.put("estimatedTimeUnit", estTimeUnit.name());
@@ -226,12 +227,16 @@ public class Hunt implements Parcelable, Serializable {
                 Log.d("ID_ID", id);
             }
 
+            // Make an empty review array.
+            url = new URL("http://scavenger.meteor.com/hunts/" + id + "/reviews");
+            NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
+
             // Save the tasks
             url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
             Log.d("URL",url.toString());
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
-                t.saveToServer(url);
+                t.saveToServer(url, id);
 
             }
 
@@ -251,7 +256,7 @@ public class Hunt implements Parcelable, Serializable {
         try {
             URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
-            return new Hunt(id, obj.getString("name"), fromJSONArray(obj.getJSONArray("reviews")),
+            return new Hunt(id, obj.getString("name"), reviewsFromJSONArray(obj),
                     tasksFromJSONArray(obj.getJSONArray("tasks")),
                     obj.getString("description"),
                     obj.getString("creatorId"),
@@ -434,10 +439,16 @@ public class Hunt implements Parcelable, Serializable {
         return ret;
     }
 
-    private static List<String> fromJSONArray(JSONArray array) throws JSONException {
+    private static List<String> reviewsFromJSONArray(JSONObject obj) throws JSONException {
+        JSONArray array = new JSONArray();
         List<String> ret = new ArrayList<String>(); //[array.length()];
-        for(int i = 0; i < array.length(); i++) {
-            ret.add(array.getString(i));
+        try {
+            array = obj.getJSONArray("reviews");
+            for (int i = 0; i < array.length(); i++) {
+                ret.add(array.getString(i));
+            }
+        } catch (JSONException e ) {
+            // Dont worry about it bro.
         }
         return ret;
     }
