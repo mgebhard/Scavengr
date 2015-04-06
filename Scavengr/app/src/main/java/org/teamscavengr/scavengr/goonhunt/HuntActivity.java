@@ -195,11 +195,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Criteria cr = new Criteria();
         lm.requestLocationUpdates(
-                lm.getBestProvider(cr, true),
+                "network",
                 REQUEST_LOCATION_UPDATE_TIMER,
                 REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
-                this,
-                getMainLooper());
+                this);
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
@@ -249,12 +248,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("MEGAN", "FOUND WAYPOINT");
             loadCompletedTask(currentTaskNumber);
         }
-        if (mapObject.isMyLocationEnabled())
-            Log.d("Ever", "My Location is isEnabled");
-        mapObject.setMyLocationEnabled(true);
 
+        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
-        // TODO(Gebhard): Update the map to move camera with your location
     }
 
     @Override
