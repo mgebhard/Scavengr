@@ -241,8 +241,16 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
         Log.d("MEGAN", "Location changed to: " + location);
+
+        // Update all location changes
         mLastLocation = location;
+        currentLatitude = mLastLocation.getLatitude();
+        currentLongitude = mLastLocation.getLongitude();
+
         distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+
+        distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(currentLatitude,
+                currentLongitude), centroid);
 
         if (distanceFromAnswer < currentTask.getRadius()) {
             Toast toast = Toast.makeText(this,
@@ -252,15 +260,19 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
             loadCompletedTask(currentTaskNumber);
         }
-        
+
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
         //mapObject.setMyLocationEnabled(true);
 
 
-        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
-                location.getLongitude()), 13));
 
+        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
+
+    }
+
+    public int getZoomLevel() {
+        return (int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
     }
 
     @Override
@@ -269,7 +281,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         map.setMyLocationEnabled(true);
         // Based on stack overflow post
         // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
-        int zoomLevel =(int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
+        int zoomLevel = getZoomLevel();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
 
         circle = map.addCircle(new CircleOptions()
