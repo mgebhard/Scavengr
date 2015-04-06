@@ -209,7 +209,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadTask(int taskNum) { //taskNum starts at 0
-        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum + " out of " + Integer.toString(hunt.getTasks().size()));
+        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum+1 + " out of " + Integer.toString(hunt.getTasks().size()));
         Bundle args = new Bundle();
 //        args.putInt(TaskFragment.ARG_POSITION, position);
 //        newFragment.setArguments(args);
