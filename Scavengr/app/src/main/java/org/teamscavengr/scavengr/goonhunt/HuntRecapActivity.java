@@ -33,6 +33,7 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
             waypointText += task.getAnswer() + "\n";
         }
         TextView waypoints = (TextView) findViewById(R.id.waypoints);
+        waypoints.setText(waypointText);
 
     }
 

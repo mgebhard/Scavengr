@@ -75,7 +75,6 @@
         </activity>
         <activity
             android:name=".createhunt.CreateWaypointActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:label="Create Waypoint" >
         </activity>
         <activity
@@ -86,7 +85,6 @@
         </activity>
         <activity
             android:name=".createhunt.ReviewCreatedHuntActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:label="Review Your Created Hunt" >
         </activity>
         <activity
