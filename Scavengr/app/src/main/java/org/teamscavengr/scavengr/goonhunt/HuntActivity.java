@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -94,6 +95,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             // Grab and set hunt description
             //TextView descriptionText = (TextView) findViewById(R.id.textView4);
             //descriptionText.setText(hunt.getDescription());
+            Log.d("HELEN", "HUNT PASSED");
+        } else {
+            Log.d("HELEN", "NO HUNT PASSED");
         }
         /*else {
             Context context = getApplicationContext();
@@ -153,8 +157,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
     }
 
-    public void loadTask() {
-        TaskFragment newFragment = new TaskFragment();
+    public void loadTask(int taskNum) { //taskNum starts at 0
+        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum + " out of " + Integer.toString(hunt.getTasks().size()));
         Bundle args = new Bundle();
 //        args.putInt(TaskFragment.ARG_POSITION, position);
 //        newFragment.setArguments(args);
@@ -168,9 +172,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
+
+        Log.d("HELEN", "LOADING TASK");
+
+        /*TextView taskText = (TextView) newFragment.getView().findViewById(R.id.taskText);
+        TextView progressText= (TextView) newFragment.getView().findViewById(R.id.progressText);
+
+        taskText.setText("Clue: " + hunt.getTasks().get(taskNum).getClue());
+        progressText.setText("Task: " + taskNum + " out of " + Integer.toString(hunt.getTasks().size()));*/
     }
 
-    public void completedTask(){
+    public void loadCompletedTask(int taskNum){
         CompletedTaskFragment newFragment = new CompletedTaskFragment();
         Bundle args = new Bundle();
 //        args.putInt(TaskFragment.ARG_POSITION, position);
@@ -185,6 +197,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
+
+        Log.d("HELEN", "LOADING TASK COMPLETED");
+
+        Fragment frag = getSupportFragmentManager().
+                findFragmentById(R.id.fragment_container);
+
+        ((TextView) (frag.getView().findViewById(R.id.congrats))).setText("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
+
+        //TextView congrats = (TextView) newFragment.getView().findViewById(R.id.congrats);
+
+        //congrats.setText("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
     }
 
     public void finishedPuzzle(){
@@ -249,11 +272,19 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 this.startActivity(photoRecap);
                 break;
             case R.id.begin_hunt:
-                loadTask();
+                if (tasksCompleted >= hunt.getTasks().size()){
+                    finishedPuzzle();
+                } else {
+                    loadTask(tasksCompleted);
+                }
                 break;
             case R.id.next_task:
                 tasksCompleted += 1;
-                loadTask();
+                if (tasksCompleted >= hunt.getTasks().size()){
+                    finishedPuzzle();
+                } else {
+                    loadTask(tasksCompleted);
+                }
                 break;
             case R.id.camera:
                 // Run a camera intent
@@ -262,7 +293,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.get_hint:
                 // Call method with two geo points to get the distance between them then add toast
-                completedTask();
+
+                break;
+            case R.id.found_it:
+                loadCompletedTask(tasksCompleted); //TODO: shift over to options menu stuff for MVP, geofencing for actual
                 break;
             default:
                 break;
@@ -277,10 +311,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
-                if (tasksCompleted >= hunt.getTasks().size()){
+                if (tasksCompleted >= hunt.getTasks().size()){ //TODO
                     finishedPuzzle();
                 } else {
-                    loadTask();
+                    loadTask(tasksCompleted);
                 }
 
         }
