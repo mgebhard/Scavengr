@@ -245,7 +245,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
 
         if (distanceFromAnswer < currentTask.getRadius()) {
-            Log.d("MEGAN", "FOUND WAYPOINT");
+            Toast toast = Toast.makeText(this,
+                    "FOUND WAYPOINT",
+                    Toast.LENGTH_LONG);
+
+            toast.show();
             loadCompletedTask(currentTaskNumber);
         }
 
@@ -260,7 +264,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {;
+    public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
         // Based on stack overflow post
@@ -304,6 +308,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         transaction.commit();
 
         Log.d("HELEN", "LOADING TASK");
+        Toast toast = Toast.makeText(this,
+                "LOADING TASK",
+                Toast.LENGTH_LONG);
+        toast.show();
 
         /*TextView taskText = (TextView) newFragment.getView().findViewById(R.id.taskText);
         TextView progressText= (TextView) newFragment.getView().findViewById(R.id.progressText);
@@ -313,6 +321,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadCompletedTask(int taskNum){
+        Toast toast = Toast.makeText(this,
+                "LOADING COMPLETED TASK",
+                Toast.LENGTH_LONG);
+        toast.show();
         CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
         Bundle args = new Bundle();
         args.putParcelable("task", currentTask);
@@ -354,7 +366,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch(view.getId()) {
             case R.id.get_photo_recap:
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
-                photoRecap.putExtra("huntObject", (Parcelable)hunt);
+                photoRecap.putExtra("huntObj", (Parcelable) hunt);
                 this.startActivity(photoRecap);
                 break;
 
@@ -368,9 +380,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.next_task:
                 tasksCompleted += 1;
+                currentTaskNumber +=1;
                 if (tasksCompleted >= hunt.getTasks().size()){
                     finishedPuzzle();
                 } else {
+                    currentTask = hunt.getTasks().get(tasksCompleted);
                     loadTask(tasksCompleted);
                 }
                 break;
@@ -454,12 +468,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
-                if (tasksCompleted >= hunt.getTasks().size()){ //TODO
+                loadTask(tasksCompleted);
+                /*if (tasksCompleted >= hunt.getTasks().size()){ //TODO
                     finishedPuzzle();
                 } else {
                     loadTask(tasksCompleted);
-                }
-
+                }*/
         }
     }
     @Override

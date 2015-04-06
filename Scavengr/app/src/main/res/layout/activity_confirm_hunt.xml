@@ -9,7 +9,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:id="@+id/linearLayout">
 
         <LinearLayout
             android:orientation="vertical"
@@ -31,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ratingBar"
-                android:layout_marginBottom="51dp"
+                android:layout_marginBottom="10dp"
                 android:layout_above="@+id/confirm_hunt"
                 android:isIndicator="true"
                 android:layout_centerHorizontal="true"
@@ -40,22 +41,26 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="143dp">
+            android:layout_width="219dp"
+            android:layout_height="143dp"
+            android:layout_gravity="center_horizontal">
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton"
                 android:layout_above="@+id/textView4"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="125dp"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:weightSum="1">
 
             <TextView
                 android:layout_width="fill_parent"
@@ -64,7 +69,10 @@
                 android:id="@+id/textView4"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="10dp"
+                android:layout_weight="4.20" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,23 +82,29 @@
             android:layout_weight="1.5"
             >
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Back"
-                android:onClick="onClick"
-                android:id="@+id/back" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Go Hunting"
-                android:id="@+id/confirm_hunt"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="36dp"
-                android:onClick="onClick" />
         </LinearLayout>
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go Hunting"
+        android:id="@+id/confirm_hunt"
+        android:onClick="onClick"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:onClick="onClick"
+        android:id="@+id/back"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp" />
 
 </RelativeLayout>
