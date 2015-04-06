@@ -42,7 +42,8 @@ public abstract class MockLocationProvider implements Closeable {
 
     @Override
     public void close() {
-        getLocationManager().removeTestProvider(providerName);
+        if(getLocationManager().getProvider(providerName) != null)
+            getLocationManager().removeTestProvider(providerName);
     }
 
     /**
