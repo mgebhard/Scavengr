@@ -31,7 +31,7 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         switch(view.getId()) {
             case R.id.review:
                 Intent review = new Intent(this, RateHuntActivity.class);
-                review.putExtra("huntObj", (Parcelable)hunt);
+                review.putExtra("huntObject", (Parcelable)hunt);
                 this.startActivity(review);
                 break;
             case R.id.home:

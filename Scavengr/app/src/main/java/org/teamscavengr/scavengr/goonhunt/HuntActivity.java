@@ -256,7 +256,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch(view.getId()) {
             case R.id.get_photo_recap:
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
-                photoRecap.putExtra("huntObj", (Parcelable)hunt);
+                photoRecap.putExtra("huntObject", (Parcelable)hunt);
                 this.startActivity(photoRecap);
                 break;
             case R.id.begin_hunt:
