@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -347,6 +348,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch(view.getId()) {
             case R.id.get_photo_recap:
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
+                photoRecap.putExtra("huntObject", (Parcelable)hunt);
                 this.startActivity(photoRecap);
                 break;
             case R.id.begin_hunt:
