@@ -1,15 +1,14 @@
 package org.teamscavengr.scavengr;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 
 import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
@@ -19,7 +18,7 @@ import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
  *
  * Created by zrneely on 4/5/15.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends Activity {
 
     protected static DirectMockLocationProvider dmlp;
 
@@ -72,7 +71,7 @@ public abstract class BaseActivity extends ActionBarActivity {
                             double lo = Double.parseDouble(lon.getText().toString());
                             dmlp.setLocation(la, lo);
                             dmlp.update();
-                        } catch(NumberFormatException ex) {
+                        } catch (NumberFormatException ex) {
                             ex.printStackTrace();
                         } finally {
                             dialog.dismiss();
