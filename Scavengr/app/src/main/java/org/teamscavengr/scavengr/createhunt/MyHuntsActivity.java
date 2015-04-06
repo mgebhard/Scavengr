@@ -124,9 +124,10 @@ public class MyHuntsActivity extends ListActivity implements
                     public void numHuntsFound(int num) {
                         Context context = getApplicationContext();
                         CharSequence text = "Loading " + num + " hunts...";
-                        int duration = Toast.LENGTH_LONG;
+                        int duration = Toast.LENGTH_SHORT;
 
                         Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
 
                     @Override
@@ -135,7 +136,7 @@ public class MyHuntsActivity extends ListActivity implements
                         huntsExtended.add(hunt.getName());
                         mHuntsObj.add(hunt);
                         mAdapter.notifyDataSetChanged();
-                        Log.d("HELEN", "LOADED");
+                        //Log.d("HELEN", "LOADED");
 
                     }
 
@@ -146,6 +147,7 @@ public class MyHuntsActivity extends ListActivity implements
                         int duration = Toast.LENGTH_SHORT;
 
                         Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
                 }, true);
 

@@ -97,7 +97,7 @@ public class HuntsList extends ListActivity {
                    public void huntLoaded(Hunt hunt) {
                        int duration = Toast.LENGTH_LONG;
 
-                       Toast.makeText(HuntsList.this, "Loaded " + hunt.getId(), duration).show();
+                       //Toast.makeText(HuntsList.this, "Loaded " + hunt.getId(), duration).show();
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
@@ -112,8 +112,8 @@ public class HuntsList extends ListActivity {
                        CharSequence text = "Failed to load a hunt";
                        int duration = Toast.LENGTH_SHORT;
                        Toast.makeText(HuntsList.this, text, duration).show();
-                       Log.d("JSONError", e.toString());
-                       Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
+                       //Log.d("JSONError", e.toString());
+                       //Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);
         //hunts.add(basicHunt);
