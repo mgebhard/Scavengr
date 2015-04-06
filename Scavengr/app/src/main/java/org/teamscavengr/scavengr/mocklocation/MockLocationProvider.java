@@ -42,7 +42,8 @@ public abstract class MockLocationProvider implements Closeable {
 
     @Override
     public void close() {
-        getLocationManager().removeTestProvider(providerName);
+        if(getLocationManager().getProvider(providerName) != null)
+            getLocationManager().removeTestProvider(providerName);
     }
 
     /**
@@ -58,7 +59,7 @@ public abstract class MockLocationProvider implements Closeable {
         l.setAltitude(0);
         l.setTime(System.currentTimeMillis());
         l.setElapsedRealtimeNanos(System.nanoTime());
-        l.setAccuracy(0.5f);
+        l.setAccuracy(1f);
         try {
             lm.setTestProviderLocation(providerName, l);
         } catch(IllegalArgumentException ex) {

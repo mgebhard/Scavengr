@@ -2,6 +2,7 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import org.teamscavengr.scavengr.Task;
 
 
 public class HuntRecapActivity extends BaseActivity implements View.OnClickListener {
+
     private Hunt hunt;
 
     @Override
@@ -31,14 +33,15 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
             waypointText += task.getAnswer() + "\n";
         }
         TextView waypoints = (TextView) findViewById(R.id.waypoints);
-        waypoints.setText(waypointText);
+
     }
 
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.review:
-                Intent hunt = new Intent(this, RateHuntActivity.class);
-                this.startActivity(hunt);
+                Intent review = new Intent(this, RateHuntActivity.class);
+                review.putExtra("huntObject", (Parcelable)hunt);
+                this.startActivity(review);
                 break;
             case R.id.home:
                 Intent createHuntIntent = new Intent(this, MainActivity.class);
