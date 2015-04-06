@@ -61,10 +61,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             public void onProviderDisabled(final String provider) {}
         });*/
 
-        ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).requestLocationUpdates("network", 100L, 0.5f, new LocationListener() {
+        ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).requestLocationUpdates("network", 10000L, 0.5f, new LocationListener() {
             @Override
             public void onLocationChanged(final Location location) {
-                Toast.makeText(MainActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("ZACH", location.toString());
             }
 
             @Override
