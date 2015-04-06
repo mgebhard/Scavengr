@@ -235,7 +235,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadCompletedTask(int taskNum){
-        CompletedTaskFragment newFragment = new CompletedTaskFragment();
+        CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
         Bundle args = new Bundle();
         args.putParcelable("task", currentTask);
         newFragment.setArguments(args);
@@ -249,13 +249,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
-
-        Log.d("HELEN", "LOADING TASK COMPLETED");
-
-        Fragment frag = getSupportFragmentManager().
-                findFragmentById(R.id.fragment_container);
-
-        ((TextView) (frag.getView().findViewById(R.id.congrats))).setText("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
 
         //TextView congrats = (TextView) newFragment.getView().findViewById(R.id.congrats);
 
