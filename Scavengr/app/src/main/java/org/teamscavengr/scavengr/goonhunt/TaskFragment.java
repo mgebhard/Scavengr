@@ -2,9 +2,11 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.teamscavengr.scavengr.R;
 
@@ -20,12 +22,12 @@ import org.teamscavengr.scavengr.R;
 public class TaskFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TASK_TEXT = "Clue: The tallest building in Cambridge.";
+    private static final String PROGRESS_TEXT = "Task 1 out of 15";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String taskText;
+    private String progressText;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -33,16 +35,14 @@ public class TaskFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment TaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TaskFragment newInstance(String param1, String param2) {
+    public static TaskFragment newInstance(String task, String prog) {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TASK_TEXT, task);
+        args.putString(PROGRESS_TEXT, prog);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,17 +55,67 @@ public class TaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            taskText = getArguments().getString(TASK_TEXT);
+            progressText = getArguments().getString(PROGRESS_TEXT);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_task, container, false);
+        View myInflatedView = inflater.inflate(R.layout.fragment_task, container,false);
+
+        // Set the Text to try this out
+        TextView task = (TextView) myInflatedView.findViewById(R.id.taskText);
+        TextView progress= (TextView) myInflatedView.findViewById(R.id.progressText);
+
+        task.setText(taskText);
+        progress.setText(progressText);
+
+        return myInflatedView;
     }
+/*
+    @Override
+    public void onStart(){
+        //update texts
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        TextView task = (TextView) getView().findViewById(R.id.taskText);
+        TextView progress= (TextView) getView().findViewById(R.id.progressText);
+
+        task.setText(taskText);
+        progress.setText(progressText);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        TextView task = (TextView) getView().findViewById(R.id.taskText);
+        TextView progress= (TextView) getView().findViewById(R.id.progressText);
+
+        task.setText(taskText);
+        progress.setText(progressText);
+    }
+
+    @Override
+    public void onStop() {
+        Log.d("a;dfjkls", "App stopped");
+
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d("as;dfjkl", "App destoryed");
+
+        super.onDestroy();
+    } */
 
 //    // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) {

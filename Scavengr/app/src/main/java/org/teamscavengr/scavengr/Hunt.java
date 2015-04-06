@@ -163,6 +163,12 @@ public class Hunt implements Parcelable, Serializable {
         return name;
     }
 
+    public float getRating() {
+        // TODO(ZACH || EVER): Should iterate through get rating ids from db and average ratings
+        // set 4.3 as default rating for MVP
+        return 4.3f;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

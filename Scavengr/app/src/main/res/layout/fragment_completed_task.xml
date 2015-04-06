@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="79dp"
         android:text="Congrats you found the Boston Commons!"
-        android:id="@+id/textView9"
+        android:id="@+id/congrats"
         android:layout_gravity="center" />
 
     <ImageView
