@@ -6,18 +6,32 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import org.teamscavengr.scavengr.BaseActivity;
+import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 
 public class HuntRecapActivity extends BaseActivity implements View.OnClickListener {
+    private Hunt hunt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt_recap);
+        if (getIntent().hasExtra("huntObj")){
+            hunt =  getIntent().getParcelableExtra("huntObj");
+        }
+
+        String waypointText = "";
+        for (Task task: hunt.getTasks()){
+            waypointText += task.getAnswer() + "\n";
+        }
+        TextView waypoints = (TextView) findViewById(R.id.waypoints);
+        waypoints.setText(waypointText);
     }
 
     public void onClick(View view) {
