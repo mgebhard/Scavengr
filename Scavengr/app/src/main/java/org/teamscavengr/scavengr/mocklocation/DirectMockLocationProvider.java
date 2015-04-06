@@ -11,7 +11,7 @@ public class DirectMockLocationProvider extends MockLocationProvider {
 
     private double lat, lon;
 
-    protected DirectMockLocationProvider(final String providerName, final Context ctx) {
+    public DirectMockLocationProvider(final String providerName, final Context ctx) {
         super(providerName, ctx);
     }
 

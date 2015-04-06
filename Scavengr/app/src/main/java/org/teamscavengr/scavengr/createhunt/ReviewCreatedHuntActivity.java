@@ -80,8 +80,8 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
         switch(view.getId()) {
             case R.id.confirm:
                 User user = (User) getIntent().getSerializableExtra("currentUser");
-                currentHunt.setName(((EditText)findViewById(R.id.huntName)).getText().toString());
-                currentHunt.setDescription(((EditText)findViewById(R.id.huntDescription)).getText().toString());
+                currentHunt.setName(((EditText)findViewById(R.id.spoof_latitude)).getText().toString());
+                currentHunt.setDescription(((EditText)findViewById(R.id.spoof_longitude)).getText().toString());
                 currentHunt.setCreatorId(user.getId());
                 currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
 

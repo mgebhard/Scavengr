@@ -17,20 +17,20 @@
             android:layout_weight="4">
 
             <EditText
-                android:id="@+id/huntName"
+                android:id="@+id/spoof_latitude"
                 android:inputType="text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="name"
-                android:layout_alignLeft="@+id/huntDescription"
-                android:layout_alignStart="@+id/huntDescription" />
+                android:layout_alignLeft="@+id/spoof_longitude"
+                android:layout_alignStart="@+id/spoof_longitude" />
 
             <EditText
-                android:id="@+id/huntDescription"
+                android:id="@+id/spoof_longitude"
                 android:inputType="textMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/huntName"
+                android:layout_below="@+id/spoof_latitude"
                 android:layout_marginTop="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp"
@@ -44,8 +44,8 @@
                 android:background="#c8ffffff"
                 android:backgroundTint="#ffffffff"
                 android:layout_alignParentTop="true"
-                android:layout_alignLeft="@+id/huntName"
-                android:layout_alignStart="@+id/huntName">
+                android:layout_alignLeft="@+id/spoof_latitude"
+                android:layout_alignStart="@+id/spoof_latitude">
 
                 <EditText
                     android:layout_width="wrap_content"
