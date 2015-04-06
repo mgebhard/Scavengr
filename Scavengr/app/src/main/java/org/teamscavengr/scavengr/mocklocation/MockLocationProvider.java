@@ -26,7 +26,6 @@ public abstract class MockLocationProvider implements Closeable {
     protected final String providerName;
     private final Context ctx;
 
-
     protected MockLocationProvider(final String providerName, final Context ctx) {
         this.providerName = providerName;
         this.ctx = ctx;

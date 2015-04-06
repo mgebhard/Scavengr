@@ -45,7 +45,9 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
                 break;
             case R.id.home:
                 Intent createHuntIntent = new Intent(this, MainActivity.class);
+                createHuntIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(createHuntIntent);
+                finish();
                 break;
             default:
                 break;

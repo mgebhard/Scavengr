@@ -19,7 +19,6 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
-import org.teamscavengr.scavengr.goonhunt.HuntActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
@@ -40,7 +39,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         manager = new GeofenceManager(this, googleApiClient);
 
-        BaseActivity.dmlp = new DirectMockLocationProvider("network", this);
         //HuntActivity.dmlp = BaseActivity.dmlp;
 
         /*((LocationManager) getSystemService(Context.LOCATION_SERVICE))
@@ -82,7 +80,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
             public void onProviderDisabled(final String provider) {
             }
         });
-
 
         // production build
         if((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
@@ -176,6 +173,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onConnected(final Bundle bundle) {
         Toast.makeText(this, "gapi client connected", Toast.LENGTH_SHORT).show();
+        LocationServices.FusedLocationApi.setMockMode(googleApiClient, true);
+        BaseActivity.dmlp = new DirectMockLocationProvider("network", this);
     }
 
     @Override

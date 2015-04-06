@@ -22,12 +22,16 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,15 +44,16 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.CalcLib;
+import org.teamscavengr.scavengr.GeofenceManager;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
-import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener, LocationListener {
+        View.OnClickListener, LocationListener, GeofenceManager.GeofenceListener,
+        ResultCallback<Status> {
 
     protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
 
@@ -70,6 +75,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected int currentTaskNumber = 0;
 
     private GoogleMap mapObject;
+    private GeofenceManager manager;
 
     protected Hunt hunt;
     private int tasksCompleted = 0;
@@ -221,6 +227,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("MEGAN", "BOUNDING RADIUS: " + boundingRadius);
 
 
+
+        buildGoogleApiClient();
+
+        manager = new GeofenceManager(this, mGoogleApiClient);
+
         distanceFromCentroid = CalcLib.distanceFromLatLng(
                 new LatLng(currentLatitude, currentLongitude), centroid);
 
@@ -232,9 +243,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("MEGAN", "Not inside hunt boundaries");
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new TaskFragment()).commit();
+            Location l = new Location("network");
+            l.setLatitude(centroid.latitude);
+            l.setLongitude(centroid.longitude);
+            manager.addGeofence("waitForUserInHuntArea", l, boundingRadius.floatValue(), Geofence.NEVER_EXPIRE, this, this);
         }
-
-        buildGoogleApiClient();
 
     }
 
@@ -244,11 +257,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         mLastLocation = location;
         distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
 
-        if (distanceFromAnswer < currentTask.getRadius()) {
-            Log.d("MEGAN", "FOUND WAYPOINT");
-            loadCompletedTask(currentTaskNumber);
-        }
-        
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
         //mapObject.setMyLocationEnabled(true);
@@ -304,6 +312,19 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         transaction.commit();
 
         Log.d("HELEN", "LOADING TASK");
+
+        // Add geofence for this task
+        final Task t = hunt.getTasks().get(taskNum);
+        manager.addGeofence(t.getId(), t.getLocation(), (float) t.getRadius(),
+                Geofence.NEVER_EXPIRE, new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(final Status status) {
+                        if(!status.isSuccess()) {
+                            // Could not create geofence :(
+                            Log.e("ZACH", "Could not create geofence!");
+                        }
+                    }
+                }, this);
 
         /*TextView taskText = (TextView) newFragment.getView().findViewById(R.id.taskText);
         TextView progressText= (TextView) newFragment.getView().findViewById(R.id.progressText);
@@ -474,7 +495,35 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onConnectionFailed(final ConnectionResult connectionResult) {
+    public void onConnectionFailed(final ConnectionResult connectionResult) {}
 
+    @Override
+    public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
+        switch(event.geofenceId) {
+            case "waitForUserInHuntArea":
+                if (tasksCompleted >= hunt.getTasks().size()){
+                    finishedPuzzle();
+                } else {
+                    loadTask(tasksCompleted);
+                }
+                break;
+            default:
+                // Event for a task - going into or out of a radius
+                setFoundButtonEnabled(event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE);
+        }
+        if(event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) {
+            manager.removeGeofences(event.geofenceId);
+        }
+    }
+
+    private void setFoundButtonEnabled(final boolean b) {
+        findViewById(R.id.found_it).setEnabled(b);
+    }
+
+    @Override
+    public void onResult(final Status status) {
+        if(!status.isSuccess()) {
+            Log.e("ZACH", "Could not create geofence");
+        }
     }
 }

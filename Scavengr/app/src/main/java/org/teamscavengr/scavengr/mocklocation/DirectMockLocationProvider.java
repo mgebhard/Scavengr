@@ -2,6 +2,8 @@ package org.teamscavengr.scavengr.mocklocation;
 
 import android.content.Context;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 /**
  * Dumbest possible mock location provider.
  *

@@ -18,13 +18,12 @@ import org.teamscavengr.scavengr.Review;
 
 public class RateHuntActivity extends BaseActivity implements View.OnClickListener {
 
-    private Hunt hunt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_hunt);
         if (getIntent().hasExtra("huntObject")) {
-            hunt = (getIntent().getParcelableExtra("huntObject"));
+            final Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
         }
     }
 
