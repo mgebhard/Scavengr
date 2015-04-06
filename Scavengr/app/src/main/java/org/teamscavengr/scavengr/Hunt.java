@@ -453,8 +453,8 @@ public class Hunt implements Parcelable, Serializable {
             for (int i = 0; i < array.length(); i++) {
                 ret.add(array.getString(i));
             }
-        } catch (JSONException e ) {
             // Dont worry about it bro.
+        } catch (JSONException e ) {
         }
         return ret;
     }
