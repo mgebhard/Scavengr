@@ -153,7 +153,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         distanceFromCentroid = CalcLib.distanceFromLatLng(
-                 new LatLng(currentLatitude, currentLongitude), centroid);
+                new LatLng(currentLatitude, currentLongitude), centroid);
 
         if (distanceFromCentroid > boundingRadius) {
             Log.d("MEGAN", "YEAH inside hunt boundaries");
