@@ -201,6 +201,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
             currentLongitude = mLastLocation.getLongitude();
+            mLastLocation.setAccuracy(1);
             Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
         }
 
@@ -251,6 +252,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             toast.show();
             loadCompletedTask(currentTaskNumber);
         }
+        
+        if (mapObject.isMyLocationEnabled())
+            Log.d("Ever", "My Location is isEnabled");
+        //mapObject.setMyLocationEnabled(true);
+
 
         mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),
                 location.getLongitude()), 13));
@@ -258,7 +264,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {;
+    public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
         // Based on stack overflow post
@@ -360,7 +366,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch(view.getId()) {
             case R.id.get_photo_recap:
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
-                photoRecap.putExtra("huntObject", (Parcelable)hunt);
+                photoRecap.putExtra("huntObj", (Parcelable) hunt);
                 this.startActivity(photoRecap);
                 break;
 
@@ -374,6 +380,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.next_task:
                 tasksCompleted += 1;
+                currentTaskNumber +=1;
+                currentTask = hunt.getTasks().get(tasksCompleted);
                 if (tasksCompleted >= hunt.getTasks().size()){
                     finishedPuzzle();
                 } else {
@@ -460,12 +468,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
-                if (tasksCompleted >= hunt.getTasks().size()){ //TODO
+                loadTask(tasksCompleted);
+                /*if (tasksCompleted >= hunt.getTasks().size()){ //TODO
                     finishedPuzzle();
                 } else {
                     loadTask(tasksCompleted);
-                }
-
+                }*/
         }
     }
     @Override

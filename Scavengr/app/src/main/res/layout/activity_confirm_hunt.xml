@@ -31,7 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ratingBar"
-                android:layout_marginBottom="51dp"
+                android:layout_marginBottom="10dp"
                 android:layout_above="@+id/confirm_hunt"
                 android:isIndicator="true"
                 android:layout_centerHorizontal="true"
@@ -40,15 +40,17 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="143dp">
+            android:layout_width="219dp"
+            android:layout_height="143dp"
+            android:layout_gravity="center_horizontal">
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton"
                 android:layout_above="@+id/textView4"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -64,7 +66,9 @@
                 android:id="@+id/textView4"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="10dp" />
         </LinearLayout>
 
         <LinearLayout

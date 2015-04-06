@@ -35,7 +35,7 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
 
             // Grab and set hunt description
             TextView descriptionText = (TextView) findViewById(R.id.textView4);
-            descriptionText.setText(hunt.getDescription());
+            descriptionText.setText("Description: " + hunt.getDescription());
 
             RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar);
             ratingBar.setRating(hunt.getRating());
