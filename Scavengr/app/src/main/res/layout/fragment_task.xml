@@ -39,7 +39,7 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Show Hint"
+                android:text="How close am I?"
                 android:onClick="onClick"
                 android:id="@+id/get_hint"
                 android:layout_gravity="center_horizontal"

@@ -368,6 +368,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.next_task:
                 tasksCompleted += 1;
+                currentTaskNumber +=1;
+                currentTask = hunt.getTasks().get(tasksCompleted);
                 if (tasksCompleted >= hunt.getTasks().size()){
                     finishedPuzzle();
                 } else {
@@ -454,11 +456,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
-                if (tasksCompleted >= hunt.getTasks().size()){ //TODO
+                loadTask(tasksCompleted);
+                /*if (tasksCompleted >= hunt.getTasks().size()){ //TODO
                     finishedPuzzle();
                 } else {
                     loadTask(tasksCompleted);
-                }
+                }*/
         }
     }
     @Override
