@@ -1,7 +1,9 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -16,15 +18,18 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -33,10 +38,12 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -68,6 +75,91 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected Hunt hunt;
     private int tasksCompleted = 0;
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    } */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.change_location:
+                if(BaseActivity.dmlp == null) {
+                    Log.e("SCV", "dmlp is null!");
+                }
+
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle("Location?");
+                LayoutInflater inflater = getLayoutInflater();
+                View v = inflater.inflate(R.layout.stuff, null);
+                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
+                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
+
+                b.setView(v);
+                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        dialog.cancel();
+                    }
+                });
+                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        try {
+                            Double la = Double.parseDouble(lat.getText().toString());
+                            Double lo = Double.parseDouble(lon.getText().toString());
+                            Log.d("lat", la.toString());
+                            Log.d("lng", lo.toString());
+                            BaseActivity.dmlp.setLocation(la, lo);
+                            BaseActivity.dmlp.update();
+
+                        } catch (NumberFormatException ex) {
+                            ex.printStackTrace();
+                        } finally {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                b.show();
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +249,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("MEGAN", "FOUND WAYPOINT");
             loadCompletedTask(currentTaskNumber);
         }
+        if (mapObject.isMyLocationEnabled())
+            Log.d("Ever", "My Location is isEnabled");
+        mapObject.setMyLocationEnabled(true);
+
 
         // TODO(Gebhard): Update the map to move camera with your location
     }
@@ -300,7 +396,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_map_test, menu);
@@ -320,7 +416,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
