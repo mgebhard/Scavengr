@@ -248,7 +248,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("MEGAN", "FOUND WAYPOINT");
             loadCompletedTask(currentTaskNumber);
         }
-        
+
         if (mapObject.isMyLocationEnabled())
             Log.d("Ever", "My Location is isEnabled");
         //mapObject.setMyLocationEnabled(true);
