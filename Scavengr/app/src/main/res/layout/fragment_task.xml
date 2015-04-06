@@ -36,17 +36,6 @@
             android:layout_height="fill_parent"
             android:layout_weight="1">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:text="This is a hint."
-                android:id="@+id/hint_text"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="10dp"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="10dp" />
-
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +53,7 @@
             android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1.5"
+            android:layout_weight="1"
             android:layout_gravity="center_horizontal">
 
             <Button

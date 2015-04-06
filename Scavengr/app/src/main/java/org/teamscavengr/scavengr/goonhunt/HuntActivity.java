@@ -75,7 +75,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected Hunt hunt;
     private int tasksCompleted = 0;
 
-
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -161,7 +160,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,7 +223,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         distanceFromCentroid = CalcLib.distanceFromLatLng(
-                 new LatLng(currentLatitude, currentLongitude), centroid);
+                new LatLng(currentLatitude, currentLongitude), centroid);
 
         if (distanceFromCentroid > boundingRadius) {
             Log.d("MEGAN", "YEAH inside hunt boundaries");
@@ -259,17 +257,19 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+    public void onMapReady(GoogleMap map) {;
+        mapObject = map;
+        map.setMyLocationEnabled(true);
+        // Based on stack overflow post
+        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
+        int zoomLevel =(int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
 
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
+        circle = map.addCircle(new CircleOptions()
+                .center(centroid)
+                .radius(boundingRadius * 1.05)
+                .strokeColor(Color.argb(256, 0, 0, 256))
+                .fillColor(Color.argb(100, 0, 0, 256)));
 
     }
 
@@ -285,7 +285,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadTask(int taskNum) { //taskNum starts at 0
-        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum + " out of " + Integer.toString(hunt.getTasks().size()));
+        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum+1 + " out of " + Integer.toString(hunt.getTasks().size()));
         Bundle args = new Bundle();
 //        args.putInt(TaskFragment.ARG_POSITION, position);
 //        newFragment.setArguments(args);
@@ -310,7 +310,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void loadCompletedTask(int taskNum){
-        CompletedTaskFragment newFragment = new CompletedTaskFragment();
+        CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
         Bundle args = new Bundle();
         args.putParcelable("task", currentTask);
         newFragment.setArguments(args);
@@ -324,13 +324,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
-
-        Log.d("HELEN", "LOADING TASK COMPLETED");
-
-        Fragment frag = getSupportFragmentManager().
-                findFragmentById(R.id.fragment_container);
-
-        ((TextView) (frag.getView().findViewById(R.id.congrats))).setText("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
 
         //TextView congrats = (TextView) newFragment.getView().findViewById(R.id.congrats);
 
@@ -352,44 +345,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Commit the transaction
         transaction.commit();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap map) {;
-        mapObject = map;
-        map.setMyLocationEnabled(true);
-        // Based on stack overflow post
-        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
-        int zoomLevel =(int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
-
-        circle = map.addCircle(new CircleOptions()
-                .center(centroid)
-                .radius(boundingRadius * 1.05)
-                .strokeColor(Color.argb(256, 0, 0, 256))
-                .fillColor(Color.argb(100, 0, 0, 256)));
-
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-        }
-
-    }
-
-    @Override
-    public void onConnectionSuspended(final int i) {
-        mGoogleApiClient.connect(); // attempt to reconnect
-    }
-
-    @Override
-    public void onConnectionFailed(final ConnectionResult connectionResult) {
-
     }
 
     public void onClick(View view) {
@@ -439,6 +394,43 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_map_test, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }*/
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
                                     final Intent data) {
@@ -454,5 +446,25 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
         }
+    }
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(final int i) {
+        mGoogleApiClient.connect(); // attempt to reconnect
+    }
+
+    @Override
+    public void onConnectionFailed(final ConnectionResult connectionResult) {
+
     }
 }

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
@@ -20,8 +21,9 @@ import org.teamscavengr.scavengr.Task;
  * create an instance of this fragment.
  */
 public class CompletedTaskFragment extends Fragment {
-    private Task completedTask;
+    private static final String CONGRATS_TEXT = "Congrats!";
 
+    private String congratsText;
     //    private OnFragmentInteractionListener mListener;
 
     /**
@@ -32,10 +34,10 @@ public class CompletedTaskFragment extends Fragment {
      * @return A new instance of fragment CompletedTaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CompletedTaskFragment newInstance(Task task) {
+    public static CompletedTaskFragment newInstance(String congrats) {
         CompletedTaskFragment fragment = new CompletedTaskFragment();
         Bundle args = new Bundle();
-        args.putParcelable("task", task);
+        args.putString(CONGRATS_TEXT, congrats);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,7 +50,7 @@ public class CompletedTaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            completedTask = getArguments().getParcelable("task");
+            congratsText = getArguments().getString(CONGRATS_TEXT);
         }
     }
 
@@ -56,7 +58,11 @@ public class CompletedTaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_completed_task, container, false);
+        View myInflatedView = inflater.inflate(R.layout.fragment_completed_task, container,false);
+        TextView congrats = (TextView) myInflatedView.findViewById(R.id.congrats);
+        congrats.setText(congratsText);
+
+        return myInflatedView;
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
