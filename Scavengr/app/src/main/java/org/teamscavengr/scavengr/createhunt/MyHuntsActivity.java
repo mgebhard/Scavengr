@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 
 import java.util.ArrayList;
@@ -198,6 +199,10 @@ public class MyHuntsActivity extends ListActivity implements
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        if (id == R.id.action_home){
+            Intent home = new Intent(this, MainActivity.class);
+            this.startActivity(home);
         }
 
         return super.onOptionsItemSelected(item);
