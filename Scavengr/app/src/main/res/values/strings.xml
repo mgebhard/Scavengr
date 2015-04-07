@@ -6,6 +6,7 @@
     <string name="create_hunt">Create Hunt</string>
     <string name="confirm_hunt_selection">Go Hunting</string>
     <string name="action_settings">Settings</string>
+    <string name="action_home">Go Home</string>
     <string name="title_activity_create_hunt">CreateHuntActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_hunt">HuntActivity</string>
