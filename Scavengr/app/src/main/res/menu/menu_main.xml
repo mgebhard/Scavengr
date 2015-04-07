@@ -6,4 +6,7 @@
     <item android:id="@+id/change_location" android:title="Set Mock Location"
         android:orderInCategory="101" app:showAsAction="ifRoom"
         android:onClick="onOptionsItemSelected" />
+    <item android:id="@+id/trigger_geofences" android:title="Trigger Geofences"
+          android:orderInCategory="102" app:showAsAction="never"
+          android:onClick="onOptionsItemSelected" />
 </menu>

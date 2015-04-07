@@ -119,6 +119,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch (id) {
             case R.id.action_settings:
                 return true;
+            case R.id.trigger_geofences:
+                BaseActivity.geofenceManager.manuallyTriggerAll();
+                break;
             case R.id.change_location:
                 if(BaseActivity.dmlp == null) {
                     Log.e("SCV", "dmlp is null!");

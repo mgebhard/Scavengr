@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Geofence manager
@@ -77,7 +78,7 @@ public class GeofenceManager  {
         public final int type;
         public final String geofenceId;
 
-        public GeofenceEvent(final int type, final String geofenceId) {
+        private GeofenceEvent(final int type, final String geofenceId) {
             this.type = type;
             this.geofenceId = geofenceId;
         }
@@ -114,8 +115,8 @@ public class GeofenceManager  {
      * @return True if it worked.
      */
     public boolean addGeofence(String name, Location center, float radius, long timeToLive,
-                              ResultCallback<Status> statusCallback,
-                              GeofenceListener geofenceListener) {
+                               ResultCallback<Status> statusCallback,
+                               GeofenceListener geofenceListener) {
         if(!client.isConnected() || pi == null) return false;
 
         listenerHashMap.put(name, geofenceListener);
@@ -137,6 +138,15 @@ public class GeofenceManager  {
     }
 
     /**
+     * Cheap hack to trigger all active geofences since location spoofing doesn't work
+     */
+    public void manuallyTriggerAll() {
+        for(Map.Entry<String, GeofenceListener> e : listenerHashMap.entrySet()) {
+            e.getValue().geofenceTriggered(new GeofenceEvent(GeofenceEvent.ENTERED_GEOFENCE, e.getKey()));
+        }
+    }
+
+    /**
      * Remove every active geofence.
      * @param restart If false, doesn't recreate the service.
      * @return True if it worked.
@@ -151,6 +161,7 @@ public class GeofenceManager  {
         } else {
             pi = null;
         }
+        listenerHashMap.clear();
         return true;
     }
 
@@ -161,6 +172,9 @@ public class GeofenceManager  {
     public boolean removeGeofences(String... names) {
         if(!client.isConnected() || pi == null) return false;
         LocationServices.GeofencingApi.removeGeofences(client, Arrays.asList(names));
+        for(String name : names) {
+            listenerHashMap.remove(name);
+        }
         return true;
     }
 

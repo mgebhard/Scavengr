@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,7 +29,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         ResultCallback<Status> {
 
     private GoogleApiClient googleApiClient;
-    private GeofenceManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
         buildApiClient();
 
-        manager = new GeofenceManager(this, googleApiClient);
+        BaseActivity.geofenceManager = new GeofenceManager(this, googleApiClient);
 
         //HuntActivity.dmlp = BaseActivity.dmlp;
 
@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         super.onDestroy();
         if(dmlp != null)
             dmlp.close();
-        manager.removeGeofences();
+        BaseActivity.geofenceManager.removeGeofences();
     }
 
     public void onClick(View view) {
@@ -155,7 +155,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 Location l = new Location("");
                 l.setLatitude(42.358801d); // The coords of the stud
                 l.setLongitude(-71.094635d);
-                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
+                BaseActivity.geofenceManager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
                         new GeofenceManager.GeofenceListener() {
                             @Override
                             public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {

@@ -21,6 +21,7 @@ import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 public abstract class BaseActivity extends Activity {
 
     public static DirectMockLocationProvider dmlp;
+    public static GeofenceManager geofenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,9 @@ public abstract class BaseActivity extends Activity {
         switch (id) {
             case R.id.action_settings:
                 return true;
+            case R.id.trigger_geofences:
+                geofenceManager.manuallyTriggerAll();
+                break;
             case R.id.change_location:
                 if(dmlp == null) {
                     Log.e("SCV", "dmlp is null!");
