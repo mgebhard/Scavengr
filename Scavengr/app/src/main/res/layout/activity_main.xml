@@ -23,7 +23,8 @@
                 android:id="@+id/geofenceButton"
                 android:layout_below="@+id/textView"
                 android:onClick="onClick"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
