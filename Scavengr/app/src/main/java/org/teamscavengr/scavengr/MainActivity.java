@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -37,6 +38,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_main);
 
         buildApiClient();
+
+//        FacebookSdk.sdkInitialize(getApplicationContext());
 
         manager = new GeofenceManager(this, googleApiClient);
 

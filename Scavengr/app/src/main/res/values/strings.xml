@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="facebook_app_id">1581135455444535</string>
     <string name="app_name">Scavengr</string>
     <string name="begin_hunt">Hunt</string>
     <string name="create_hunt">Create Hunt</string>
