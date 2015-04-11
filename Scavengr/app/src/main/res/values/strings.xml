@@ -30,5 +30,7 @@
     <string name="my_profile">My Profile</string>
     <string name="facebook">Facebook</string>
     <string name="my_name">My Name</string>
+    <string name="hello_user">Hello %1$s!</string>
+    <string name="skip_login">Continue as a guest.</string>
 
 </resources>
