@@ -1,7 +1,6 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -22,10 +21,7 @@ public class SelectionFragment extends Fragment {
     private static final String TAG = "SelectionFragment";
 
     private ProfilePictureView profilePictureView;
-    private MainActivity activity;
-
-    private Uri photoUri;
-    private ImageView photoThumbnail;
+    private TextView greeting;
 
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
@@ -33,7 +29,6 @@ public class SelectionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = (MainActivity) getActivity();
         callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {
@@ -47,11 +42,14 @@ public class SelectionFragment extends Fragment {
 
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
-//            tokenUpdated(currentAccessToken);
-//            profilePictureView.setProfileId(currentAccessToken.getUserId());
+            profilePictureView.setProfileId(currentAccessToken.getUserId());
+            greeting.setText(getString(R.string.hello_user, Profile.getCurrentProfile().getFirstName()));
 
         } else {
-//            profilePictureView.setProfileId(null);
+            // Don't know the user
+            // TODO(Gebhard): hide the my hunts button
+            profilePictureView.setProfileId(null);
+            greeting.setText("Welcome");
 
         }
     }
@@ -61,20 +59,11 @@ public class SelectionFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.selection, container, false);
 
-//        profilePictureView = (ProfilePictureView) view.findViewById(R.id.selection_profile_pic);
-//        profilePictureView.setCropped(true);
-//        photoThumbnail = (ImageView) view.findViewById(R.id.selected_image);
-//
-//        profilePictureView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (AccessToken.getCurrentAccessToken() != null) {
-//                    activity.showSettingsFragment();
-//                } else {
-//                    activity.showSplashFragment();
-//                }
-//            }
-//        });
+        profilePictureView = (ProfilePictureView) view.findViewById(R.id.profilePicture);
+        greeting = (TextView) view.findViewById(R.id.greeting);
+        profilePictureView.setCropped(true);
+
+        // TODO (gebhard): create a facebook log out system by options of picture click
 
         updateWithToken(AccessToken.getCurrentAccessToken());
 
@@ -96,24 +85,5 @@ public class SelectionFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
-        activity = null;
     }
 }
-
-
-
-//    /**
-//     * Notifies that the token has been updated.
-//     */
-//    private void tokenUpdated(AccessToken currentAccessToken) {
-//        if (pendingAnnounce) {
-//            Set<String> permissions = AccessToken.getCurrentAccessToken().getPermissions();
-//            if (currentAccessToken == null
-//                    || !currentAccessToken.getPermissions().contains(PERMISSION)) {
-//                pendingAnnounce = false;
-//                showRejectedPermissionError();
-//                return;
-//            }
-//            handleAnnounce();
-//        }
-//

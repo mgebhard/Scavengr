@@ -6,18 +6,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.widget.TextView;
+import android.view.View;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
-import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.widget.ProfilePictureView;
+
+import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
+import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements View.OnClickListener{
 
 
     private static final String USER_SKIPPED_LOGIN_KEY = "user_skipped_login";
@@ -28,10 +29,6 @@ public class MainActivity extends FragmentActivity {
     private static final int FRAGMENT_COUNT = SELECTION +1;
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 
-
-
-    //    private ProfilePictureView profilePictureView;
-    //    private TextView greeting;
     //    private GoogleApiClient googleApiClient;
     //    private GeofenceManager manager;
 
@@ -110,19 +107,6 @@ public class MainActivity extends FragmentActivity {
         }
         transaction.commit();
     }
-
-//    private void updateUI() {
-//        boolean enableButtons = AccessToken.getCurrentAccessToken() != null;
-//
-//        Profile profile = Profile.getCurrentProfile();
-//        if (enableButtons && profile != null) {
-//            profilePictureView.setProfileId(profile.getId());
-//            greeting.setText(getString(R.string.hello_user, profile.getFirstName()));
-//        } else {
-//            profilePictureView.setProfileId(null);
-//            greeting.setText(null);
-//        }
-//    }
 
     @Override
     protected void onStart() {
@@ -207,12 +191,62 @@ public class MainActivity extends FragmentActivity {
     }
 
 
+    public void onClick(View view) {
+        /*Hunt.loadHuntInBackground("e4dbb85d17ea96e135b58a4a", new Hunt.HuntLoadedCallback() {
+            @Override
+            public void huntLoaded(final Hunt hunt) {
+                Toast.makeText(MainActivity.this, "loaded hunt " + hunt.getId(), Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void huntFailedToLoad(final Exception ex) {
+                ex.printStackTrace();
+                Toast.makeText(MainActivity.this, "failed to load hunts", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void numHuntsFound(final int i) {}
+
+        }, true);*/
+
+        switch(view.getId()) {
+            case R.id.go_on_hunt:
+                //Intent hunt = new Intent(this, HuntsList.class);
+                Intent hunt = new Intent(this, HuntsList.class);
+                // Pass in Geo Location of user
+                this.startActivity(hunt);
+                break;
+            case R.id.create_hunt:
+                Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
+                this.startActivity(createHuntIntent);
+                break;
+
+//            TODO(ZACH) : Go through and remove code.
+//            case R.id.geofenceButton:
+//                if(!googleApiClient.isConnected()) {
+//                    Toast.makeText(this, "client not connected", Toast.LENGTH_SHORT).show();
+//                    break;
+//                }
+//                Location l = new Location("");
+//                l.setLatitude(42.358801d); // The coords of the stud
+//                l.setLongitude(-71.094635d);
+//                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
+//                        new GeofenceManager.GeofenceListener() {
+//                            @Override
+//                            public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
+//                                Toast.makeText(MainActivity.this,
+//                                        event.geofenceId + ": " + ((event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) ? "entered" : "exited"),
+//                                        Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+            default:
+                break;
+        }
+
+    }
 
 
     //        buildApiClient();
-
-//        FacebookSdk.sdkInitialize(getApplicationContext());
 
 //        manager = new GeofenceManager(this, googleApiClient);
 
@@ -237,32 +271,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onProviderDisabled(final String provider) {}
         });*/
-
-//        FacebookSdk.sdkInitialize(getApplicationContext());
-//        callbackManager = CallbackManager.Factory.create();
-
-//        loginButton = (LoginButton) findViewById(R.id.login_button);
-//        loginButton.setReadPermissions("user_friends");
-
-//
-//        // Callback registration
-//        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(LoginResult loginResult) {
-//                // TODO(ZACH || EVER): Store the user in the database
-//
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//                // App code
-//            }
-//
-//            @Override
-//            public void onError(FacebookException exception) {
-//                // App code
-//            }
-//        });
 //
 //
 //        ((LocationManager) getSystemService(Context.LOCATION_SERVICE)).requestLocationUpdates("network", 10000L, 0.5f, new LocationListener() {
@@ -308,57 +316,7 @@ public class MainActivity extends FragmentActivity {
 ////        manager.removeGeofences();
 //    }
 
-//    public void onClick(View view) {
-        /*Hunt.loadHuntInBackground("e4dbb85d17ea96e135b58a4a", new Hunt.HuntLoadedCallback() {
-            @Override
-            public void huntLoaded(final Hunt hunt) {
-                Toast.makeText(MainActivity.this, "loaded hunt " + hunt.getId(), Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void huntFailedToLoad(final Exception ex) {
-                ex.printStackTrace();
-                Toast.makeText(MainActivity.this, "failed to load hunts", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void numHuntsFound(final int i) {}
-
-        }, true);*/
-
-//        switch(view.getId()) {
-//            case R.id.go_on_hunt:
-//                //Intent hunt = new Intent(this, HuntsList.class);
-//                Intent hunt = new Intent(this, HuntsList.class);
-//                // Pass in Geo Location of user
-//                this.startActivity(hunt);
-//                break;
-//            case R.id.create_hunt:
-//                Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
-//                this.startActivity(createHuntIntent);
-//                break;
-//            case R.id.geofenceButton:
-//                if(!googleApiClient.isConnected()) {
-//                    Toast.makeText(this, "client not connected", Toast.LENGTH_SHORT).show();
-//                    break;
-//                }
-//                Location l = new Location("");
-//                l.setLatitude(42.358801d); // The coords of the stud
-//                l.setLongitude(-71.094635d);
-//                manager.addGeofence("geofenceStud", l, 100, Geofence.NEVER_EXPIRE, this,
-//                        new GeofenceManager.GeofenceListener() {
-//                            @Override
-//                            public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
-//                                Toast.makeText(MainActivity.this,
-//                                        event.geofenceId + ": " + ((event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) ? "entered" : "exited"),
-//                                        Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//            default:
-//                break;
-//        }
-
-//    }
 
 //    @Override
 //    public void onConnected(final Bundle bundle) {

@@ -286,7 +286,7 @@ public class HelloFacebookSampleActivity extends FragmentActivity {
     }
 
     private void postStatusUpdate() {
-        Profile profile = Profile.getCurrentProfile();
+        Profile profile =
         ShareLinkContent linkContent = new ShareLinkContent.Builder()
                 .setContentTitle("Hello Facebook")
                 .setContentDescription(
