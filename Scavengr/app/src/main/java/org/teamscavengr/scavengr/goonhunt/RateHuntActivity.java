@@ -9,11 +9,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import org.json.JSONException;
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Review;
+
+import java.io.IOException;
 
 
 public class RateHuntActivity extends BaseActivity implements View.OnClickListener {
@@ -37,7 +41,20 @@ public class RateHuntActivity extends BaseActivity implements View.OnClickListen
                 Review currentReview = new Review(null, null,
                         reviewRating.getRating(), reviewComments.getText().toString());
 
-                // TODO(ZACH || EVER): save the review to the DB
+
+                // save the review to the DB
+                currentReview.saveReviewInBackground(true, new Review.ReviewSavedCallback() {
+                    @Override
+                    public void reviewSaved() {
+                        Toast.makeText(RateHuntActivity.this, "Review saved", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void reviewFailedToSave(final Exception ex) {
+                        Toast.makeText(RateHuntActivity.this, "Review not saved :(", Toast.LENGTH_SHORT).show();
+                        ex.printStackTrace();
+                    }
+                });
 
                 this.startActivity(recap);
                 break;

@@ -100,6 +100,30 @@ public class Review implements Parcelable {
         }
     }
 
+    public void saveReviewInBackground(final boolean onUIThread, final ReviewSavedCallback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    saveReview();
+                    Review.run(onUIThread, new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.reviewSaved();
+                        }
+                    });
+                } catch (IOException | JSONException e) {
+                    Review.run(onUIThread, new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.reviewFailedToSave(e);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
     public static Review loadReview(String id) {
         try {
             URL url = new URL("http://scavengr.meteor.com/reviews/" + id);
@@ -139,6 +163,11 @@ public class Review implements Parcelable {
         public void reviewLoaded(Review r);
 
         public void reviewFailedToLoad(Exception ex);
+    }
+
+    public static interface ReviewSavedCallback {
+        public void reviewSaved();
+        public void reviewFailedToSave(Exception ex);
     }
 
     @Override
