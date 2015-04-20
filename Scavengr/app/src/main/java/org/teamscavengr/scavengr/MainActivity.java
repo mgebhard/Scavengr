@@ -19,6 +19,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
@@ -34,6 +35,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private static final int SELECTION = 1;
     private static final int FRAGMENT_COUNT = SELECTION +1;
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
+
+    public GoogleApiClient mGoogleApiClient;
 
     //    private GoogleApiClient googleApiClient;
     //    private GeofenceManager manager;
