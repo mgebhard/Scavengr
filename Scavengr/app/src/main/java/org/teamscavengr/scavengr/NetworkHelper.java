@@ -57,8 +57,6 @@ public class NetworkHelper {
         //    out = conn.getOutputStream();
         //Log.d("EVER", "Output is " + output);
         if (output) {
-            Log.d("EVER", "Sent request to server");
-            Log.d("EVER", params.toString());
             DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
 
             //String encoded = URLEncoder.encode(jsonParams.toString(),"UTF-8");
