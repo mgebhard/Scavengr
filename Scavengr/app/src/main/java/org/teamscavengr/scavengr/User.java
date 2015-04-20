@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.facebook.login.LoginManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +17,9 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A User is a user.
@@ -26,6 +31,7 @@ public class User implements Serializable {
     private final Optional<String> fbId;
     private final String email;
     private final String id;
+    private String meteorId;
 
     public User(String name, Optional<String> gPlusId, Optional<String> fbId, String email, String id) {
         this.name = name;
@@ -181,6 +187,55 @@ public class User implements Serializable {
                         ulc.userFailedToLoad(e);
                     }
                 }
+            }
+        }).start();
+    }
+
+    public void publishUser() {
+        try {
+            URL url;
+            if(id == null) {
+                url = new URL("http://scavengr.meteor.com/users/");
+
+                Map<String, String> requestMap = new HashMap<>();
+                requestMap.put("name", getName());
+                requestMap.put("id", getFacebookId());
+                try {
+                    meteorId = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
+                } catch (IOException e ) {
+                    // Just catching a causal exception
+                    Log.d("USER", "Failed to post user");
+                }
+                requestMap.clear();
+                Log.d("ID_ID", id);
+            }
+
+            // Make an empty review array.
+            url = new URL("http://scavenger.meteor.com/users/" + id + "/reviews");
+            try {
+                NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
+            } catch (IOException e) {
+                Log.d("USER", "Failed to post reviews to server");
+            }
+            // Save the tasks
+            url = new URL("http://scavengr.meteor.com/users/" + id + "/hunts");
+            try {
+                NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
+            } catch (IOException e) {
+                Log.d("USER", "Failed to post hunts to server");
+            }
+
+        } catch(MalformedURLException ex) {
+            throw new RuntimeException("bad url", ex);
+        } catch (JSONException ex) {
+            throw new RuntimeException("server returned bad data", ex);
+        }
+    }
+
+    public void publishUserInBackground() {
+        new Thread(new Runnable() {
+            public void run() {
+                publishUser();
             }
         }).start();
     }
