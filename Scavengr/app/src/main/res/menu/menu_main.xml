@@ -6,4 +6,7 @@
     <item android:id="@+id/change_location" android:title="Set Mock Location"
         android:orderInCategory="101" app:showAsAction="ifRoom"
         android:onClick="onOptionsItemSelected" />
+    <item android:id="@+id/logout" android:title="Logout"
+        android:orderInCategory="110" app:showAsAction="ifRoom"
+        android:onClick="onOptionsItemSelected" />
 </menu>
