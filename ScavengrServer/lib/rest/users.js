@@ -7,7 +7,7 @@ Router.route('/users', function() {
     if(this.request.method == 'GET') {
         this.response.end(JSON.stringify(Users.find({}, { _id: 1 }).fetch().map(function(x) { return { id: x._id._str, name: x.name }})));
     } else if(this.request.method == 'POST') {
-        this.response.end(JSON.stringify({ id: Users.insert(this.request.body)._str }));
+        this.response.end(JSON.stringify(Users.insert(this.request.body)));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "POST, GET, OPTIONS");
         this.response.end("OPTIONS Response");
