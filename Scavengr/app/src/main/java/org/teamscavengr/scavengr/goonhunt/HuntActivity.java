@@ -350,7 +350,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch (id) {
             case R.id.action_settings:
                 return true;
-            case R.id.change_location:
+            /*case R.id.change_location:
                 if(BaseActivity.dmlp == null) {
                     Log.e("SCV", "dmlp is null!");
                 }
@@ -388,7 +388,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
                 b.show();
-                break;
+                break;*/
             default:
                 break;
         }
