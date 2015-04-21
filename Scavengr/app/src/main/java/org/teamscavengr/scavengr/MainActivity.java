@@ -133,7 +133,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -199,7 +198,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.go_on_hunt:
-                //Intent hunt = new Intent(this, HuntsList.class);
                 Intent hunt = new Intent(this, HuntsList.class);
                 // Pass in Geo Location of user
                 this.startActivity(hunt);
