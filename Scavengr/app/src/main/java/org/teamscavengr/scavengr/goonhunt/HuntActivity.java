@@ -148,7 +148,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("MEGAN", "Location changed to: " + location);
         mLastLocation = location;
         Task currentTask = hunt.getTasks().get(currentTaskNumber);
-        Double distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+        Double distanceFromAnswer = CalcLib.distanceFromLatLng(
+                new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
+                new  LatLng(currentTask.getLocation().getLatitude(), currentTask.getLocation().getLongitude()));
         Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(),
                 mLastLocation.getLongitude()), centroid);
 
