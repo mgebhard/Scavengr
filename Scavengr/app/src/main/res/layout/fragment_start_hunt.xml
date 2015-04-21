@@ -14,12 +14,4 @@
         android:id="@+id/textView8"
         android:layout_gravity="center" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Begin"
-        android:id="@+id/begin_hunt"
-        android:onClick="onClick"
-        android:layout_gravity="center_horizontal|bottom" />
-
 </FrameLayout>

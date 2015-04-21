@@ -17,7 +17,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
@@ -163,7 +166,7 @@ public class HuntsList extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_hunts_list, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -173,13 +176,25 @@ public class HuntsList extends ListActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent home;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            case R.id.logout:
+                LoginManager.getInstance().logOut();
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_home:
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                break;
+            default:
+                break;
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
 

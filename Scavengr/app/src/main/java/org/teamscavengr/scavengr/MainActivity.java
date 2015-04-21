@@ -19,6 +19,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
@@ -34,6 +35,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private static final int SELECTION = 1;
     private static final int FRAGMENT_COUNT = SELECTION +1;
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
+
+    public GoogleApiClient mGoogleApiClient;
 
     //    private GoogleApiClient googleApiClient;
     //    private GeofenceManager manager;
@@ -210,15 +213,22 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent home;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == R.id.logout){
-            LoginManager.getInstance().logOut();
-            Intent home = new Intent(this, MainActivity.class);
-            this.startActivity(home);
+            case R.id.logout:
+                LoginManager.getInstance().logOut();
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_home:
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
