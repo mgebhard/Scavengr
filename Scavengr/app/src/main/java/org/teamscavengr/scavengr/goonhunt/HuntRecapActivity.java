@@ -33,19 +33,19 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt_recap);
-        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher);
+//        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher);
 
         if (getIntent().hasExtra("huntObj")) {
             hunt =  getIntent().getParcelableExtra("huntObj");
         }
-        if (getIntent().hasExtra("photos")) {
-            images = (HashMap<Task, Bitmap>) getIntent().getParcelableExtra("photos");
-        }
-
-        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
-        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
-        imageSwitcher.setInAnimation(in);
-        imageSwitcher.setOutAnimation(out);
+//        if (getIntent().hasExtra("photos")) {
+//            images = (HashMap<Task, Bitmap>) getIntent().getParcelableExtra("photos");
+//        }
+//
+//        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+//        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
+//        imageSwitcher.setInAnimation(in);
+//        imageSwitcher.setOutAnimation(out);
 
         String waypointText = "";
         for (Task task: hunt.getTasks()){
