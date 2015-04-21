@@ -130,7 +130,7 @@ public class CalcLib {
            double newLong = radius * multiplier + answerLocation.getLongitude();
 
            LatLng centroid = new LatLng(newLat, newLong);
-           return  new Pair<LatLng, Double>(centroid, radius * 1.05);
+           return  new Pair<LatLng, Double>(centroid, radius * 1.1);
        }
 
         double radius = 0.0;
@@ -153,7 +153,7 @@ public class CalcLib {
         centroidLng = centroidLng/hunt.getNumberOfTasks();
         LatLng centroid = new LatLng(centroidLat, centroidLng);
         if (hunt.getNumberOfTasks() == 1) {
-            radius = hunt.getTasks().get(0).getRadius();
+            radius = hunt.getTasks().get(0).getRadius() * 1.1;
         } else {
             for (int i = 0; i < hunt.getNumberOfTasks(); i++) {
                 Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));

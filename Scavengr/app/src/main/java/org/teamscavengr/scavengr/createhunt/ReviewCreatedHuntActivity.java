@@ -85,8 +85,9 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 currentHunt.setDescription(((EditText)findViewById(R.id.spoof_longitude)).getText().toString());
                 currentHunt.setCreatorId(user.getId());
                 currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
-                if (!currentHunt.checkHunt()) {
-                    Toast.makeText(ReviewCreatedHuntActivity.this, "Missing some information", Toast.LENGTH_SHORT).show();
+                StringBuilder toastString = new StringBuilder();
+                if (!currentHunt.checkHunt(toastString)) {
+                    Toast.makeText(ReviewCreatedHuntActivity.this, toastString.toString(), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 new Thread(new Runnable() {

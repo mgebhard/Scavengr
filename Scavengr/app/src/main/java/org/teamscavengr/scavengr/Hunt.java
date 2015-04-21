@@ -503,8 +503,7 @@ public class Hunt implements Parcelable, Serializable {
 
     }
 
-    public boolean checkHunt() {
-        String toastString = "";
+    public boolean checkHunt(StringBuilder toastString) {
 
 /*
         this.name = "";
@@ -522,23 +521,23 @@ public class Hunt implements Parcelable, Serializable {
         private long timeCreated;
 */
         if (name == "" || description == null) {
-            toastString += "Name missing\n";
+            toastString.append("Name missing\n");
             return false;
         }
         if (description == "" || description == null) {
-            toastString += "Description missing\n";
+            toastString.append("Description missing\n");
             return false;
         }
         if (creatorId == "" || creatorId == null) {
-            toastString += "You must be logged in\n";
+            toastString.append("You must be logged in\n");
             return false;
         }
         if (estTime == 0) {
-            toastString += "Missing Estimated Time\n";
+            toastString.append("Missing Estimated Time\n");
             return false;
         }
         if (estTimeUnit == null) {
-            toastString += "Missing Estimated Time Units\n";
+            toastString.append("Missing Estimated Time Units\n");
             return false;
         }
 
