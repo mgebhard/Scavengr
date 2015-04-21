@@ -1,11 +1,11 @@
 package org.teamscavengr.scavengr;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.facebook.login.LoginManager;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,8 +17,10 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,13 +32,12 @@ public class User implements Serializable {
     private final Optional<String> gPlusId;
     private final Optional<String> fbId;
     private final String email;
-    private final String id;
-    private String meteorId;
+    private String id;
 
-    public User(String name, Optional<String> gPlusId, Optional<String> fbId, String email, String id) {
+    public User(String id, String name, Optional<String> gPlusId, Optional<String> fbId, String email) {
+        this.id = id;
         this.name = name;
         this.gPlusId = gPlusId;
-        this.id = id;
         this.fbId = fbId;
         this.email = email;
     }
@@ -102,31 +103,9 @@ public class User implements Serializable {
      * @throws java.io.IOException If there is an error.
      */
     public static User loadUser(String id) throws IOException {
-        InputStream in = null;
         try {
-            // Initialize connection
             URL url = new URL("http://scavengr.meteor.com/users/" + id);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(1000);
-            conn.setConnectTimeout(1000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-            conn.connect();
-            int response = conn.getResponseCode();
-            Log.d("SCV", "Got response from scavengr.meteor.com");
-            in = conn.getInputStream();
-
-            // Read data
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while((line = br.readLine()) != null) {
-                sb.append(line);
-                sb.append("\n");
-            }
-
-            // Handle JSON
-            JSONObject result = new JSONObject(sb.toString());
+            JSONObject result = NetworkHelper.doRequest(url, "GET");
             Optional<String> gPlus, fb;
             if(result.has("googleplus")) {
                 gPlus = Optional.of(result.getString("googleplus"));
@@ -139,15 +118,11 @@ public class User implements Serializable {
                 fb = Optional.empty();
             }
 
-            return new User(result.getString("name"), gPlus, fb, result.getString("email"), id);
+            return new User(id, result.getString("name"), gPlus, fb, result.getString("email"));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("id \"" + id + "\" lead to Malformed URL", e);
         } catch (JSONException e) {
             throw new RuntimeException("server returned invalid data", e);
-        } finally {
-            if(in != null) {
-                in.close();
-            }
         }
     }
 
@@ -182,7 +157,7 @@ public class User implements Serializable {
                                 ulc.userFailedToLoad(e);
                             }
                         };
-                        new Handler(Looper.myLooper()).post(r);
+                        new Handler(Looper.getMainLooper()).post(r);
                     } else {
                         ulc.userFailedToLoad(e);
                     }
@@ -191,7 +166,62 @@ public class User implements Serializable {
         }).start();
     }
 
-    public void publishUser() {
+    public static List<String> findUserWithName(final String name) throws IOException {
+        System.out.println(name);
+        try {
+            URL url = new URL("http://scavengr.meteor.com/users/byName/" + URLEncoder.encode(name, "UTF-8"));
+            JSONObject result = NetworkHelper.doRequest(url, "GET");
+            JSONArray a = result.getJSONArray("result");
+            List<String> ret = new ArrayList<>();
+            for(int i = 0; i < a.length(); i++) {
+                ret.add(a.getJSONObject(i).getString("id"));
+            }
+
+            return ret;
+
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("name \"" + name + "\" lead to Malformed URL", e);
+        } catch (JSONException e) {
+            throw new RuntimeException("server returned invalid data", e);
+        }
+    }
+
+    public static void findUserWithNameInBackground(final String name,
+                                                    final NameSeachDoneCallback nsdc,
+                                                    final boolean onUIThread) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    final List<String> ids = findUserWithName(name);
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                nsdc.usersFound(ids);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        nsdc.usersFound(ids);
+                    }
+                } catch (final IOException | RuntimeException e) {
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                nsdc.usersFailedToFind(e);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        nsdc.usersFailedToFind(e);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void saveUser() throws IOException {
         try {
             URL url;
             if(id == null) {
@@ -199,31 +229,19 @@ public class User implements Serializable {
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", getName());
-                requestMap.put("id", getFacebookId());
-                try {
-                    meteorId = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
-                } catch (IOException e ) {
-                    // Just catching a causal exception
-                    Log.d("USER", "Failed to post user");
-                }
+                requestMap.put("facebook", getFacebookId());
+                id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
                 Log.d("ID_ID", id);
             }
 
             // Make an empty review array.
             url = new URL("http://scavenger.meteor.com/users/" + id + "/reviews");
-            try {
-                NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
-            } catch (IOException e) {
-                Log.d("USER", "Failed to post reviews to server");
-            }
+            NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
+
             // Save the tasks
             url = new URL("http://scavengr.meteor.com/users/" + id + "/hunts");
-            try {
-                NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
-            } catch (IOException e) {
-                Log.d("USER", "Failed to post hunts to server");
-            }
+            NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
 
         } catch(MalformedURLException ex) {
             throw new RuntimeException("bad url", ex);
@@ -232,10 +250,36 @@ public class User implements Serializable {
         }
     }
 
-    public void publishUserInBackground() {
+    public void saveUserInBackground(final UserSavedCallback usc,
+                                     final boolean onUIThread) {
         new Thread(new Runnable() {
             public void run() {
-                publishUser();
+                try {
+                    saveUser();
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                usc.userSaved();
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        usc.userSaved();
+                    }
+                } catch (final IOException | RuntimeException e) {
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                usc.userFailedToSave(e);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        usc.userFailedToSave(e);
+                    }
+                }
             }
         }).start();
     }
@@ -254,6 +298,23 @@ public class User implements Serializable {
          * @param ex The exception thrown.
          */
         public void userFailedToLoad(Exception ex);
+
+    }
+
+    public static interface UserSavedCallback {
+
+        public void userSaved();
+
+        public void userFailedToSave(Exception ex);
+
+    }
+
+
+    public static interface NameSeachDoneCallback {
+
+        public void usersFound(List<String> ids);
+
+        public void usersFailedToFind(Exception ex);
 
     }
 

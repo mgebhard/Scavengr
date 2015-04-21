@@ -12,6 +12,8 @@ import android.widget.*;
 import com.facebook.*;
 import com.facebook.login.widget.ProfilePictureView;
 
+import java.util.List;
+
 
 /**
  * Fragment that represents the main selection screen for Scrumptious.
@@ -25,6 +27,7 @@ public class SelectionFragment extends Fragment {
 
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,27 @@ public class SelectionFragment extends Fragment {
     private void updateWithToken(AccessToken currentAccessToken) {
         if (currentAccessToken != null) {
             profilePictureView.setProfileId(currentAccessToken.getUserId());
+            // Check to see if we need to create a new user
+            User.findUserWithNameInBackground(Profile.getCurrentProfile().getName(),
+                    new User.NameSeachDoneCallback() {
+                        @Override
+                        public void usersFound(final List<String> ids) {
+                            if(ids.size() > 0) {
+                                // User already exists, take the 1st one.
+                                setCurrentUserFromId(ids.get(0));
+                            } else {
+                                // User not in db yet, add it
+                                createAndSaveUser();
+                            }
+                        }
+
+                        @Override
+                        public void usersFailedToFind(final Exception ex) {
+                            Toast.makeText(SelectionFragment.this.getActivity(),
+                                    "Couldn't load users!", Toast.LENGTH_SHORT).show();
+                            ex.printStackTrace();
+                        }
+                    }, true);
             greeting.setText(getString(R.string.hello_user, Profile.getCurrentProfile().getFirstName()));
 
         } else {
@@ -52,6 +76,43 @@ public class SelectionFragment extends Fragment {
             greeting.setText("Welcome");
 
         }
+    }
+
+    private void setCurrentUserFromId(String id) {
+        User.loadUserInBackground(id, new User.UserLoadedCallback() {
+            @Override
+            public void userLoaded(final User user) {
+                SelectionFragment.this.user = user;
+            }
+
+            @Override
+            public void userFailedToLoad(final Exception ex) {
+                Toast.makeText(SelectionFragment.this.getActivity(),
+                        "Couldn't load user!", Toast.LENGTH_SHORT).show();
+                ex.printStackTrace();
+            }
+        }, true);
+    }
+
+    private void createAndSaveUser() {
+        Profile fbProfile = Profile.getCurrentProfile();
+        user = new User(null, fbProfile.getName(),
+                Optional.<String>empty(), Optional.of(fbProfile.getId()), "");
+        user.saveUserInBackground(new User.UserSavedCallback() {
+            @Override
+            public void userSaved() {
+                // HOORAY
+                Toast.makeText(getActivity(), "YAY", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void userFailedToSave(final Exception ex) {
+                Toast.makeText(getActivity(), "Noooooo :(", Toast.LENGTH_SHORT).show();
+                ex.printStackTrace();
+                getActivity().finish();
+            }
+
+        }, true);
     }
 
     @Override

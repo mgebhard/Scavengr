@@ -133,8 +133,8 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
             case R.id.finish:
                 Intent reviewCreated = new Intent(this, ReviewCreatedHuntActivity.class);
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
-                reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
-                        Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
+                reviewCreated.putExtra("currentUser", new User("RANDOM_STRING_ID_WOOO", "tim", Optional.<String>empty(),
+                        Optional.<String>empty(), "tim@tim.com"));
                 this.startActivity(reviewCreated);
                 break;
 

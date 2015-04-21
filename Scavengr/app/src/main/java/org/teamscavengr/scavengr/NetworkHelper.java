@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,10 @@ import java.util.Map;
  * Created by zrneely on 4/4/15.
  */
 public class NetworkHelper {
+
+    public static JSONObject doRequest(URL url, String type) throws IOException, JSONException {
+        return doRequest(url, type, false, new HashMap<String, String>());
+    }
 
     public static JSONObject doRequest(URL url, String type, boolean output, Map<String, String> values) throws
             IOException,
@@ -36,6 +41,7 @@ public class NetworkHelper {
         conn.setConnectTimeout(10000);
         conn.setRequestMethod(type);
         conn.setDoOutput(output);
+        conn.setRequestProperty("Accept-Encoding", "");
         if (output)
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoInput(true);
@@ -52,25 +58,13 @@ public class NetworkHelper {
 
         conn.connect();
 
-        OutputStream out = null;
-        //if(output)
-        //    out = conn.getOutputStream();
-        //Log.d("EVER", "Output is " + output);
         if (output) {
             DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
-
-            //String encoded = URLEncoder.encode(jsonParams.toString(),"UTF-8");
 
             printout.writeBytes(getQuery(params));
 
             printout.flush();
             printout.close();
-
-
-
-            /*BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            bw.write(getQuery(params));
-            bw.flush();*/
         }
 
         // Get output
