@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
@@ -15,6 +16,7 @@ import com.facebook.login.LoginManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -501,6 +503,52 @@ public class Hunt implements Parcelable, Serializable {
         }).start();
     }
 
+    public void makeHuntToast(String toastMessage) {
+
+    }
+
+    public boolean checkHunt() {
+        String toastString = "";
+
+/*
+        this.name = "";
+        this.id = null;
+        this.reviewIds = new ArrayList<String>();
+        this.tasks = new ArrayList<Task>();
+        this.description = "";
+        if (Profile.getCurrentProfile() != null) {
+            this.creatorId = Profile.getCurrentProfile().getId();
+        } else {
+            this.creatorId = "";
+        }
+
+        private TimeUnit estTimeUnit;
+        private long timeCreated;
+*/
+        if (name == "" || description == null) {
+            toastString += "Name missing\n";
+            return false;
+        }
+        if (description == "" || description == null) {
+            toastString += "Description missing\n";
+            return false;
+        }
+        if (creatorId == "" || creatorId == null) {
+            toastString += "You must be logged in\n";
+            return false;
+        }
+        if (estTime == 0) {
+            toastString += "Missing Estimated Time\n";
+            return false;
+        }
+        if (estTimeUnit == null) {
+            toastString += "Missing Estimated Time Units\n";
+            return false;
+        }
+
+        return true;
+    }
+
     public String getCreatorId() {
         return creatorId;
     }
@@ -571,4 +619,5 @@ public class Hunt implements Parcelable, Serializable {
             return new Hunt[size];
         }
     };
+
 }

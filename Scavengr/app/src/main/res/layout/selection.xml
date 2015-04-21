@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
-    android:background="@drawable/map_background">
+    android:background="@drawable/new_background">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,7 +20,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="113dp">
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3">
 
             <Button
                 android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            >
+            android:layout_weight="0.06">
 
             <TextView
                 android:id="@+id/greeting"
@@ -63,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Scavengr"
-                android:textSize="60dp"
+                android:textSize="50dp"
                 android:id="@+id/textView6"
                 android:layout_above="@+id/go_on_hunt"
                 android:layout_centerHorizontal="true"
@@ -71,36 +72,77 @@
 
         </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="157dp"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_weight="0.14">
 
-                <Button
-                    android:layout_width="150dp"
-                    android:layout_height="65dp"
-                    android:text="@string/create_hunt"
-                    android:textSize="20dp"
-                    android:id="@+id/create_hunt"
-                    android:onClick="onClick"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/imageView"
-                    android:layout_gravity="right|top"
-                    android:layout_marginRight="10dp"
-                    android:alpha="256" />
+            <Button
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:id="@+id/create_hunt"
+                android:onClick="onClick"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/my_hunts_button"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
 
-                <Button
-                    android:layout_width="150dp"
-                    android:layout_height="65dp"
-                    android:text="@string/begin_hunt"
-                    android:textSize="20dp"
-                    android:id="@+id/go_on_hunt"
-                    android:onClick="onClick"
-                    android:layout_alignTop="@+id/create_hunt"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="left|top"
-                    android:layout_marginLeft="10dp"
-                    android:alpha="256" />
-            </FrameLayout>
+            <Button
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:id="@+id/go_on_hunt"
+                android:onClick="onClick"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/go_on_hunt_button"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Hunt"
+                android:id="@+id/textView5"
+                android:layout_below="@+id/go_on_hunt"
+                android:layout_alignStart="@+id/go_on_hunt"
+                android:layout_alignEnd="@+id/go_on_hunt"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:background="#ffffff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Create"
+                android:id="@+id/textView10"
+                android:layout_gravity="right"
+                android:layout_below="@+id/create_hunt"
+                android:layout_alignEnd="@+id/create_hunt"
+                android:layout_alignBottom="@+id/textView5"
+                android:layout_alignStart="@+id/create_hunt"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:background="#ffffff"
+                android:autoText="false" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5" >
+
         </LinearLayout>
+
+    </LinearLayout>
 </RelativeLayout>

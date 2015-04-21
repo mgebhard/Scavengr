@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
@@ -85,12 +86,17 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 currentHunt.setDescription(((EditText)findViewById(R.id.spoof_longitude)).getText().toString());
                 currentHunt.setCreatorId(user.getId());
                 currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
-
+                if (!currentHunt.checkHunt()) {
+                    Toast.makeText(ReviewCreatedHuntActivity.this, "Missing some information", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
+
                             currentHunt.saveHunt();
+
                             Log.d("SCV", "saveHunt returned");
                         } catch (IOException e) {
                             e.printStackTrace();
