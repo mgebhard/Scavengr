@@ -101,7 +101,6 @@
         </activity>
         <activity
             android:name=".createhunt.HuntDetailsActivity"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:label="Hunt Details" >
         </activity>
     </application>
