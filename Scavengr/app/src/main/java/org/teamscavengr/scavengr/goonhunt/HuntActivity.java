@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.BaseActivity;
@@ -45,6 +47,9 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -157,7 +162,27 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             // TODO (GEBHARD): PAUSE APP
         }
 
-        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
+
+        List<LatLng> points = new ArrayList<LatLng>();
+        for (Task task: hunt.getTasks()) {
+            points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+        }
+        LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+        LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude*1.1, centroid.longitude + diffLatLng.longitude*1.1);
+        LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude*1.1, centroid.longitude - diffLatLng.longitude*1.1);
+        LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+        mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                // Do nothing
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        });
+//        mapObject.animateCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
 
     }
 
@@ -171,6 +196,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         map.setMyLocationEnabled(true);
         // Based on stack overflow post
         // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
+
         int zoomLevel = getZoomLevel();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
 
@@ -180,6 +206,25 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
 
+        /*List<LatLng> points = new ArrayList<LatLng>();
+        for (Task task: hunt.getTasks()) {
+            points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+        }
+        LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+        LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude*1.1, centroid.longitude + diffLatLng.longitude*1.1);
+        LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude*1.1, centroid.longitude - diffLatLng.longitude*1.1);
+        LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+        mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                // Do nothing
+            }
+
+            @Override
+            public void onCancel() {
+                // Do nothing
+            }
+        });*/
     }
 
     /**
