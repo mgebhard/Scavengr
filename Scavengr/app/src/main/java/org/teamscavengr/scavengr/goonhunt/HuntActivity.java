@@ -60,12 +60,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected Location centroidLocation;
     protected Double boundingRadius;
     protected LocationManager mLocationManager;
+    protected boolean inHuntBoundary = false;
 
     protected Hunt hunt;
     protected int currentTaskNumber = 0;
 
     private GoogleMap mapObject;
-    private GeofenceManager manager;
+//    private GeofenceManager manager;
     protected GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -77,8 +78,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (getIntent().hasExtra("huntObject")) {
             hunt = (getIntent().getParcelableExtra("huntObject"));
 
-            buildGoogleApiClient();
-            manager = new GeofenceManager(this, mGoogleApiClient);
+//            buildGoogleApiClient();
+//            manager = new GeofenceManager(this, mGoogleApiClient);
 
             // Get bounding geo fence for hunt
             Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
@@ -94,6 +95,34 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     REQUEST_LOCATION_UPDATE_TIMER,
                     REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
                     this);
+            mLastLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (mLastLocation != null) {
+                mLastLocation.setAccuracy(1);
+                Log.d("MEGAN", "Found current last location");
+
+                // If not in radius show start screen
+                Double distanceFromCentroid = CalcLib.distanceFromLatLng(
+                        new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
+                        centroid);
+
+                if (distanceFromCentroid > boundingRadius) {
+                    Log.d("MEGAN", "Not inside hunt boundaries");
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, new StartHuntFragment()).commit();
+                } else {
+                    Log.d("MEGAN", "Inside hunt boundaries");
+                    inHuntBoundary = true;
+                    loadTask(currentTaskNumber);
+                }
+
+            } else {
+                Log.d("MEGAN", "DON'T KNOW LOCATION");
+                Toast toast = Toast.makeText(this,
+                        "Make sure location is turned on otherwise can't go hunting",
+                        Toast.LENGTH_LONG);
+                toast.show();
+            }
 
             try{
                 MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -110,6 +139,24 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         Log.d("MEGAN", "Location changed to: " + location);
         mLastLocation = location;
+        Task currentTask = hunt.getTasks().get(currentTaskNumber);
+        Double distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+        Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(),
+                mLastLocation.getLongitude()), centroid);
+
+        if (distanceFromAnswer < currentTask.getRadius()) {
+            Log.d("MEGAN", "FOUND TASK");
+            loadCompletedTask(currentTaskNumber);
+        }
+
+        if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+            loadTask(currentTaskNumber);
+            inHuntBoundary = true;
+        } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
+            inHuntBoundary = false;
+            // TODO (GEBHARD): PAUSE APP
+        }
+
         mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
 
     }
@@ -129,7 +176,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         map.addCircle(new CircleOptions()
                 .center(centroid)
-                .radius(boundingRadius * 1.05)
+                .radius(boundingRadius)
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
 
@@ -158,18 +205,18 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d("MEGAN", "LOADING TASK");
 
         // Add geofence for this task
-        boolean added = manager.addGeofence("currentTask", newTask.getLocation(), (float) newTask.getRadius(),
-                Geofence.NEVER_EXPIRE, new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(final Status status) {
-                        if(!status.isSuccess()) {
-                            // Could not create geofence :(
-                            Log.e("ZACH", "Could not create geofence!");
-                        }
-                    }
-                }, this);
+//        boolean added = manager.addGeofence("currentTask", newTask.getLocation(), (float) newTask.getRadius(),
+//                Geofence.NEVER_EXPIRE, new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(final Status status) {
+//                        if(!status.isSuccess()) {
+//                            // Could not create geofence :(
+//                            Log.e("ZACH", "Could not create geofence!");
+//                        }
+//                    }
+//                }, this);
 
-        Log.e("MEGAN", "Added geofence for task" + added);
+//        Log.e("MEGAN", "Added geofence for task" + added);
     }
 
     /**
@@ -270,33 +317,33 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
-        Toast toast = Toast.makeText(this,
-                "GEO CHANGE " + event.geofenceId.toString(),
-                Toast.LENGTH_LONG);
-        toast.show();
-        switch(event.geofenceId) {
-            case "fullHuntFence":
-                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                    if (currentTaskNumber >= hunt.getTasks().size()){
-                        finishedPuzzle();
-                    } else {
-                        loadTask(currentTaskNumber);
-                    }
-                } else {
-                    // TODO(GEBHARD): THEY LEFT HUNT BOUNDARIES -> PAUSE HUNT
-                }
-                break;
-            case "currentTask":
-                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                    // You found the clue, Remove geo fence and switch transitions
-                    manager.removeGeofences("currentTask");
-                    loadCompletedTask(currentTaskNumber);
-                }
-
-            default:
-                // Event for a task - going into or out of a radius
-                Log.d("MEGAN", "Question mark: Default geo event Trigger getting called: " + event.geofenceId);
-        }
+//        Toast toast = Toast.makeText(this,
+//                "GEO CHANGE " + event.geofenceId.toString(),
+//                Toast.LENGTH_LONG);
+//        toast.show();
+//        switch(event.geofenceId) {
+//            case "fullHuntFence":
+//                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
+//                    if (currentTaskNumber >= hunt.getTasks().size()){
+//                        finishedPuzzle();
+//                    } else {
+//                        loadTask(currentTaskNumber);
+//                    }
+//                } else {
+//                    // TODO(GEBHARD): THEY LEFT HUNT BOUNDARIES -> PAUSE HUNT
+//                }
+//                break;
+//            case "currentTask":
+//                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
+//                    // You found the clue, Remove geo fence and switch transitions
+////                    manager.removeGeofences("currentTask");
+//                    loadCompletedTask(currentTaskNumber);
+//                }
+//
+//            default:
+//                // Event for a task - going into or out of a radius
+//                Log.d("MEGAN", "Question mark: Default geo event Trigger getting called: " + event.geofenceId);
+//        }
     }
 
     @Override
@@ -378,14 +425,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
+//    protected synchronized void buildGoogleApiClient() {
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//        mGoogleApiClient.connect();
+//    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -421,40 +468,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.d("MEGAN", "CONNCETED FUCK YEAA");
-
-        boolean added = manager.addGeofence("fullHuntFence", centroidLocation, boundingRadius.floatValue(),
-                Geofence.NEVER_EXPIRE, this, this);
-
-        Log.d("MEGAN", "GEO FENCE ACTUALLY ADDED: " + added);
-
-        mLastLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        if (mLastLocation != null) {
-            mLastLocation.setAccuracy(1);
-            Log.d("MEGAN", "Found current last location");
-
-            // If not in radius show start screen
-            Double distanceFromCentroid = CalcLib.distanceFromLatLng(
-                    new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
-                    centroid);
-
-            if (distanceFromCentroid > boundingRadius) {
-                Log.d("MEGAN", "Not inside hunt boundaries");
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, new StartHuntFragment()).commit();
-            } else {
-                Log.d("MEGAN", "Inside hunt boundaries");
-                loadTask(currentTaskNumber);
-            }
-
-        } else {
-            Log.d("MEGAN", "DON'T KNOW LOCATION");
-            Toast toast = Toast.makeText(this,
-                    "Make sure location is turned on otherwise can't go hunting",
-                    Toast.LENGTH_LONG);
-            toast.show();
-        }
+//        Log.d("MEGAN", "CONNCETED FUCK YEAA");
+//
+//        boolean added = manager.addGeofence("fullHuntFence", centroidLocation, boundingRadius.floatValue(),
+//                Geofence.NEVER_EXPIRE, this, this);
+//
+//        Log.d("MEGAN", "GEO FENCE ACTUALLY ADDED: " + added);
 
     }
 
