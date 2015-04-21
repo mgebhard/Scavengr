@@ -9,7 +9,7 @@ Router.route('/reviews/', function() {
             Reviews.find({}, { _id: 1 }).fetch().map(function(x) { return { id: x._id._str }; })
         ));
     } else if(this.request.method == 'POST') {
-        this.response.end(JSON.stringify({ id: Reviews.insert(this.request.body)._str }));
+        this.response.end(JSON.stringify(Reviews.insert(this.request.body)));
     } else if(this.request.method == 'OPTIONS') {
         this.response.setHeader('Access-Control-Allow-Methods', "GET, POST, OPTIONS");
         this.response.end("OPTIONS Response");
