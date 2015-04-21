@@ -1,26 +1,24 @@
 package org.teamscavengr.scavengr.goonhunt;
 
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.Profile;
@@ -29,8 +27,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -40,7 +36,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.GeofenceManager;
 import org.teamscavengr.scavengr.Hunt;
@@ -50,6 +45,12 @@ import org.teamscavengr.scavengr.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -58,7 +59,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
     protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
+    protected static final int REQUEST_IMAGE_CAPTURE = 420;
     protected final static String LOCATION_PROVIDER = "network";
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    String mCurrentPhotoPath;
 
     protected Location mLastLocation;
     protected LatLng centroid;
@@ -69,6 +74,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected Hunt hunt;
     protected int currentTaskNumber = 0;
+
+    protected Map<Task, Bitmap> images;
 
     private GoogleMap mapObject;
 //    private GeofenceManager manager;
@@ -82,7 +89,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (getIntent().hasExtra("huntObject")) {
             hunt = (getIntent().getParcelableExtra("huntObject"));
-
+            images = new HashMap<Task, Bitmap>();
 //            buildGoogleApiClient();
 //            manager = new GeofenceManager(this, mGoogleApiClient);
 
@@ -152,12 +159,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (distanceFromAnswer < currentTask.getRadius()) {
             Log.d("MEGAN", "FOUND TASK");
             loadCompletedTask(currentTaskNumber);
-        }
-
-        if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+        } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+            // Just entered the hunt boundary
             loadTask(currentTaskNumber);
             inHuntBoundary = true;
         } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
+            // Exited the hunt boundary
             inHuntBoundary = false;
             // TODO (GEBHARD): PAUSE APP
         }
@@ -318,6 +325,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // FINISHED SCAVENGER HUNT
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
                 photoRecap.putExtra("huntObj", (Parcelable) hunt);
+                photoRecap.putExtra("photos", (Parcelable)images);
                 this.startActivity(photoRecap);
                 break;
 
@@ -332,8 +340,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.camera:
                 // Run a camera intent
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 420);
+                dispatchTakePictureIntent();
                 break;
 
             case R.id.get_hint:
@@ -353,6 +360,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                         hintText,
                         Toast.LENGTH_LONG);
                 toast.show();
+                break;
+
+            case R.id.found_it:
+                loadCompletedTask(currentTaskNumber);
                 break;
 
             default:
@@ -470,14 +481,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-//    protected synchronized void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//        mGoogleApiClient.connect();
-//    }
+    //    protected synchronized void buildGoogleApiClient() {
+    //        mGoogleApiClient = new GoogleApiClient.Builder(this)
+    //                .addConnectionCallbacks(this)
+    //                .addOnConnectionFailedListener(this)
+    //                .addApi(LocationServices.API)
+    //                .build();
+    //        mGoogleApiClient.connect();
+    //    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -495,22 +506,54 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode,
-                                    final Intent data) {
-        switch(requestCode) {
-            case 420:
-                // got a result from the camera button
-                // do something with it
-                Log.d("SCV", "got a picture, woo: " + data.getData().toString());
-                //TODO: load the next task instead; also add in detection for completed hunt
-                //loadTask(tasksCompleted);
-                /*if (tasksCompleted >= hunt.getTasks().size()){ //TODO
-                    finishedPuzzle();
-                } else {
-                    loadTask(tasksCompleted);
-                }*/
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            images.put(hunt.getTasks().get(currentTaskNumber), imageBitmap);
+            // mImageView.setImageBitmap(imageBitmap);
         }
     }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
+    }
+
+
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
+    }
+
     @Override
     public void onConnected(Bundle connectionHint) {
 //        Log.d("MEGAN", "CONNCETED FUCK YEAA");
