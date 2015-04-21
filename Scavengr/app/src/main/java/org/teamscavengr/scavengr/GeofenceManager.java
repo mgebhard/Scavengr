@@ -116,6 +116,7 @@ public class GeofenceManager  {
     public boolean addGeofence(String name, Location center, float radius, long timeToLive,
                               ResultCallback<Status> statusCallback,
                               GeofenceListener geofenceListener) {
+        Log.d("MEGAN", "connected || connecting: " + client.isConnected() + client.isConnecting());
         if(!client.isConnected() || pi == null) return false;
 
         listenerHashMap.put(name, geofenceListener);

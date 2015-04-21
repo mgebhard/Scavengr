@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by erosales on 3/15/15.
@@ -101,6 +102,22 @@ public class CalcLib {
     }
 
     public static Pair<LatLng, Double> calculateCentroidAndRadius (Hunt hunt) {
+       if (hunt.getNumberOfTasks() == 1) {
+           Task onlyTask = hunt.getTasks().get(0);
+           Double radius = onlyTask.getRadius();
+           Location answerLocation = onlyTask.getLocation();
+
+           Random random = new Random();
+           int percentage = random.nextInt((100 - -100) + 1) + -100;
+           float multiplier = ((float)percentage)/100f;
+
+           double newLat = radius * multiplier + answerLocation.getLatitude();
+           double newLong = radius * multiplier + answerLocation.getLongitude();
+
+           LatLng centroid = new LatLng(newLat, newLong);
+           return  new Pair<LatLng, Double>(centroid, radius * 1.05);
+       }
+
         double radius = 0.0;
         double centroidLat = 0.0;
         double centroidLng = 0.0;
@@ -133,6 +150,6 @@ public class CalcLib {
                 }
             }
         }
-        return  new Pair<LatLng, Double>(centroid, radius);
+        return  new Pair<LatLng, Double>(centroid, radius*1.05);
     }
 }

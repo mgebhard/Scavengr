@@ -6,14 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -22,9 +20,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,14 +29,13 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.CalcLib;
@@ -49,58 +44,312 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
-
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener, LocationListener, GeofenceManager.GeofenceListener,
         ResultCallback<Status> {
 
-    protected GoogleApiClient mGoogleApiClient; // TODO this is already loaded in MainActivity - get that one?
+    protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
+    protected final static String LOCATION_PROVIDER = "network";
 
-    protected double currentLatitude = 43.6867;
-    protected double currentLongitude = -85.0102;
-    private Location mLastLocation;
-
-    public final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
-    public final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
-
+    protected Location mLastLocation;
     protected LatLng centroid;
+    protected Location centroidLocation;
     protected Double boundingRadius;
-    protected Circle circle;
-    protected double distanceFromCentroid;
-    protected double distanceFromAnswer;
-    protected LocationManager lm;
+    protected LocationManager mLocationManager;
+    protected boolean inHuntBoundary = false;
 
-    protected Task currentTask;
+    protected Hunt hunt;
     protected int currentTaskNumber = 0;
 
     private GoogleMap mapObject;
-    private GeofenceManager manager;
+//    private GeofenceManager manager;
+    protected GoogleApiClient mGoogleApiClient;
 
-    protected Hunt hunt;
-    private int tasksCompleted = 0;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_hunt);
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+
+        if (getIntent().hasExtra("huntObject")) {
+            hunt = (getIntent().getParcelableExtra("huntObject"));
+
+//            buildGoogleApiClient();
+//            manager = new GeofenceManager(this, mGoogleApiClient);
+
+            // Get bounding geo fence for hunt
+            Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
+            centroid = geoFence.first;
+            boundingRadius = geoFence.second;
+            centroidLocation = new Location("network");
+            centroidLocation.setLatitude(centroid.latitude);
+            centroidLocation.setLongitude(centroid.longitude);
+
+            mLocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager.requestLocationUpdates(
+                    LOCATION_PROVIDER,
+                    REQUEST_LOCATION_UPDATE_TIMER,
+                    REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
+                    this);
+            mLastLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (mLastLocation != null) {
+                mLastLocation.setAccuracy(1);
+                Log.d("MEGAN", "Found current last location");
+
+                // If not in radius show start screen
+                Double distanceFromCentroid = CalcLib.distanceFromLatLng(
+                        new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
+                        centroid);
+
+                if (distanceFromCentroid > boundingRadius) {
+                    Log.d("MEGAN", "Not inside hunt boundaries");
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, new StartHuntFragment()).commit();
+                } else {
+                    Log.d("MEGAN", "Inside hunt boundaries");
+                    inHuntBoundary = true;
+                    loadTask(currentTaskNumber);
+                }
+
+            } else {
+                Log.d("MEGAN", "DON'T KNOW LOCATION");
+                Toast toast = Toast.makeText(this,
+                        "Make sure location is turned on otherwise can't go hunting",
+                        Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            try{
+                MapFragment mapFragment = (MapFragment) getFragmentManager()
+                        .findFragmentById(R.id.map);
+                mapFragment.getMapAsync(this);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void onLocationChanged(Location location) {
+        Log.d("MEGAN", "Location changed to: " + location);
+        mLastLocation = location;
+        Task currentTask = hunt.getTasks().get(currentTaskNumber);
+        Double distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
+        Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(),
+                mLastLocation.getLongitude()), centroid);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (distanceFromAnswer < currentTask.getRadius()) {
+            Log.d("MEGAN", "FOUND TASK");
+            loadCompletedTask(currentTaskNumber);
         }
 
-        return super.onOptionsItemSelected(item);
-    } */
+        if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+            loadTask(currentTaskNumber);
+            inHuntBoundary = true;
+        } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
+            inHuntBoundary = false;
+            // TODO (GEBHARD): PAUSE APP
+        }
+
+        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
+
+    }
+
+    public int getZoomLevel() {
+        return (int) (16 - Math.log((boundingRadius + 0) / 500) / Math.log(2));
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        mapObject = map;
+        map.setMyLocationEnabled(true);
+        // Based on stack overflow post
+        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
+        int zoomLevel = getZoomLevel();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
+
+        map.addCircle(new CircleOptions()
+                .center(centroid)
+                .radius(boundingRadius)
+                .strokeColor(Color.argb(256, 0, 0, 256))
+                .fillColor(Color.argb(100, 0, 0, 256)));
+
+    }
+
+    /**
+     * Transition the fragment to show a the current task number.
+     * Also adds geo fence around current task.
+     *
+     * @param taskNum number getting loaded indexed at 0
+     */
+    public void loadTask(int taskNum) {
+        Task newTask = hunt.getTasks().get(taskNum);
+
+        TaskFragment newFragmentTask = TaskFragment.newInstance("Clue: " + newTask.getClue(),
+                "Task: " + (taskNum+1) + " out of " + Integer.toString(hunt.getTasks().size()));
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragmentTask);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        Log.d("MEGAN", "LOADING TASK");
+
+        // Add geofence for this task
+//        boolean added = manager.addGeofence("currentTask", newTask.getLocation(), (float) newTask.getRadius(),
+//                Geofence.NEVER_EXPIRE, new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(final Status status) {
+//                        if(!status.isSuccess()) {
+//                            // Could not create geofence :(
+//                            Log.e("ZACH", "Could not create geofence!");
+//                        }
+//                    }
+//                }, this);
+
+//        Log.e("MEGAN", "Added geofence for task" + added);
+    }
+
+    /**
+     * Transitions the fragment to show completed task.
+     *
+     * @param taskNum the task number of the clue you just found
+     */
+    public void loadCompletedTask(int taskNum){
+        Toast toast = Toast.makeText(this,
+                "LOADING COMPLETED TASK",
+                Toast.LENGTH_LONG);
+        toast.show();
+
+        Task completedTask = hunt.getTasks().get(taskNum);
+        CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance(
+                "Congratulations! You found: " + completedTask.getAnswer());
+
+        Bundle args = new Bundle();
+        args.putParcelable("task", hunt.getTasks().get(currentTaskNumber));
+        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+        // SNAIL TRAIL
+        Location completedTaskLocation = completedTask.getLocation();
+        mapObject.addMarker(new MarkerOptions()
+                .position(new LatLng(completedTaskLocation.getLatitude(),
+                                    completedTaskLocation.getLongitude()))
+                .title(completedTask.getAnswer()));
+    }
+
+    /**
+     * Transitions the fragment to show a congrats message before exiting this activity.
+     */
+    public void finishedPuzzle(){
+        CompletedHuntFragment newFragment = new CompletedHuntFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("hunt", hunt);
+        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.get_photo_recap:
+                // FINISHED SCAVENGER HUNT
+                Intent photoRecap = new Intent(this, HuntRecapActivity.class);
+                photoRecap.putExtra("huntObj", (Parcelable) hunt);
+                this.startActivity(photoRecap);
+                break;
+
+            case R.id.next_task:
+                currentTaskNumber += 1;
+                if (currentTaskNumber >= hunt.getTasks().size()){
+                    finishedPuzzle();
+                } else {
+                    loadTask(currentTaskNumber);
+                }
+                break;
+
+            case R.id.camera:
+                // Run a camera intent
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, 420);
+                break;
+
+            case R.id.get_hint:
+                String hintText = "";
+                // Call method with two geo points to get the distance between them then add toast
+                if (mLastLocation != null) {
+                    double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
+                            mLastLocation,
+                            hunt.getTasks().get(currentTaskNumber).getLocation());
+                    hintText = String.format("You are %.2f meters away from finding the waypoint",
+                            distanceFromAnswerInMeters);
+                } else {
+                    hintText = "Sorry your location dropped.";
+                }
+
+                Toast toast = Toast.makeText(this,
+                        hintText,
+                        Toast.LENGTH_LONG);
+                toast.show();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
+//        Toast toast = Toast.makeText(this,
+//                "GEO CHANGE " + event.geofenceId.toString(),
+//                Toast.LENGTH_LONG);
+//        toast.show();
+//        switch(event.geofenceId) {
+//            case "fullHuntFence":
+//                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
+//                    if (currentTaskNumber >= hunt.getTasks().size()){
+//                        finishedPuzzle();
+//                    } else {
+//                        loadTask(currentTaskNumber);
+//                    }
+//                } else {
+//                    // TODO(GEBHARD): THEY LEFT HUNT BOUNDARIES -> PAUSE HUNT
+//                }
+//                break;
+//            case "currentTask":
+//                if (event.type == Geofence.GEOFENCE_TRANSITION_ENTER) {
+//                    // You found the clue, Remove geo fence and switch transitions
+////                    manager.removeGeofences("currentTask");
+//                    loadCompletedTask(currentTaskNumber);
+//                }
+//
+//            default:
+//                // Event for a task - going into or out of a radius
+//                Log.d("MEGAN", "Question mark: Default geo event Trigger getting called: " + event.geofenceId);
+//        }
+    }
+
+    @Override
+    public void onResult(final Status status) {
+        if(!status.isSuccess()) {
+            Log.e("MEGAN", "Could not create geofence");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +368,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         switch (id) {
             case R.id.action_settings:
                 return true;
-            case R.id.change_location:
+            /*case R.id.change_location:
                 if(BaseActivity.dmlp == null) {
                     Log.e("SCV", "dmlp is null!");
                 }
@@ -157,7 +406,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
                 b.show();
-                break;
+                break;*/
             default:
                 break;
         }
@@ -165,323 +414,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_hunt);
-        if (getIntent().hasExtra("huntObject")) {
-
-            hunt = (getIntent().getParcelableExtra("huntObject"));
-            currentTask = hunt.getTasks().get(currentTaskNumber);
-
-            // Grab and set hunt title
-
-            // TODO (Gebhard): This is not an actual text view
-//            TextView titleText = (TextView) findViewById(R.id.textView3);
-//            titleText.setText("HUNT: " + hunt.getName());
-
-            // Grab and set hunt description
-            //TextView descriptionText = (TextView) findViewById(R.id.textView4);
-            //descriptionText.setText(hunt.getDescription());
-            Log.d("HELEN", "HUNT PASSED");
-        } else {
-            Log.d("HELEN", "NO HUNT PASSED");
-        }
-        /*else {
-            Context context = getApplicationContext();
-            CharSequence text = "The cat is dead - Failed to load data";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        } */
-
-        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Criteria cr = new Criteria();
-        lm.requestLocationUpdates(
-                "network",
-                REQUEST_LOCATION_UPDATE_TIMER,
-                REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
-                this);
-        mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (mLastLocation != null) {
-            currentLatitude = mLastLocation.getLatitude();
-            currentLongitude = mLastLocation.getLongitude();
-            mLastLocation.setAccuracy(1);
-            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
-        }
-
-        try{
-            MapFragment mapFragment = (MapFragment) getFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        // If not in radius show start screen
-
-        Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(hunt);
-        centroid = geoFence.first;
-        boundingRadius = geoFence.second;
-        Log.d("MEGAN", "BOUNDING RADIUS: " + boundingRadius);
-
-
-
-        buildGoogleApiClient();
-
-        manager = new GeofenceManager(this, mGoogleApiClient);
-
-        distanceFromCentroid = CalcLib.distanceFromLatLng(
-                new LatLng(currentLatitude, currentLongitude), centroid);
-
-        if (distanceFromCentroid > boundingRadius) {
-            Log.d("MEGAN", "YEAH inside hunt boundaries");
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new StartHuntFragment()).commit();
-        } else {
-            Log.d("MEGAN", "Not inside hunt boundaries");
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new TaskFragment()).commit();
-            Location l = new Location("network");
-            l.setLatitude(centroid.latitude);
-            l.setLongitude(centroid.longitude);
-            manager.addGeofence("waitForUserInHuntArea", l, boundingRadius.floatValue(), Geofence.NEVER_EXPIRE, this, this);
-        }
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d("MEGAN", "Location changed to: " + location);
-
-        // Update all location changes
-        mLastLocation = location;
-        currentLatitude = mLastLocation.getLatitude();
-        currentLongitude = mLastLocation.getLongitude();
-
-        distanceFromAnswer = CalcLib.distanceFromLatLng(location, currentTask.getLocation());
-
-        distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(currentLatitude,
-                currentLongitude), centroid);
-
-        if (distanceFromAnswer < currentTask.getRadius()) {
-            Toast toast = Toast.makeText(this,
-                    "FOUND WAYPOINT",
-                    Toast.LENGTH_LONG);
-
-            toast.show();
-            loadCompletedTask(currentTaskNumber);
-        }
-
-        if (mapObject.isMyLocationEnabled())
-            Log.d("Ever", "My Location is isEnabled");
-        //mapObject.setMyLocationEnabled(true);
-
-
-
-        mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
-
-    }
-
-    public int getZoomLevel() {
-        return (int) (16 - Math.log((boundingRadius + distanceFromCentroid) / 500) / Math.log(2));
-    }
-
-    @Override
-    public void onMapReady(GoogleMap map) {
-        mapObject = map;
-        map.setMyLocationEnabled(true);
-        // Based on stack overflow post
-        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
-        int zoomLevel = getZoomLevel();
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
-
-        circle = map.addCircle(new CircleOptions()
-                .center(centroid)
-                .radius(boundingRadius * 1.05)
-                .strokeColor(Color.argb(256, 0, 0, 256))
-                .fillColor(Color.argb(100, 0, 0, 256)));
-
-    }
-
-    /**
-     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-     */
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    public void loadTask(int taskNum) { //taskNum starts at 0
-        TaskFragment newFragment = TaskFragment.newInstance("Clue: " + hunt.getTasks().get(taskNum).getClue(), "Task: " + taskNum+1 + " out of " + Integer.toString(hunt.getTasks().size()));
-        Bundle args = new Bundle();
-//        args.putInt(TaskFragment.ARG_POSITION, position);
-//        newFragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-
-        Log.d("HELEN", "LOADING TASK");
-        Toast toast = Toast.makeText(this,
-                "LOADING TASK",
-                Toast.LENGTH_LONG);
-        toast.show();
-
-        // Add geofence for this task
-        final Task t = hunt.getTasks().get(taskNum);
-        manager.addGeofence(t.getId(), t.getLocation(), (float) t.getRadius(),
-                Geofence.NEVER_EXPIRE, new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(final Status status) {
-                        if(!status.isSuccess()) {
-                            // Could not create geofence :(
-                            Log.e("ZACH", "Could not create geofence!");
-                        }
-                    }
-                }, this);
-
-        /*TextView taskText = (TextView) newFragment.getView().findViewById(R.id.taskText);
-        TextView progressText= (TextView) newFragment.getView().findViewById(R.id.progressText);
-
-        taskText.setText("Clue: " + hunt.getTasks().get(taskNum).getClue());
-        progressText.setText("Task: " + taskNum + " out of " + Integer.toString(hunt.getTasks().size()));*/
-    }
-
-    public void loadCompletedTask(int taskNum){
-        Toast toast = Toast.makeText(this,
-                "LOADING COMPLETED TASK",
-                Toast.LENGTH_LONG);
-        toast.show();
-        CompletedTaskFragment newFragment = CompletedTaskFragment.newInstance("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
-        Bundle args = new Bundle();
-        args.putParcelable("task", currentTask);
-        newFragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-
-        //TextView congrats = (TextView) newFragment.getView().findViewById(R.id.congrats);
-
-        //congrats.setText("Congratulations! You found: " + hunt.getTasks().get(taskNum).getAnswer());
-    }
-
-    public void finishedPuzzle(){
-        CompletedHuntFragment newFragment = new CompletedHuntFragment();
-        Bundle args = new Bundle();
-        args.putParcelable("hunt", hunt);
-        newFragment.setArguments(args);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
-    }
-
-    public void onClick(View view) {
-        switch(view.getId()) {
-            case R.id.get_photo_recap:
-                Intent photoRecap = new Intent(this, HuntRecapActivity.class);
-                photoRecap.putExtra("huntObj", (Parcelable) hunt);
-                this.startActivity(photoRecap);
-                break;
-
-            case R.id.begin_hunt:
-                if (tasksCompleted >= hunt.getTasks().size()){
-                    finishedPuzzle();
-                } else {
-                    loadTask(tasksCompleted);
-                }
-                break;
-
-            case R.id.next_task:
-                tasksCompleted += 1;
-                currentTaskNumber +=1;
-                if (tasksCompleted >= hunt.getTasks().size()){
-                    finishedPuzzle();
-                } else {
-                    currentTask = hunt.getTasks().get(tasksCompleted);
-                    loadTask(tasksCompleted);
-                }
-                break;
-
-            case R.id.camera:
-                // Run a camera intent
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 420);
-                break;
-
-            case R.id.get_hint:
-                String hintText = "";
-                // Call method with two geo points to get the distance between them then add toast
-                if (mLastLocation != null) {
-                    double distanceFromAnswerInMeters = CalcLib.distanceFromLatLng(
-                            mLastLocation,
-                            currentTask.getLocation());
-                    hintText = String.format("You are %.2f meters away from finding the waypoint",
-                            distanceFromAnswerInMeters);
-                } else {
-                    hintText = "Sorry your location dropped.";
-                }
-                Toast toast = Toast.makeText(this,
-                        hintText,
-                        Toast.LENGTH_LONG);
-                toast.show();
-                break;
-
-            case R.id.found_it:
-                loadCompletedTask(tasksCompleted); //TODO: shift over to options menu stuff for MVP, geofencing for actual
-
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_map_test, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
+//    protected synchronized void buildGoogleApiClient() {
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//        mGoogleApiClient.connect();
+//    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -502,7 +442,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onActivityResult(final int requestCode, final int resultCode,
                                     final Intent data) {
         switch(requestCode) {
-            case 420: // got a result from the camera button
+            case 420:
+                // got a result from the camera button
                 // do something with it
                 Log.d("SCV", "got a picture, woo: " + data.getData().toString());
                 //TODO: load the next task instead; also add in detection for completed hunt
@@ -516,8 +457,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
     @Override
     public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
+//        Log.d("MEGAN", "CONNCETED FUCK YEAA");
+//
+//        boolean added = manager.addGeofence("fullHuntFence", centroidLocation, boundingRadius.floatValue(),
+//                Geofence.NEVER_EXPIRE, this, this);
+//
+//        Log.d("MEGAN", "GEO FENCE ACTUALLY ADDED: " + added);
 
     }
 
@@ -529,33 +474,5 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {}
 
-    @Override
-    public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {
-        switch(event.geofenceId) {
-            case "waitForUserInHuntArea":
-                if (tasksCompleted >= hunt.getTasks().size()){
-                    finishedPuzzle();
-                } else {
-                    loadTask(tasksCompleted);
-                }
-                break;
-            default:
-                // Event for a task - going into or out of a radius
-                setFoundButtonEnabled(event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE);
-        }
-        if(event.type == GeofenceManager.GeofenceEvent.ENTERED_GEOFENCE) {
-            manager.removeGeofences(event.geofenceId);
-        }
-    }
 
-    private void setFoundButtonEnabled(final boolean b) {
-        findViewById(R.id.found_it).setEnabled(b);
-    }
-
-    @Override
-    public void onResult(final Status status) {
-        if(!status.isSuccess()) {
-            Log.e("ZACH", "Could not create geofence");
-        }
-    }
 }
