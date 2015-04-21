@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
-    android:background="@drawable/map_background">
+    android:background="@drawable/new_background">
 
     <LinearLayout
         android:orientation="vertical"
@@ -75,11 +75,12 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="157dp"
-            android:layout_gravity="center_horizontal|top">
+            android:layout_gravity="center_horizontal|top"
+            android:layout_weight="0.14">
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:id="@+id/create_hunt"
                 android:onClick="onClick"
                 android:layout_gravity="left|center_vertical"
@@ -89,8 +90,8 @@
                 android:layout_alignParentEnd="true" />
 
             <Button
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
                 android:id="@+id/go_on_hunt"
                 android:onClick="onClick"
                 android:layout_gravity="right|center_vertical"
@@ -103,26 +104,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Go on a Hunt"
+                android:text="Hunt"
                 android:id="@+id/textView5"
-                android:gravity="center_horizontal"
                 android:layout_below="@+id/go_on_hunt"
                 android:layout_alignStart="@+id/go_on_hunt"
                 android:layout_alignEnd="@+id/go_on_hunt"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center"
+                android:background="#ffffff" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="My Hunts"
+                android:text="Create"
                 android:id="@+id/textView10"
                 android:layout_gravity="right"
                 android:layout_below="@+id/create_hunt"
                 android:layout_alignEnd="@+id/create_hunt"
                 android:layout_alignBottom="@+id/textView5"
                 android:layout_alignStart="@+id/create_hunt"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:padding="5dp"
+                android:background="#ffffff"
+                android:autoText="false" />
 
         </RelativeLayout>
 
