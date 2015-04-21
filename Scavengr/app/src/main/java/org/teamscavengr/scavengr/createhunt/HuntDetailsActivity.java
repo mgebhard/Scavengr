@@ -34,7 +34,8 @@ import java.util.ArrayList;
  * Created by hzhou1235 on 3/30/15.
  */
 public class HuntDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -163,7 +164,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
                 //TODO: edit page
                 this.startActivity(editHunt);
                 break;
-            
+
             case R.id.back: //TODO: should this just go back?
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(myHunts);
