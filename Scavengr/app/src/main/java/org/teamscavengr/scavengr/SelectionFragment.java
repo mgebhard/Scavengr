@@ -105,12 +105,12 @@ public class SelectionFragment extends Fragment {
             @Override
             public void userSaved() {
                 // HOORAY
-                Toast.makeText(getActivity(), "YAY", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "User created", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void userFailedToSave(final Exception ex) {
-                Toast.makeText(getActivity(), "Noooooo :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Could not create new user", Toast.LENGTH_SHORT).show();
                 ex.printStackTrace();
                 getActivity().finish();
             }

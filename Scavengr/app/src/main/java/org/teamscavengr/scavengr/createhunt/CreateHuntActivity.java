@@ -131,7 +131,7 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 Intent reviewCreated = new Intent(this, ReviewCreatedHuntActivity.class);
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
                 reviewCreated.putExtra("currentUser", new User("RANDOM_STRING_ID_WOOO", "tim", Optional.<String>empty(),
-                        Optional.<String>empty(), "tim@tim.com"));
+                        Optional.<String>empty()));
                 this.startActivity(reviewCreated);
                 break;
 
