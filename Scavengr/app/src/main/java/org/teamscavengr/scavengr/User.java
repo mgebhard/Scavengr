@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -9,12 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -31,15 +26,13 @@ public class User implements Serializable {
     private final String name;
     private final Optional<String> gPlusId;
     private final Optional<String> fbId;
-    private final String email;
     private String id;
 
-    public User(String id, String name, Optional<String> gPlusId, Optional<String> fbId, String email) {
+    public User(String id, String name, Optional<String> gPlusId, Optional<String> fbId) {
         this.id = id;
         this.name = name;
         this.gPlusId = gPlusId;
         this.fbId = fbId;
-        this.email = email;
     }
 
     /**
@@ -47,13 +40,6 @@ public class User implements Serializable {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return The email address of the user.
-     */
-    public String getEmail() {
-        return email;
     }
 
     /**
@@ -118,7 +104,7 @@ public class User implements Serializable {
                 fb = Optional.empty();
             }
 
-            return new User(id, result.getString("name"), gPlus, fb, result.getString("email"));
+            return new User(id, result.getString("name"), gPlus, fb);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("id \"" + id + "\" lead to Malformed URL", e);
         } catch (JSONException e) {

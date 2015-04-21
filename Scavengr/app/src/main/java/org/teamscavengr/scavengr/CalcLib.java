@@ -1,13 +1,10 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
-import android.location.LocationManager;
 import android.util.Log;
 import android.util.Pair;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;

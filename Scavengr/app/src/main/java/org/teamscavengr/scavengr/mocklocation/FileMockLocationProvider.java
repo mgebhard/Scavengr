@@ -3,8 +3,6 @@ package org.teamscavengr.scavengr.mocklocation;
 import android.content.Context;
 import android.os.FileObserver;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

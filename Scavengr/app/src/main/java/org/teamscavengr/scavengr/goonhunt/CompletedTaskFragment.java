@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.teamscavengr.scavengr.R;
-import org.teamscavengr.scavengr.Task;
 
 
 /**

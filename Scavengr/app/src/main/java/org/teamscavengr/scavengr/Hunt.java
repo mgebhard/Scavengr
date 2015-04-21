@@ -1,22 +1,18 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.facebook.Profile;
-import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
 import java.io.BufferedReader;
 import java.io.IOException;
