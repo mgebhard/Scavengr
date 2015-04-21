@@ -1,12 +1,16 @@
 package org.teamscavengr.scavengr;
 
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
+
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,7 +93,11 @@ public class Hunt implements Parcelable, Serializable {
         this.reviewIds = new ArrayList<String>();
         this.tasks = new ArrayList<Task>();
         this.description = "";
-        this.creatorId = "";
+        if (Profile.getCurrentProfile() != null) {
+            this.creatorId = Profile.getCurrentProfile().getId();
+        } else {
+            this.creatorId = "";
+        }
         this.estTime = estTime;
         this.estTimeUnit = estTimeUnit;
         this.timeCreated = timeCreated;

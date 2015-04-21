@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -41,6 +42,7 @@ import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.GeofenceManager;
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 
@@ -364,7 +366,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Intent home;
         switch (id) {
             case R.id.action_settings:
                 return true;
@@ -407,6 +409,15 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 });
                 b.show();
                 break;*/
+            case R.id.logout:
+                LoginManager.getInstance().logOut();
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_home:
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                break;
             default:
                 break;
         }
