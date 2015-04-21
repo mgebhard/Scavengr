@@ -2,22 +2,15 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Review;
-
-import java.io.IOException;
 
 
 public class RateHuntActivity extends BaseActivity implements View.OnClickListener {

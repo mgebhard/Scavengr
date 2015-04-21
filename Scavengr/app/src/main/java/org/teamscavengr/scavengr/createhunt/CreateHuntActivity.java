@@ -6,10 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -133,8 +130,8 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
             case R.id.finish:
                 Intent reviewCreated = new Intent(this, ReviewCreatedHuntActivity.class);
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
-                reviewCreated.putExtra("currentUser", new User("tim", Optional.<String>empty(),
-                        Optional.<String>empty(), "tim@tim.com", "RANDOM_STRING_ID_WOOO"));
+                reviewCreated.putExtra("currentUser", new User("RANDOM_STRING_ID_WOOO", "tim", Optional.<String>empty(),
+                        Optional.<String>empty()));
                 this.startActivity(reviewCreated);
                 break;
 

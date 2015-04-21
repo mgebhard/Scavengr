@@ -5,12 +5,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,8 +25,6 @@ import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
-
-import java.util.ArrayList;
 
 /**
  * Created by hzhou1235 on 3/30/15.

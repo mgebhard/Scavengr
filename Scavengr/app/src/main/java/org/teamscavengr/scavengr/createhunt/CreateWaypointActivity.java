@@ -53,7 +53,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     private InputMethodManager imm = null;
 
-    private final double defaultRadius = 10.0;
+    private final double defaultRadius = 10.0; //in meters
     private final double maxRadius = 5000.0; //in meters
     private int progress;
     private Circle circle;
@@ -198,10 +198,12 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         switch(view.getId()) {
             case R.id.ok:
                 Hunt currentHunt = getIntent().getParcelableExtra("currentHunt");
+                // Grab the task radius
+                double taskRadius = maxRadius * (progress/100.0) * (progress/100.0) + 10.0;
                 Task taskAdded = new Task(null, mLastLocation,
                         ((EditText)findViewById(R.id.clue)).getText().toString(),
                         ((EditText)findViewById(R.id.answer)).getText().toString(),
-                        progress/100.0, currentHunt.getTasks().size() + 1);
+                        taskRadius, currentHunt.getTasks().size() + 1);
                 currentHunt.addTask(taskAdded);
                 Intent addTask = new Intent(this, CreateHuntActivity.class);
                 addTask.putExtra("currentHunt", (Parcelable)currentHunt);
