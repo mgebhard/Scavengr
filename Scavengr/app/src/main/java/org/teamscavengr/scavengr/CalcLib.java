@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -75,13 +76,30 @@ public class CalcLib {
                 end.getLongitude());
     }
 
+    public static LatLng maxDistanceFromCentroid(LatLng centroid, List<LatLng> points) {
+        double diffLat = 0;
+        double diffLng = 0;
+        if (points.size() == 1) {
+            return new LatLng(.0002, .0002);
+        }
+        for (LatLng point: points) {
+            if (diffLat < Math.abs(point.latitude - centroid.latitude)) {
+                diffLat = Math.abs(point.latitude - centroid.latitude);
+            }
+            if (diffLng < Math.abs(point.longitude - centroid.longitude)) {
+                diffLng = Math.abs(point.longitude - centroid.longitude);
+            }
+        }
+        return new LatLng(diffLat, diffLng);
+    }
+
     /**
      * Gets the average of LatLng.
      *
      * @param points List of LatLng points to get the average of.
      * @return LatLng representing the average latLng of the points
      */
-    public static LatLng CentralAverage(ArrayList<LatLng> points) {
+    public static LatLng CentralAverage(List<LatLng> points) {
         double avgLat = 0;
         double avgLng = 0;
         int size = 0;

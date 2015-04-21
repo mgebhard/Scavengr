@@ -21,8 +21,6 @@ import com.facebook.login.widget.LoginButton;
 public class LoginFragment extends Fragment {
 
     private LoginButton loginButton;
-    private TextView skipLoginButton;
-    private SkipLoginCallback skipLoginCallback;
     private CallbackManager callbackManager;
 
     public interface SkipLoginCallback {
@@ -54,15 +52,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        skipLoginButton = (TextView) view.findViewById(R.id.skip_login_button);
-        skipLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (skipLoginCallback != null) {
-                    skipLoginCallback.onSkipLoginPressed();
-                }
-            }
-        });
 
         return view;
     }
@@ -71,10 +60,6 @@ public class LoginFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void setSkipLoginCallback(SkipLoginCallback callback) {
-        skipLoginCallback = callback;
     }
 
 

@@ -34,7 +34,8 @@ import java.util.ArrayList;
  * Created by hzhou1235 on 3/30/15.
  */
 public class HuntDetailsActivity extends ActionBarActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        View.OnClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -55,12 +56,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -76,10 +72,6 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Button back = (Button) findViewById(R.id.back);
-        Button edit = (Button) findViewById(R.id.edit);
-        back.setOnClickListener(this);
-        edit.setOnClickListener(this);
 
         buildGoogleApiClient();
         //getActionBar().setIcon(R.drawable.scavengr_logo);
@@ -118,7 +110,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
             Location taskLocation = task.getLocation();
             double lat = taskLocation.getLatitude();
             double lng = taskLocation.getLongitude();
-            Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
+
             map.addMarker(new MarkerOptions()
                     .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
@@ -157,13 +149,12 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
     @Override
     public void onConnectionSuspended(final int i) {
-
     }
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {
-
     }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.edit:
@@ -173,10 +164,12 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
                 //TODO: edit page
                 this.startActivity(editHunt);
                 break;
+
             case R.id.back: //TODO: should this just go back?
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 this.startActivity(myHunts);
                 break;
+
             default:
                 break;
         }
