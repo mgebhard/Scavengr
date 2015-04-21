@@ -171,6 +171,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         List<LatLng> points = new ArrayList<LatLng>();
+        points.add(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
         for (Task task: hunt.getTasks()) {
             points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
         }
