@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#ffffffff" >
+    android:background="#ffffff" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,9 +46,9 @@
                 android:text="@string/skip_login"
                 android:id="@+id/skip_login_button"
                 android:textSize="15dp"
-                android:textColor="#000000"
+                android:textColor="#ffffff"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/button_background"
+                android:background="@drawable/basic_button"
                 android:layout_weight="0.11" />
 
         </LinearLayout>

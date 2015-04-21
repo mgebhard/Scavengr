@@ -13,23 +13,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Completed!"
         android:id="@+id/textView2"
-        android:layout_gravity="center_horizontal|top" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next Clue"
-        android:onClick="onClick"
-        android:id="@+id/next_task"
-        android:layout_gravity="right|bottom" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Camera"
-        android:onClick="onClick"
-        android:id="@+id/camera"
-        android:layout_gravity="left|bottom" />
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="30dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,5 +28,39 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView2"
         android:layout_gravity="center_horizontal|bottom" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="188dp"
+        android:layout_gravity="center_horizontal|bottom">
+
+        <Button
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:onClick="onClick"
+            android:id="@+id/next_task"
+            android:layout_gravity="right|bottom"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/next_button"
+            android:layout_marginEnd="52dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+        <!--android:text="Next Clue"-->
+
+        <Button
+            android:layout_width="125dp"
+            android:layout_height="75dp"
+            android:text="Camera"
+            android:onClick="onClick"
+            android:id="@+id/camera"
+            android:layout_gravity="left|bottom"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/basic_button"
+            android:textColor="#ffffff"
+            android:layout_marginStart="47dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:textSize="18dp" />
+    </RelativeLayout>
 
 </FrameLayout>

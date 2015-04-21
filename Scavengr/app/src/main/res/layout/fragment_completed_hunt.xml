@@ -5,19 +5,22 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="You completed the whole scavenger hunt congrats!"
-        android:id="@+id/textView12"
-        android:layout_gravity="center" />
-
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="125dp"
+        android:layout_height="50dp"
         android:text="See Results"
         android:id="@+id/get_photo_recap"
         android:onClick="onClick"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="@drawable/basic_button"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="261dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Congratulations! You have completed the entire hunt."
+        android:id="@+id/textView12"
+        android:layout_gravity="center" />
 </FrameLayout>

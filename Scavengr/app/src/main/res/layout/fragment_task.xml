@@ -20,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Task: Find the best pastry shop in the North eEnd"
+                android:text="Task: Find the best pastry shop in the North End"
                 android:id="@+id/taskText"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="10dp"
@@ -37,8 +37,8 @@
             android:layout_weight="1">
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="250dp"
+                android:layout_height="50dp"
                 android:text="How close am I?"
                 android:onClick="onClick"
                 android:id="@+id/get_hint"
@@ -46,7 +46,12 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/basic_button"
+                android:textColor="#ffffff"
+                android:textSize="18dp"
+                />
         </LinearLayout>
 
         <LinearLayout

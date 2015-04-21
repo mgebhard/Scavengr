@@ -59,23 +59,29 @@
     </LinearLayout>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Review"
+        android:layout_width="100dp"
+        android:layout_height="75dp"
+        android:text="Rate/Review"
         android:id="@+id/review"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="onClick"/>
+        android:onClick="onClick"
+        android:background="@drawable/basic_button"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor= "#ffffff"/>
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Home"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:id="@+id/home"
-        android:layout_alignBottom="@+id/review"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onClick"/>
+        android:onClick="onClick"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background = "@drawable/home_button"/>
 
 </RelativeLayout>
