@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
+import com.facebook.login.LoginManager;
 
 import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
 
@@ -42,45 +45,19 @@ public abstract class BaseActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        Intent home;
         switch (id) {
             case R.id.action_settings:
                 return true;
-            case R.id.change_location:
-                if(dmlp == null) {
-                    Log.e("SCV", "dmlp is null!");
-                }
 
-                AlertDialog.Builder b = new AlertDialog.Builder(BaseActivity.this);
-                b.setTitle("Location?");
-                LayoutInflater inflater = getLayoutInflater();
-                View v = inflater.inflate(R.layout.stuff, null);
-                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
-                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
-
-                b.setView(v);
-                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        dialog.cancel();
-                    }
-                });
-                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        try {
-                            double la = Double.parseDouble(lat.getText().toString());
-                            double lo = Double.parseDouble(lon.getText().toString());
-                            dmlp.setLocation(la, lo);
-                            dmlp.update();
-                        } catch (NumberFormatException ex) {
-                            ex.printStackTrace();
-                        } finally {
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                b.show();
+            case R.id.logout:
+                LoginManager.getInstance().logOut();
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_home:
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
                 break;
             default:
                 break;

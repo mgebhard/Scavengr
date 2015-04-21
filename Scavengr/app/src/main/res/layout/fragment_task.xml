@@ -55,17 +55,6 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Found it!"
-                android:id="@+id/found_it"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:onClick="onClick"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

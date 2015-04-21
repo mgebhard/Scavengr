@@ -365,6 +365,68 @@ public class Hunt implements Parcelable, Serializable {
         return Arrays.asList(Optional.<Hunt>empty());
     }
 
+    public static List<Optional<Hunt>> loadAllUserHunts(String userId) {
+        InputStream in = null;
+        try {
+            URL url = new URL("http://scavengr.meteor.com/users/" + userId);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(1000);
+            conn.setConnectTimeout(1000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            // int response = conn.getResponseCode();
+            Log.d("SCV", "Got response from scavengr.meteor.com");
+            in = conn.getInputStream();
+
+            // Read data
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+
+            // Chain-load all the other hunts
+            JSONObject obj = new JSONObject(sb.toString());
+//            obj.getJSONArray("createdHunts");
+
+
+            @SuppressWarnings("unchecked")
+            List<Optional<Hunt>> ret = new ArrayList<>();
+
+
+
+            /*for(int i = 0; i < obj.length(); i++) {
+                try {
+                    ret.add(Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
+                } catch(JSONException | RuntimeException ex) {
+                    ex.printStackTrace();
+                    ret.add(Optional.<Hunt>empty());
+                }
+            }
+            return ret;*/
+
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("bad url", e);
+        } catch (JSONException e) {
+            throw new RuntimeException("server returned invalid data", e);
+        } catch (IOException e) {
+            // do something
+        } finally {
+            if(in != null) try {
+                in.close();
+            } catch (IOException e) {
+                throw new RuntimeException("could not close!", e);
+            }
+        }
+
+        return Arrays.asList(Optional.<Hunt>empty());
+
+    }
+
     public static void loadAllHuntsInBackground(final HuntLoadedCallback hlc,
                                                 final boolean onUIThread) {
         new Thread(new Runnable() {
@@ -379,6 +441,39 @@ public class Hunt implements Parcelable, Serializable {
                 });
                 for(final Optional<Hunt> hunt : h) {
                     if(hunt.isPresent()) {
+                        Hunt.run(onUIThread, new Runnable() {
+                            @Override
+                            public void run() {
+                                hlc.huntLoaded(hunt.get());
+                            }
+                        });
+                    } else {
+                        Hunt.run(onUIThread, new Runnable() {
+                            @Override
+                            public void run() {
+                                hlc.huntFailedToLoad(new RuntimeException("not present"));
+                            }
+                        });
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public static void loadUsersHuntsInBackground(final HuntLoadedCallback hlc,
+                                                  final boolean onUIThread, final String userId) {
+        new Thread(new Runnable () {
+            @Override
+            public void run() {
+                final List<Optional <Hunt>> h = loadAllUserHunts(userId);
+                Hunt.run(onUIThread, new Runnable() {
+                    @Override
+                    public void run() {
+                        hlc.numHuntsFound(h.size());
+                    }
+                });
+                for (final Optional<Hunt> hunt : h) {
+                    if (hunt.isPresent()) {
                         Hunt.run(onUIThread, new Runnable() {
                             @Override
                             public void run() {
