@@ -36,6 +36,25 @@ Router.route('/users/byName/:name', function() {
     }
 }, { where: 'server' });
 
+Router.route('/users/byFacebookId/:facebookId', function() {
+    this.response.statusCode = 200;
+    this.response.setHeader("Content-Type", "application/json");
+    this.response.setHeader("Access-Control-Allow-Origin", "*");
+    this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    if(this.request.method == 'GET') {
+        this.response.end(JSON.stringify({'result': Users.find({ facebook: this.params.facebookId }).map(function(x) {
+            return { id: x._id._str };
+        })}));
+    } else if(this.request.method == 'OPTIONS') {
+        this.response.setHeader('Access-Control-Allow-Methods', "GET, OPTIONS");
+        this.response.end("OPTIONS Response");
+    } else {
+        this.response.statusCode = 405;
+        this.response.end("Not Allowed");
+    }
+}, { where: 'server' });
+
 Router.route('/users/:userId', function() {
     this.response.statusCode = 200;
     this.response.setHeader("Content-Type", "application/json");

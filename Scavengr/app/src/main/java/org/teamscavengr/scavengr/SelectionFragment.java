@@ -51,7 +51,7 @@ public class SelectionFragment extends Fragment {
             profilePictureView.setProfileId(currentAccessToken.getUserId());
             // Check to see if we need to create a new user
             User.findUserWithNameInBackground(Profile.getCurrentProfile().getName(),
-                    new User.NameSeachDoneCallback() {
+                    new User.NameSearchDoneCallback() {
                         @Override
                         public void usersFound(final List<String> ids) {
                             if(ids.size() > 0) {

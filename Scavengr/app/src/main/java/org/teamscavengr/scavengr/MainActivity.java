@@ -10,16 +10,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
+
+import java.io.IOError;
+import java.io.IOException;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     private static final int LOGIN = 0;
@@ -30,6 +36,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private boolean isResumed = false;
+    private static User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +57,37 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     }
                     if (currentAccessToken != null) {
                         showFragment(SELECTION, false);
+
                     } else {
                         showFragment(LOGIN, false);
                     }
+
+                    User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+                            new User.FacebookLookupDoneCallback() {
+                                @Override
+                                public void usersFound(List<String> ids) {
+                                    if (ids.size() > 0) {
+                                        User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
+                                            @Override
+                                            public void userLoaded(User user) {
+                                                MainActivity.user = user;
+                                            }
+
+                                            @Override
+                                            public void userFailedToLoad(Exception ex) {
+                                                Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            }, true);
+                                    }
+                                }
+
+                                @Override
+                                public void usersFailedToFind(Exception e) {
+                                    Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+                                }
+                            }, true);
+
                 }
             }
         };
@@ -198,13 +233,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.go_on_hunt:
+                if (user == null) {
+                    Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Intent hunt = new Intent(this, HuntsList.class);
+                hunt.putExtra("user", user);
                 // Pass in Geo Location of user
                 this.startActivity(hunt);
                 break;
 
             case R.id.create_hunt:
+                if (user == null) {
+                    Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
+                createHuntIntent.putExtra("user", user);
                 this.startActivity(createHuntIntent);
                 break;
 

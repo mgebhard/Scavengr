@@ -172,8 +172,27 @@ public class User implements Serializable {
         }
     }
 
+    public static List<String> findUserWithFacebookId(final String facebookId) throws IOException {
+        System.out.println(facebookId);
+        try {
+            URL url = new URL("http://scavengr.meteor.com/users/byFacebookId/" + URLEncoder.encode(facebookId, "UTF-8"));
+            JSONObject result = NetworkHelper.doRequest(url, "GET");
+            JSONArray a = result.getJSONArray("result");
+            List<String> ret = new ArrayList<>();
+            for(int i = 0; i < a.length(); i++) {
+                ret.add(a.getJSONObject(i).getString("id"));
+            }
+            return ret;
+
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("FacebookId \"" + facebookId + "\" lead to Malformed URL", e);
+        } catch (JSONException e) {
+            throw new RuntimeException("server returned invalid data", e);
+        }
+    }
+
     public static void findUserWithNameInBackground(final String name,
-                                                    final NameSeachDoneCallback nsdc,
+                                                    final NameSearchDoneCallback nsdc,
                                                     final boolean onUIThread) {
         new Thread(new Runnable() {
             public void run() {
@@ -207,6 +226,41 @@ public class User implements Serializable {
         }).start();
     }
 
+    public static void findUserWithFacebookIdInBackground(final String facebookID,
+                                                    final FacebookLookupDoneCallback fldc,
+                                                    final boolean onUIThread) {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    final List<String> ids = findUserWithFacebookId(facebookID);
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                fldc.usersFound(ids);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        fldc.usersFound(ids);
+                    }
+                } catch (final IOException | RuntimeException e) {
+                    if(onUIThread) {
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                fldc.usersFailedToFind(e);
+                            }
+                        };
+                        new Handler(Looper.getMainLooper()).post(r);
+                    } else {
+                        fldc.usersFailedToFind(e);
+                    }
+                }
+            }
+        }).start();
+    }
+
     public void saveUser() throws IOException {
         try {
             URL url;
@@ -216,6 +270,7 @@ public class User implements Serializable {
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", getName());
                 requestMap.put("facebook", getFacebookId());
+                requestMap.put("_id", getFacebookId());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
                 Log.d("ID_ID", id);
@@ -296,12 +351,18 @@ public class User implements Serializable {
     }
 
 
-    public static interface NameSeachDoneCallback {
+    public static interface NameSearchDoneCallback {
 
         public void usersFound(List<String> ids);
 
         public void usersFailedToFind(Exception ex);
 
+    }
+
+    public static interface FacebookLookupDoneCallback {
+        public void usersFound(List<String> ids);
+
+        public void usersFailedToFind(Exception e);
     }
 
 }

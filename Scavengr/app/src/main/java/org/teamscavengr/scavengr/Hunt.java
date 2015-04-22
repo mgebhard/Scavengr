@@ -221,12 +221,12 @@ public class Hunt implements Parcelable, Serializable {
      * Saves this hunt to the server. If we don't currently have an ID, creates one.
      * @throws IOException If bullshit happens
      */
-    public void saveHunt() throws IOException {
+    public void saveHunt(String creatorMeteorId) throws IOException {
         try {
             URL url;
             if(id == null) {
                 url = new URL("http://scavengr.meteor.com/hunts/");
-
+                creatorId = creatorMeteorId;
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
                 requestMap.put("creatorId", creatorId);

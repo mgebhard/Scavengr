@@ -18,6 +18,7 @@ import com.facebook.login.LoginManager;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
 
@@ -30,6 +31,7 @@ public class MyHuntsActivity extends ListActivity {
     ArrayList<Hunt> mHuntsObj = new ArrayList<Hunt>();
     ArrayList<String> mHuntNames = new ArrayList<String>();
     ArrayList<String> huntsExtended = new ArrayList<String>();
+    User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class MyHuntsActivity extends ListActivity {
         mHuntsObj = new ArrayList<Hunt>();
         mHuntNames = new ArrayList<String>();
         huntsExtended = new ArrayList<String>();
+        currentUser = (User) getIntent().getParcelableExtra("user");
 
         huntsExtended.add("+ CREATE NEW HUNT");
         setContentView(R.layout.custom_list_activity_view);
