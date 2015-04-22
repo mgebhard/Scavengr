@@ -150,49 +150,51 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
         Log.d("MEGAN", "Location changed to: " + location);
         mLastLocation = location;
-        Task currentTask = hunt.getTasks().get(currentTaskNumber);
-        Double distanceFromAnswer = CalcLib.distanceFromLatLng(
-                new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
-                new  LatLng(currentTask.getLocation().getLatitude(), currentTask.getLocation().getLongitude()));
-        Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(),
-                mLastLocation.getLongitude()), centroid);
+        Task currentTask;
+        if (currentTaskNumber < hunt.getTasks().size()) {
+            currentTask = hunt.getTasks().get(currentTaskNumber);
+            Double distanceFromAnswer = CalcLib.distanceFromLatLng(
+                    new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),
+                    new LatLng(currentTask.getLocation().getLatitude(), currentTask.getLocation().getLongitude()));
+            Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(),
+                    mLastLocation.getLongitude()), centroid);
 
-        if (distanceFromAnswer < currentTask.getRadius()) {
-            Log.d("MEGAN", "FOUND TASK");
-            loadCompletedTask(currentTaskNumber);
-        } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
-            // Just entered the hunt boundary
-            loadTask(currentTaskNumber);
-            inHuntBoundary = true;
-        } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
-            // Exited the hunt boundary
-            inHuntBoundary = false;
-            // TODO (GEBHARD): PAUSE APP
-        }
-
-
-        List<LatLng> points = new ArrayList<LatLng>();
-        points.add(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-        for (Task task: hunt.getTasks()) {
-            points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
-        }
-        LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
-        LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude*1.1, centroid.longitude + diffLatLng.longitude*1.1);
-        LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude*1.1, centroid.longitude - diffLatLng.longitude*1.1);
-        LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
-        mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                // Do nothing
+            if (distanceFromAnswer < currentTask.getRadius()) {
+                Log.d("MEGAN", "FOUND TASK");
+                loadCompletedTask(currentTaskNumber);
+            } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+                // Just entered the hunt boundary
+                loadTask(currentTaskNumber);
+                inHuntBoundary = true;
+            } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
+                // Exited the hunt boundary
+                inHuntBoundary = false;
+                // TODO (GEBHARD): PAUSE APP
             }
 
-            @Override
-            public void onCancel() {
-                // Do nothing
+
+            List<LatLng> points = new ArrayList<LatLng>();
+            points.add(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            for (Task task : hunt.getTasks()) {
+                points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
             }
-        });
+            LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+            LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+            LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+            LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+            mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
+                    // Do nothing
+                }
+
+                @Override
+                public void onCancel() {
+                    // Do nothing
+                }
+            });
 //        mapObject.animateCamera(CameraUpdateFactory.newLatLngZoom(centroid, getZoomLevel()));
-
+        }
     }
 
     public int getZoomLevel() {
@@ -310,6 +312,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
      * Transitions the fragment to show a congrats message before exiting this activity.
      */
     public void finishedPuzzle(){
+        if (mGoogleApiClient != null) { mGoogleApiClient.disconnect(); }
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();
         args.putParcelable("hunt", hunt);
@@ -327,7 +330,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 // FINISHED SCAVENGER HUNT
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
                 photoRecap.putExtra("huntObj", (Parcelable) hunt);
-                photoRecap.putExtra("photos", (Parcelable)images);
+                //photoRecap.putExtra("photos", (Parcelable)images);
                 this.startActivity(photoRecap);
                 break;
 
@@ -335,6 +338,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 currentTaskNumber += 1;
                 if (currentTaskNumber >= hunt.getTasks().size()){
                     finishedPuzzle();
+//                    this.onDestroy();
                 } else {
                     loadTask(currentTaskNumber);
                 }
@@ -569,11 +573,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionSuspended(final int i) {
-        mGoogleApiClient.connect(); // attempt to reconnect
+        mGoogleApiClient.connect(); // attempt to connect
     }
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {}
+
+
 
 
 }
