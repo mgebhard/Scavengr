@@ -41,6 +41,7 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
 
     public Location mLastLocation;
     public GoogleMap mapObject;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,10 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
         } else {
             // Default constructor for hunt
             currentHunt = new Hunt();
+        }
+
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
         }
 
         if (getIntent().hasExtra("editMode")){
@@ -132,12 +137,14 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 reviewCreated.putExtra("currentHunt", (Parcelable) currentHunt);
                 reviewCreated.putExtra("currentUser", new User("RANDOM_STRING_ID_WOOO", "tim", Optional.<String>empty(),
                         Optional.<String>empty()));
+                reviewCreated.putExtra("user", currentUser);
                 this.startActivity(reviewCreated);
                 break;
 
             case R.id.add_waypoint:
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
                 createTask.putExtra("currentHunt", (Parcelable) currentHunt);
+                createTask.putExtra("user", currentUser);
                 this.startActivity(createTask);
                 break;
 

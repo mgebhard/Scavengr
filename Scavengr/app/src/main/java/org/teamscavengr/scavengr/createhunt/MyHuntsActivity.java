@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,14 +50,16 @@ public class MyHuntsActivity extends ListActivity {
 
         huntsExtended.add("+ CREATE NEW HUNT");
         setContentView(R.layout.custom_list_activity_view);
-        Hunt.loadAllHuntsInBackground(
+        Hunt.loadUsersHuntsInBackground(
                 new Hunt.HuntLoadedCallback() {
                     @Override
                     public void numHuntsFound(int num) {
                         Context context = getApplicationContext();
                         CharSequence text = "Loading " + num + " hunts...";
                         int duration = Toast.LENGTH_SHORT;
-
+                        if (num < 1) {
+                            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                        }
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
@@ -72,13 +75,14 @@ public class MyHuntsActivity extends ListActivity {
 
                     @Override
                     public void huntFailedToLoad(Exception e) {
+                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                         Context context = getApplicationContext();
                         CharSequence text = "Failed to load a hunt";
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
-                }, true);
+                }, true, currentUser);
 
         mAdapter = new ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, huntsExtended);
@@ -95,10 +99,12 @@ public class MyHuntsActivity extends ListActivity {
         Intent hunt = null;
         if (position == 0){
             hunt = new Intent(this, CreateHuntActivity.class);
+
         } else {
             hunt = new Intent(this, HuntDetailsActivity.class);
             hunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position - 1));
         }
+        hunt.putExtra("user", currentUser);
         this.startActivity(hunt);
     }
 

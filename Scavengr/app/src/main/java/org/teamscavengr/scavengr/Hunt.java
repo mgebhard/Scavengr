@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -374,7 +375,7 @@ public class Hunt implements Parcelable, Serializable {
     public static List<Optional<Hunt>> loadAllUserHunts(String userId) {
         InputStream in = null;
         try {
-            URL url = new URL("http://scavengr.meteor.com/users/" + userId);
+            URL url = new URL("http://scavengr.meteor.com/hunts/byAuthor/" + URLEncoder.encode(userId, "UTF-8"));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(1000);
             conn.setConnectTimeout(1000);
@@ -396,16 +397,10 @@ public class Hunt implements Parcelable, Serializable {
             }
 
             // Chain-load all the other hunts
-            JSONObject obj = new JSONObject(sb.toString());
-//            obj.getJSONArray("createdHunts");
-
-
+            JSONArray obj = new JSONArray(sb.toString());
             @SuppressWarnings("unchecked")
             List<Optional<Hunt>> ret = new ArrayList<>();
-
-
-
-            /*for(int i = 0; i < obj.length(); i++) {
+            for(int i = 0; i < obj.length(); i++) {
                 try {
                     ret.add(Optional.of(loadHunt(obj.getJSONObject(i).getString("id"))));
                 } catch(JSONException | RuntimeException ex) {
@@ -413,7 +408,7 @@ public class Hunt implements Parcelable, Serializable {
                     ret.add(Optional.<Hunt>empty());
                 }
             }
-            return ret;*/
+            return ret;
 
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("bad url", e);
@@ -467,10 +462,11 @@ public class Hunt implements Parcelable, Serializable {
     }
 
     public static void loadUsersHuntsInBackground(final HuntLoadedCallback hlc,
-                                                  final boolean onUIThread, final String userId) {
+                                                  final boolean onUIThread, final User user) {
         new Thread(new Runnable () {
             @Override
             public void run() {
+                String userId = user.getId();
                 final List<Optional <Hunt>> h = loadAllUserHunts(userId);
                 Hunt.run(onUIThread, new Runnable() {
                     @Override

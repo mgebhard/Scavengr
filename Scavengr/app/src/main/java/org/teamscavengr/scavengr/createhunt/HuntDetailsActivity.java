@@ -25,6 +25,7 @@ import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 /**
  * Created by hzhou1235 on 3/30/15.
@@ -41,6 +42,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
     public Location mLastLocation;
     public GoogleMap mapObject;
     private Hunt hunt;
+    private User currentUser;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,6 +76,9 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
         if (getIntent().hasExtra("huntObject")) {
             hunt = (getIntent().getParcelableExtra("huntObject"));
+        }
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
         }
 
         TextView timesHunted = (TextView) findViewById(R.id.times_hunted);
@@ -157,6 +162,7 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
                 Intent editHunt = new Intent(this, CreateHuntActivity.class);
                 editHunt.putExtra("editMode", true);
                 editHunt.putExtra("currentHunt", (Parcelable) hunt);
+                editHunt.putExtra("user", currentUser);
                 //TODO: edit page
                 this.startActivity(editHunt);
                 break;

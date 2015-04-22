@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ReviewCreatedHuntActivity extends ActionBarActivity implements View.OnClickListener {
     Hunt currentHunt;
+    User currentUser;
     private int hour, minute;
     ListView listView;
 
@@ -42,6 +43,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.review_created_hunt);
         currentHunt = getIntent().getParcelableExtra("currentHunt");
+        currentUser = getIntent().getParcelableExtra("user");
 
         listView = (ListView) findViewById(R.id.list);
         List<String> values = new ArrayList<String>();
@@ -83,10 +85,10 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm:
-                User user = (User) getIntent().getSerializableExtra("currentUser");
+//                User user = getIntent().getParcelableExtra("currentUser");
                 currentHunt.setName(((EditText)findViewById(R.id.spoof_latitude)).getText().toString());
                 currentHunt.setDescription(((EditText)findViewById(R.id.spoof_longitude)).getText().toString());
-                currentHunt.setCreatorId(user.getId());
+                currentHunt.setCreatorId(currentUser.getId());
                 currentHunt.setTimeCreated(System.currentTimeMillis() / 1000L);
                 StringBuilder toastString = new StringBuilder();
                 if (!currentHunt.checkHunt(toastString)) {
@@ -98,7 +100,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                     public void run() {
                         try {
                             // TODO: remove dependency on facebook profile
-                            currentHunt.saveHunt(Profile.getCurrentProfile().getId());
+                            currentHunt.saveHunt(currentUser.getId());
 
                             Log.d("SCV", "saveHunt returned");
                         } catch (IOException e) {
@@ -108,6 +110,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 }).start();
 
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                myHunts.putExtra("user", currentUser);
                 this.startActivity(myHunts);
                 break;
 

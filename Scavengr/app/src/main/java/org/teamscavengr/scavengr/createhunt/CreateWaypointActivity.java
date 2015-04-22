@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 
 /**
@@ -57,6 +58,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     private final double maxRadius = 5000.0; //in meters
     private int progress;
     private Circle circle;
+    private User currentUser;
 
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
@@ -114,6 +116,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
         mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
+        }
+
         if (mLastLocation != null) {
             currentLatitude = mLastLocation.getLatitude();
             currentLongitude = mLastLocation.getLongitude();
@@ -207,6 +213,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 currentHunt.addTask(taskAdded);
                 Intent addTask = new Intent(this, CreateHuntActivity.class);
                 addTask.putExtra("currentHunt", (Parcelable)currentHunt);
+                addTask.putExtra("user", currentUser);
                 this.startActivity(addTask);
                 break;
 

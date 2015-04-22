@@ -1,7 +1,10 @@
 package org.teamscavengr.scavengr;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,15 +20,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A User is a user.
  */
-public class User implements Serializable {
+public class User implements Parcelable {
 
-    private final String name;
-    private final Optional<String> gPlusId;
-    private final Optional<String> fbId;
+    private String name;
+    private Optional<String> gPlusId;
+    private Optional<String> fbId;
     private String id;
 
     public User(String id, String name, Optional<String> gPlusId, Optional<String> fbId) {
@@ -364,5 +368,59 @@ public class User implements Serializable {
 
         public void usersFailedToFind(Exception e);
     }
+
+    public User(Parcel in) {
+        readFromParcel(in);
+    }
+
+    private void readFromParcel(Parcel in) {
+        name = in.readString();
+        id = in.readString();
+        String ingPlusId = in.readString();
+        if (ingPlusId.equals("")) {
+            gPlusId = Optional.<String>empty();
+        } else {
+            gPlusId = Optional.<String>of(ingPlusId);
+        }
+        String infbId = in.readString();
+        if (infbId.equals("")) {
+            fbId = Optional.<String>empty();
+        } else {
+            fbId = Optional.<String>of(infbId);
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // TODO Auto-generated method stub
+        dest.writeString(name);
+        dest.writeString(id);
+        // Write out reviewIds
+        if (gPlusId.isPresent()) {
+            dest.writeString(gPlusId.get());
+        } else {
+            dest.writeString("");
+        }
+        if (fbId.isPresent()) {
+            dest.writeString(fbId.get());
+        } else {
+            dest.writeString("");
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
 }
