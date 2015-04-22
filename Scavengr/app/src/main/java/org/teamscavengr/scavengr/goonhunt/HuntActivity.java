@@ -57,7 +57,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         ResultCallback<Status> {
 
     protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
-    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 5;
+    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
     protected static final int REQUEST_IMAGE_CAPTURE = 420;
     protected final static String LOCATION_PROVIDER = "network";
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -312,6 +312,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
      * Transitions the fragment to show a congrats message before exiting this activity.
      */
     public void finishedPuzzle(){
+        mLocationManager.removeUpdates(this);
         if (mGoogleApiClient != null) { mGoogleApiClient.disconnect(); }
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();

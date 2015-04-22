@@ -123,14 +123,14 @@ public class CalcLib {
            Location answerLocation = onlyTask.getLocation();
 
            Random random = new Random();
-           int percentage = random.nextInt((100 - -100) + 1) + -100;
-           float multiplier = ((float)percentage)/100f;
+//           int percentage = random.nextInt((100 - -100) + 1) + -100;
+//           float multiplier = ((float)percentage)/100f;
 
-           double newLat = radius * multiplier + answerLocation.getLatitude();
-           double newLong = radius * multiplier + answerLocation.getLongitude();
+           double newLat = radius + answerLocation.getLatitude();
+           double newLong = radius + answerLocation.getLongitude();
 
            LatLng centroid = new LatLng(newLat, newLong);
-           return  new Pair<LatLng, Double>(centroid, radius * 1.1);
+           return  new Pair<LatLng, Double>(centroid, radius);
        }
 
         double radius = 0.0;
@@ -153,7 +153,7 @@ public class CalcLib {
         centroidLng = centroidLng/hunt.getNumberOfTasks();
         LatLng centroid = new LatLng(centroidLat, centroidLng);
         if (hunt.getNumberOfTasks() == 1) {
-            radius = hunt.getTasks().get(0).getRadius() * 1.1;
+            radius = hunt.getTasks().get(0).getRadius();
         } else {
             for (int i = 0; i < hunt.getNumberOfTasks(); i++) {
                 Log.d("MEGAN", "Task Location: " + lats.get(i) + lngs.get(i));
@@ -165,6 +165,6 @@ public class CalcLib {
                 }
             }
         }
-        return  new Pair<LatLng, Double>(centroid, radius*1.05);
+        return  new Pair<LatLng, Double>(centroid, radius*1.1);
     }
 }
