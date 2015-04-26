@@ -2,6 +2,7 @@ package org.teamscavengr.scavengr.createhunt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -26,9 +28,6 @@ import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
-
-import java.util.Objects;
-
 
 public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
@@ -42,6 +41,14 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     public Location currentLocation;
     public GoogleMap mapObject;
     private User currentUser;
+
+    @Override
+    protected void onStop() {
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm.removeUpdates(this);
+
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,14 +107,18 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude()), 15));
 
-        for (Task task : currentHunt.getTasks()){
+        for (Task task : currentHunt.getTasks()) {
             Location taskLocation = task.getLocation();
-            Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
+            LatLng loc = new LatLng(taskLocation.getLatitude(), taskLocation.getLongitude());
             map.addMarker(new MarkerOptions()
                     .title("#" + task.getTaskNumber() + " " + task.getAnswer())
                     .snippet(task.getClue())
-                    .position(new LatLng(taskLocation.getLatitude(),
-                            taskLocation.getLongitude())));
+                    .position(loc));
+            map.addCircle(new CircleOptions()
+                    .center(loc)
+                    .radius(task.getRadius())
+                    .strokeColor(Color.argb(256, 0, 0, 256))
+                    .fillColor(Color.argb(100, 0, 0, 256)));
         }
     }
 
