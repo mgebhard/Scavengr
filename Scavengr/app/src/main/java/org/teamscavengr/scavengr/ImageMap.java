@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Map;
 
 /**

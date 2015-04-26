@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr;
 
-import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcel;
@@ -12,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A User is a user.

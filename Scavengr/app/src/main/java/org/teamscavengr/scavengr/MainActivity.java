@@ -23,8 +23,6 @@ import com.facebook.login.LoginManager;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
-import java.io.IOError;
-import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
