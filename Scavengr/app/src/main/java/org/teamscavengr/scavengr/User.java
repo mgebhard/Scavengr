@@ -271,7 +271,6 @@ public class User implements Parcelable {
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", getName());
                 requestMap.put("facebook", getFacebookId());
-                requestMap.put("_id", getFacebookId());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 requestMap.clear();
                 Log.d("ID_ID", id);
