@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageSwitcher;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 import java.util.HashMap;
 
@@ -20,6 +22,7 @@ import java.util.HashMap;
 public class HuntRecapActivity extends BaseActivity implements View.OnClickListener {
 
     private Hunt hunt;
+    private User user;
     private HashMap<Task, Bitmap> images;
     private ImageSwitcher imageSwitcher;
 
@@ -30,8 +33,16 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_hunt_recap);
 //        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher);
 
-        if (getIntent().hasExtra("huntObj")) {
-            hunt =  getIntent().getParcelableExtra("huntObj");
+        if (getIntent().hasExtra("hunt")) {
+            Log.d("HuntRecap", "Found hunt obj");
+            hunt =  getIntent().getParcelableExtra("hunt");
+            Log.d("HuntRecapActivity", hunt.toString());
+        } else {
+            Log.d("HuntRecapActivity", "This is failing hard");
+        }
+
+        if (getIntent().hasExtra("user")) {
+            user = getIntent().getParcelableExtra("user");
         }
 //        if (getIntent().hasExtra("photos")) {
 //            images = (HashMap<Task, Bitmap>) getIntent().getParcelableExtra("photos");
@@ -41,7 +52,7 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
 //        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
 //        imageSwitcher.setInAnimation(in);
 //        imageSwitcher.setOutAnimation(out);
-
+        Log.d("HuntRecap", hunt.toString());
         String waypointText = "";
         for (Task task: hunt.getTasks()){
             waypointText += task.getAnswer() + "\n";
@@ -55,7 +66,11 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         switch(view.getId()) {
             case R.id.review:
                 Intent review = new Intent(this, RateHuntActivity.class);
-                review.putExtra("huntObject", (Parcelable)hunt);
+                review.putExtra("huntObj", (Parcelable)hunt);
+                Log.d("HuntRecap", user.toString());
+                if (user != null) {
+                    review.putExtra("user", user);
+                }
                 this.startActivity(review);
                 break;
 

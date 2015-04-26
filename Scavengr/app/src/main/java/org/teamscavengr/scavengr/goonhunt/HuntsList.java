@@ -4,6 +4,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.facebook.login.LoginManager;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
 
@@ -25,11 +27,16 @@ public class HuntsList extends ListActivity {
     ArrayAdapter mAdapter;
     ArrayList<Hunt> mHuntsObj = new ArrayList<Hunt>();
     ArrayList<String> mHuntNames = new ArrayList<String>();
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
+        }
+        Log.d("HuntsList", currentUser.toString());
 
         Hunt.loadAllHuntsInBackground(
             new Hunt.HuntLoadedCallback() {
@@ -71,6 +78,8 @@ public class HuntsList extends ListActivity {
     public void onListItemClick(ListView l, View v, int position, long id) {;
         Intent confirmGoingOnHunt = new Intent(this, ConfirmHuntActivity.class);
         confirmGoingOnHunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
+        Log.d("HuntList", currentUser.toString());
+        confirmGoingOnHunt.putExtra("user", currentUser);
         this.startActivity(confirmGoingOnHunt);
     }
 

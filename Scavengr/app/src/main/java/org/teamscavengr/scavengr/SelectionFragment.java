@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
 import com.facebook.Profile;
 import com.facebook.login.widget.ProfilePictureView;
 
@@ -23,19 +22,15 @@ import java.util.List;
  */
 public class SelectionFragment extends Fragment {
 
-    private static final String TAG = "SelectionFragment";
-
     private ProfilePictureView profilePictureView;
     private TextView greeting;
 
-    private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {
             @Override
@@ -47,7 +42,7 @@ public class SelectionFragment extends Fragment {
     }
 
     private void updateWithToken(AccessToken currentAccessToken) {
-        if (currentAccessToken != null) {
+        if (currentAccessToken != null && Profile.getCurrentProfile() != null) {
             profilePictureView.setProfileId(currentAccessToken.getUserId());
             // Check to see if we need to create a new user
             User.findUserWithNameInBackground(Profile.getCurrentProfile().getName(),

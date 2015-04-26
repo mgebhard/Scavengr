@@ -118,8 +118,10 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 }).start();
 
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 myHunts.putExtra("user", currentUser);
                 this.startActivity(myHunts);
+                this.finish();
                 break;
 
             case R.id.back:
@@ -137,11 +139,12 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                                 ReviewCreatedHuntActivity.this.minute = minute;
                                 ((EditText) findViewById(R.id.estimated_time)).setText(hourOfDay +
                                         ":" + String.format("%02d", minute));
+                                currentHunt.setEstimatedTime(hour * 60L + minute, TimeUnit.MINUTES);
                             }
                         }, 0, 0, true);
                 timePickerDialog.setTitle("Enter estimated length");
                 timePickerDialog.show();
-                currentHunt.setEstimatedTime(hour * 60L + minute, TimeUnit.MINUTES);
+                break;
 
             default:
                 break;

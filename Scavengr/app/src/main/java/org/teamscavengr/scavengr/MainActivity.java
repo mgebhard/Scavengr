@@ -60,6 +60,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         showFragment(LOGIN, false);
                     }
 
+                    if(Profile.getCurrentProfile() == null) {
+                        return;
+                    }
                     User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
                             new User.FacebookLookupDoneCallback() {
                                 @Override

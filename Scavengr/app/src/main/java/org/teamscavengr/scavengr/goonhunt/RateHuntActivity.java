@@ -11,16 +11,22 @@ import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Review;
+import org.teamscavengr.scavengr.User;
 
 
 public class RateHuntActivity extends BaseActivity implements View.OnClickListener {
+    private Hunt hunt;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_hunt);
-        if (getIntent().hasExtra("huntObject")) {
-            final Hunt hunt = (getIntent().getParcelableExtra("huntObject"));
+        if (getIntent().hasExtra("huntObj")) {
+            hunt = (getIntent().getParcelableExtra("huntObj"));
+        }
+        if (getIntent().hasExtra("user")) {
+            currentUser = (getIntent().getParcelableExtra("user"));
         }
     }
 
@@ -31,7 +37,7 @@ public class RateHuntActivity extends BaseActivity implements View.OnClickListen
                 RatingBar reviewRating = (RatingBar) findViewById(R.id.reviewRatingBar);
                 TextView reviewComments = (TextView) findViewById(R.id.reviewComments);
 
-                Review currentReview = new Review(null, null,
+                Review currentReview = new Review(null, currentUser.getId(),
                         reviewRating.getRating(), reviewComments.getText().toString());
 
 

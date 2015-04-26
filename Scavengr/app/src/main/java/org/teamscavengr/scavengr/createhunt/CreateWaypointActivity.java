@@ -45,16 +45,9 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
-    // Defaults to Michigan
-    protected double currentLatitude = 43.6867;
-    protected double currentLongitude = - 85.0102;
-
     public GoogleMap mapObject;
-    public Location mLastLocation;
+    public Location currentLocation;
 
-    private InputMethodManager imm = null;
-
-    private final double defaultRadius = 10.0; //in meters
     private final double maxRadius = 5000.0; //in meters
     private int progress;
     private Circle circle;
@@ -79,11 +72,15 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 //        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
         mapObject = map;
         map.setMyLocationEnabled(true);
-        LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
+
+        LatLng usersLastKnownLocation = new LatLng(currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+
         if (currentTask!=null){
             usersLastKnownLocation = new LatLng(currentTask.getLocation().getLatitude(),
                     currentTask.getLocation().getLongitude());
         }
+
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 15));
         MarkerOptions marker = new MarkerOptions()
                 .title("Your Current Location")
@@ -91,6 +88,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 .position(usersLastKnownLocation);
         map.addMarker(marker);
 
+        final double defaultRadius = 10.0;
         circle = map.addCircle(new CircleOptions()
                 .center(usersLastKnownLocation)
                 .radius(defaultRadius)
@@ -140,18 +138,17 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
             setTitle("Edit Waypoint");
         }
 
-        // Gets the users last known location to set the flag on the map
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
-        mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
         }
 
-        if (mLastLocation != null) {
-            currentLatitude = mLastLocation.getLatitude();
-            currentLongitude = mLastLocation.getLongitude();
-            Log.d("MEGAN", "Found current last location: " + currentLatitude + currentLongitude);
+        Location curLoc = getIntent().getParcelableExtra("curLoc");
+        if(curLoc != null) {
+            currentLocation = curLoc;
+        } else {
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
@@ -214,6 +211,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 Log.d("HELEN", "SHOULD PRINT THIS");
                 EditText cText = (EditText) findViewById(R.id.clue);
                 EditText aText = (EditText) findViewById(R.id.answer);
+                InputMethodManager imm;
                 if (cText.requestFocus()){
                     imm = (InputMethodManager) view.getContext()
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -233,8 +231,9 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
             case R.id.ok:
                 // Grab the task radius
                 double taskRadius = maxRadius * (progress/100.0) * (progress/100.0) + 10.0;
+
                 if (editTaskNum == -1){
-                    Task taskAdded = new Task(null, mLastLocation,
+                    Task taskAdded = new Task(null, currentLocation,
                             ((EditText)findViewById(R.id.clue)).getText().toString(),
                             ((EditText)findViewById(R.id.answer)).getText().toString(),
                             taskRadius, currentHunt.getTasks().size() + 1);
@@ -247,6 +246,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                     editedTask.setAnswer(((EditText)findViewById(R.id.answer)).getText().toString());
                     editedTask.setRadius(taskRadius);
                 }
+
                 Intent addTask = new Intent(this, CreateHuntActivity.class);
                 addTask.putExtra("currentHunt", (Parcelable)currentHunt);
                 addTask.putExtra("user", currentUser);

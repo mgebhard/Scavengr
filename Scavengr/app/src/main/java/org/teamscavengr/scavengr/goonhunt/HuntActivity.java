@@ -41,9 +41,11 @@ import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
+import org.teamscavengr.scavengr.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,6 +74,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected boolean inHuntBoundary = false;
 
     protected Hunt hunt;
+    protected User currentUser;
     protected int currentTaskNumber = 0;
 
     protected Map<Task, Bitmap> images;
@@ -85,6 +88,10 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_hunt);
 
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
+        }
+        Log.d("HuntActivity", currentUser.toString());
 
         if (getIntent().hasExtra("huntObject")) {
             hunt = (getIntent().getParcelableExtra("huntObject"));
@@ -330,7 +337,15 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.get_photo_recap:
                 // FINISHED SCAVENGER HUNT
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
-                photoRecap.putExtra("huntObj", (Parcelable) hunt);
+                if (hunt != null) {
+                    Log.d("Hunt Activity", "The hunt is not null right now");
+                    photoRecap.putExtra("hunt", (Parcelable) hunt);
+                }
+                Log.d("HuntActivity", hunt.toString());
+                Log.d("HuntActivity", currentUser.toString());
+                if (currentUser != null) {
+                    photoRecap.putExtra("user", currentUser);
+                }
                 //photoRecap.putExtra("photos", (Parcelable)images);
                 this.startActivity(photoRecap);
                 break;
