@@ -17,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.BaseActivity;
@@ -29,7 +30,7 @@ import org.teamscavengr.scavengr.User;
 
 public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -98,17 +99,20 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
+        map.setOnInfoWindowClickListener(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
                 currentLongitude), 15));
 
+        int i = 0;
         for (Task task : currentHunt.getTasks()){
             Location taskLocation = task.getLocation();
-            Log.d("MEGAN", "Task " + task.getTaskNumber() + " " + task.getClue());
+            Log.d("MEGAN", "Task " + (i+1) + " " + task.getClue());
             map.addMarker(new MarkerOptions()
-                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
-                    .snippet(task.getClue())
+                    .title("#" + (i+1) + " " + task.getAnswer())
+                    .snippet(task.getClue() + "\n" + "(tap to edit)")
                     .position(new LatLng(taskLocation.getLatitude(),
                             taskLocation.getLongitude())));
+            i++;
         }
     }
 
@@ -152,5 +156,19 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        String num = (marker.getTitle().split("\\s"))[0];
+        num = num.replace("#", "");
+        int editTaskNum = Integer.parseInt(num)-1;
+
+        Intent editWaypointTask = new Intent(this, CreateWaypointActivity.class);
+        editWaypointTask.putExtra("editTaskNum", editTaskNum);
+        editWaypointTask.putExtra("currentHunt", (Parcelable) currentHunt);
+        editWaypointTask.putExtra("user", currentUser);
+        editWaypointTask.putExtra("editMode", editMode);
+        this.startActivity(editWaypointTask);
     }
 }

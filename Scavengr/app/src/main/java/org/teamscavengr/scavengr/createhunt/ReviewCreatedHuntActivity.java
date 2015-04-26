@@ -44,15 +44,26 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
 
         listView = (ListView) findViewById(R.id.list);
         List<String> values = new ArrayList<String>();
+        int i = 0;
         for (Task task: currentHunt.getTasks()) {
-            values.add("Task Number: " + task.getTaskNumber() +
+            i++;
+            values.add("Task Number: " + i +
                     " Task Location: " + task.getAnswer());
         }
+
+        values.add("");
+        values.add("");
+        values.add("");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
         listView.setAdapter(adapter);
+
+        ((EditText)findViewById(R.id.spoof_latitude)).setText(currentHunt.getName());
+        ((EditText)findViewById(R.id.spoof_longitude)).setText(currentHunt.getDescription());
+        String timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
+        ((EditText)findViewById(R.id.estimated_time)).setText(timeText);
     }
 
 

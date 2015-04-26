@@ -59,6 +59,9 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     private int progress;
     private Circle circle;
     private User currentUser;
+    private int editTaskNum = -1;
+    private Hunt currentHunt = null;
+    private Task currentTask = null;
 
     /**
      * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
@@ -77,10 +80,14 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         mapObject = map;
         map.setMyLocationEnabled(true);
         LatLng usersLastKnownLocation = new LatLng(currentLatitude, currentLongitude);
+        if (currentTask!=null){
+            usersLastKnownLocation = new LatLng(currentTask.getLocation().getLatitude(),
+                    currentTask.getLocation().getLongitude());
+        }
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(usersLastKnownLocation, 15));
         MarkerOptions marker = new MarkerOptions()
                 .title("Your Current Location")
-                .snippet("Task number.")
+                .snippet("Task #"+(currentHunt.getTasks().size()+1))
                 .position(usersLastKnownLocation);
         map.addMarker(marker);
 
@@ -89,6 +96,10 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
                 .radius(defaultRadius)
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
+
+        if (editTaskNum != -1){
+            circle.setRadius(maxRadius * ((progress/100.0) * (progress/100.0)) + 10.0);
+        }
 
     }
 
@@ -111,6 +122,23 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_waypoint);
+
+        if (getIntent().hasExtra("editTaskNum")) {
+            editTaskNum = getIntent().getIntExtra("editTaskNum", editTaskNum);
+        }
+
+        if (getIntent().hasExtra("currentHunt")) {
+            currentHunt = (getIntent().getParcelableExtra("currentHunt"));
+        }
+
+        if (editTaskNum != -1){
+            currentTask = currentHunt.getTasks().get(editTaskNum);
+            progress = (int) (Math.sqrt(((currentTask.getRadius() - 10.0)/maxRadius)* 10000.0));
+            ((EditText)findViewById(R.id.clue)).setText(currentTask.getClue());
+            ((EditText)findViewById(R.id.answer)).setText(currentTask.getAnswer());
+            ((SeekBar)findViewById(R.id.radius_bar)).setProgress(progress);
+            setTitle("Edit Waypoint");
+        }
 
         // Gets the users last known location to set the flag on the map
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -203,17 +231,28 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.ok:
-                Hunt currentHunt = getIntent().getParcelableExtra("currentHunt");
                 // Grab the task radius
                 double taskRadius = maxRadius * (progress/100.0) * (progress/100.0) + 10.0;
-                Task taskAdded = new Task(null, mLastLocation,
-                        ((EditText)findViewById(R.id.clue)).getText().toString(),
-                        ((EditText)findViewById(R.id.answer)).getText().toString(),
-                        taskRadius, currentHunt.getTasks().size() + 1);
-                currentHunt.addTask(taskAdded);
+                if (editTaskNum == -1){
+                    Task taskAdded = new Task(null, mLastLocation,
+                            ((EditText)findViewById(R.id.clue)).getText().toString(),
+                            ((EditText)findViewById(R.id.answer)).getText().toString(),
+                            taskRadius, currentHunt.getTasks().size() + 1);
+                    currentHunt.addTask(taskAdded);
+                }
+                else {
+                    Log.d("HELEN", "in edit mode");
+                    Task editedTask = currentHunt.getTasks().get(editTaskNum);
+                    editedTask.setClue(((EditText)findViewById(R.id.clue)).getText().toString());
+                    editedTask.setAnswer(((EditText)findViewById(R.id.answer)).getText().toString());
+                    editedTask.setRadius(taskRadius);
+                }
                 Intent addTask = new Intent(this, CreateHuntActivity.class);
                 addTask.putExtra("currentHunt", (Parcelable)currentHunt);
                 addTask.putExtra("user", currentUser);
+                if (getIntent().hasExtra("editMode")) {
+                    addTask.putExtra("editMode", getIntent().getBooleanExtra("editMode", false));
+                }
                 this.startActivity(addTask);
                 break;
 
