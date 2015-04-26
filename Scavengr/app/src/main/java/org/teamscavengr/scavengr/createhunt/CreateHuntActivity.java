@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr.createhunt;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -26,20 +27,19 @@ import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
+import java.util.Objects;
+
 
 public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
+        View.OnClickListener, LocationListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
     Hunt currentHunt;
     private boolean editMode = false;
 
-    protected double currentLatitude = 43.6867;
-    protected double currentLongitude = -85.0102;
-
-    public Location mLastLocation;
+    public Location currentLocation;
     public GoogleMap mapObject;
     private User currentUser;
 
@@ -69,11 +69,10 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
         }
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        Location mLastLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (mLastLocation != null) {
-            currentLatitude = mLastLocation.getLatitude();
-            currentLongitude = mLastLocation.getLongitude();
-        }
+        currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0.1f, this);
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0.1f, this);
 
         buildGoogleApiClient();
 
@@ -98,8 +97,8 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLatitude,
-                currentLongitude), 15));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
+                currentLocation.getLongitude()), 15));
 
         for (Task task : currentHunt.getTasks()){
             Location taskLocation = task.getLocation();
@@ -114,21 +113,17 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+        currentLocation = LocationServices.FusedLocationApi.getLastLocation(
                 mGoogleApiClient);
-        LatLng here = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+        LatLng here = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 6));
     }
 
     @Override
-    public void onConnectionSuspended(final int i) {
-
-    }
+    public void onConnectionSuspended(final int i) {}
 
     @Override
-    public void onConnectionFailed(final ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(final ConnectionResult connectionResult) {}
 
     public void onClick(View view) {
         switch(view.getId()) {
@@ -145,12 +140,54 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
                 createTask.putExtra("currentHunt", (Parcelable) currentHunt);
                 createTask.putExtra("user", currentUser);
+                createTask.putExtra("curLoc", currentLocation);
                 this.startActivity(createTask);
                 break;
-
 
             default:
                 break;
         }
     }
+
+    @Override
+    public void onLocationChanged(final Location location) {
+        if(isBetterLocation(location, currentLocation)) {
+            currentLocation = location;
+            if(mapObject != null) {
+                LatLng here =
+                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 6));
+            }
+        }
+    }
+
+    @Override
+    public void onStatusChanged(final String provider, final int status, final Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(final String provider) {}
+
+    @Override
+    public void onProviderDisabled(final String provider) {}
+
+    private boolean isBetterLocation(Location newLoc, Location curLoc) {
+        if(curLoc == null) {
+            return true;
+        }
+        long timeDelta = newLoc.getTime() - curLoc.getTime();
+        boolean isNewer = timeDelta > 0;
+        if(timeDelta > 1000 * 60 * 2) return true;
+        if(timeDelta < -1000 * 60 * 2) return false;
+
+        int accDelt = (int) (newLoc.getAccuracy() - curLoc.getAccuracy());
+        boolean isSameProvider = (curLoc.getProvider() == null) ? (newLoc.getProvider() == null) :
+                curLoc.getProvider().equals(newLoc.getProvider());
+        if(accDelt < 0) return true;
+        else if(isNewer && !(accDelt > 0)) return true;
+        else if(isNewer && !(accDelt > 200) && isSameProvider) return true;
+        return false;
+    }
+
 }
