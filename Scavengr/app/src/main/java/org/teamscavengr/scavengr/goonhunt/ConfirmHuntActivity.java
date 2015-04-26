@@ -14,10 +14,12 @@ import android.widget.Toast;
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.User;
 
 
 public class ConfirmHuntActivity extends BaseActivity implements View.OnClickListener {
     private Hunt hunt;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,9 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
             toast.show();
         }
 
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
+        }
         // Default image for hunt
         ImageButton image = (ImageButton) (findViewById(R.id.imageButton));
         image.setBackgroundResource(R.drawable.treasuremap);
@@ -57,6 +62,7 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
             case R.id.confirm_hunt:
                 Intent huntIntent = new Intent(this, HuntActivity.class);
                 huntIntent.putExtra("huntObject", (Parcelable) hunt);
+                huntIntent.putExtra("user", currentUser);
                 Log.d("NULL?", hunt.getName());
                 this.startActivity(huntIntent);
                 break;
