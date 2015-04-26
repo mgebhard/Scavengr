@@ -556,6 +556,8 @@ public class Hunt implements Parcelable, Serializable {
         this.timeCreated = timeCreated;
     }
 
+    public void deleteTask(int index){ tasks.remove(index); }
+
     public static interface HuntLoadedCallback {
 
         /**

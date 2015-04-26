@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 
@@ -136,6 +137,8 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
             ((EditText)findViewById(R.id.answer)).setText(currentTask.getAnswer());
             ((SeekBar)findViewById(R.id.radius_bar)).setProgress(progress);
             setTitle("Edit Waypoint");
+        } else {
+            (findViewById(R.id.delete)).setVisibility(View.INVISIBLE);
         }
 
 
@@ -258,6 +261,17 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
             case R.id.cancel:
                 this.finish();
+                break;
+
+            case R.id.delete:
+                currentHunt.deleteTask(editTaskNum);
+                Intent deleteTask = new Intent(this, CreateHuntActivity.class);
+                deleteTask.putExtra("currentHunt", (Parcelable) currentHunt);
+                deleteTask.putExtra("user", currentUser);
+                if (getIntent().hasExtra("editMode")) {
+                    deleteTask.putExtra("editMode", getIntent().getBooleanExtra("editMode", false));
+                }
+                this.startActivity(deleteTask);
                 break;
 
             default:
