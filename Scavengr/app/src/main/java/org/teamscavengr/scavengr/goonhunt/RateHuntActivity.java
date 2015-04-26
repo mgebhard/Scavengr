@@ -2,6 +2,7 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -15,29 +16,29 @@ import org.teamscavengr.scavengr.User;
 
 
 public class RateHuntActivity extends BaseActivity implements View.OnClickListener {
+
+    private User user;
     private Hunt hunt;
-    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_hunt);
-        if (getIntent().hasExtra("huntObj")) {
-            hunt = (getIntent().getParcelableExtra("huntObj"));
-        }
-        if (getIntent().hasExtra("user")) {
-            currentUser = (getIntent().getParcelableExtra("user"));
-        }
+        user = getIntent().getParcelableExtra("user");
+        hunt = getIntent().getParcelableExtra("hunt");
     }
 
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.submit_review:
                 Intent recap = new Intent(this, HuntRecapActivity.class);
+                recap.putExtra("hunt", (Parcelable) hunt);
+                recap.putExtra("user", user);
+
                 RatingBar reviewRating = (RatingBar) findViewById(R.id.reviewRatingBar);
                 TextView reviewComments = (TextView) findViewById(R.id.reviewComments);
 
-                Review currentReview = new Review(null, currentUser.getId(),
+                Review currentReview = new Review(null, user.getId(),
                         reviewRating.getRating(), reviewComments.getText().toString());
 
 

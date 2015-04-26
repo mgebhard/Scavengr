@@ -26,33 +26,20 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
     private HashMap<Task, Bitmap> images;
     private ImageSwitcher imageSwitcher;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt_recap);
 //        imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher);
 
-        if (getIntent().hasExtra("hunt")) {
-            Log.d("HuntRecap", "Found hunt obj");
-            hunt =  getIntent().getParcelableExtra("hunt");
-            Log.d("HuntRecapActivity", hunt.toString());
-        } else {
-            Log.d("HuntRecapActivity", "This is failing hard");
-        }
+        Log.d("HuntRecap", "Found hunt obj");
+        hunt =  getIntent().getParcelableExtra("hunt");
 
-        if (getIntent().hasExtra("user")) {
-            user = getIntent().getParcelableExtra("user");
-        }
+        user = getIntent().getParcelableExtra("user");
 //        if (getIntent().hasExtra("photos")) {
 //            images = (HashMap<Task, Bitmap>) getIntent().getParcelableExtra("photos");
 //        }
-//
-//        Animation in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
-//        Animation out = AnimationUtils.loadAnimation(this,android.R.anim.slide_out_right);
-//        imageSwitcher.setInAnimation(in);
-//        imageSwitcher.setOutAnimation(out);
-        Log.d("HuntRecap", hunt.toString());
+
         String waypointText = "";
         for (Task task: hunt.getTasks()){
             waypointText += task.getAnswer() + "\n";
@@ -66,11 +53,8 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         switch(view.getId()) {
             case R.id.review:
                 Intent review = new Intent(this, RateHuntActivity.class);
-                review.putExtra("huntObj", (Parcelable)hunt);
-                Log.d("HuntRecap", user.toString());
-                if (user != null) {
-                    review.putExtra("user", user);
-                }
+                review.putExtra("user", user);
+                review.putExtra("hunt", (Parcelable) hunt);
                 this.startActivity(review);
                 break;
 
