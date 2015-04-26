@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -20,18 +21,24 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.BaseActivity;
+import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.Optional;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener, LocationListener {
+        View.OnClickListener, GoogleMap.OnInfoWindowClickListener, LocationListener {
 
     protected GoogleApiClient mGoogleApiClient;
 
@@ -104,16 +111,21 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
+        map.setOnInfoWindowClickListener(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude()), 15));
 
-        for (Task task : currentHunt.getTasks()) {
+        int i = 0;
+        for (Task task : currentHunt.getTasks()){
             Location taskLocation = task.getLocation();
             LatLng loc = new LatLng(taskLocation.getLatitude(), taskLocation.getLongitude());
+            Log.d("MEGAN", "Task " + (i+1) + " " + task.getClue());
             map.addMarker(new MarkerOptions()
-                    .title("#" + task.getTaskNumber() + " " + task.getAnswer())
-                    .snippet(task.getClue())
+                    .title("#" + (i+1) + " " + task.getAnswer())
+                    .snippet(task.getClue() + "\n" + "(tap to edit)")
                     .position(loc));
+            i++;
+
             map.addCircle(new CircleOptions()
                     .center(loc)
                     .radius(task.getRadius())
@@ -161,13 +173,51 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     }
 
     @Override
+    public void onInfoWindowClick(Marker marker) {
+        String num = (marker.getTitle().split("\\s"))[0];
+        num = num.replace("#", "");
+        int editTaskNum = Integer.parseInt(num)-1;
+
+        Intent editWaypointTask = new Intent(this, CreateWaypointActivity.class);
+        editWaypointTask.putExtra("editTaskNum", editTaskNum);
+        editWaypointTask.putExtra("currentHunt", (Parcelable) currentHunt);
+        editWaypointTask.putExtra("user", currentUser);
+        editWaypointTask.putExtra("editMode", editMode);
+        this.startActivity(editWaypointTask);
+    }
+
+    @Override
     public void onLocationChanged(final Location location) {
         if(isBetterLocation(location, currentLocation)) {
             currentLocation = location;
             if(mapObject != null) {
+                Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(currentHunt);
+                LatLng centroid = geoFence.first;
                 LatLng here =
                         new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 6));
+
+                List<LatLng> points = new ArrayList<LatLng>();
+                points.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                for (Task task : currentHunt.getTasks()) {
+                    points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+                }
+                LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+                LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+                LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+                LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+                mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+                    @Override
+                    public void onFinish() {
+                        // Do nothing
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // Do nothing
+                    }
+                });
+
+//                mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 14));
             }
         }
     }
