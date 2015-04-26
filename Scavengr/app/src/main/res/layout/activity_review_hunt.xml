@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Comments:"
-        android:id="@+id/reviewComments"
+        android:id="@+id/notEditText"
         android:layout_alignTop="@+id/reviewRatingBar"
         android:layout_alignLeft="@+id/reviewRatingBar"
         android:layout_alignStart="@+id/reviewRatingBar"
@@ -30,10 +30,10 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/reviewComments"
-        android:layout_alignLeft="@+id/reviewComments"
-        android:layout_alignStart="@+id/reviewComments"
+        android:id="@+id/reviewComments"
+        android:layout_below="@+id/notEditText"
+        android:layout_alignLeft="@+id/notEditText"
+        android:layout_alignStart="@+id/notEditText"
         android:layout_alignRight="@+id/submit_review"
         android:layout_alignEnd="@+id/submit_review" />
 

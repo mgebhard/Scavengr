@@ -78,8 +78,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                             public void userFailedToLoad(Exception ex) {
                                                 Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
                                             }
-
-                                            }, true);
+                                        }, true);
                                     }
                                 }
 
