@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.teamscavengr.scavengr.R;
+import org.teamscavengr.scavengr.Task;
 
 
 /**
@@ -51,6 +52,9 @@ public class CompletedTaskFragment extends Fragment {
         if (getArguments() != null) {
             congratsText = getArguments().getString(CONGRATS_TEXT);
         }
+        Task task = (Task) getArguments().get("task");
+        congratsText = "Congrats! You found: " + task.getAnswer();
+        this.onStart();
     }
 
     @Override
