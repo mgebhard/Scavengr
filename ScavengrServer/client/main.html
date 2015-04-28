@@ -211,10 +211,13 @@
           Author
         </td>
         <td>
+          Hunt ID
+        </td>
+        <td>
           Rating
         </td>
         <td>
-          Text
+          Comments
         </td>
         </thead>
         <tbody>
@@ -223,14 +226,17 @@
           <td width="33%">
             {{ _id._str }}
           </td>
-          <td width="20%">
-            {{author._str}}
+          <td width="10%">
+            {{authorId}}
+          </td>
+          <td width="10%">
+            {{huntId}}
           </td>
           <td width="13%">
             {{rating}}
           </td>
           <td width="33%">
-            {{text}}
+            {{comments}}
           </td>
         </tr>
         {{/each}}
@@ -254,23 +260,15 @@
         <td>
           Name
         </td>
-        <td>
-          Created HuntIDs
-        </td>
         </thead>
         <tbody>
         {{#each usersList }}
         <tr>
-          <td width="33%">
+          <td width="50%">
             {{ _id._str }}
           </td>
-          <td width="33%">
+          <td width="50%">
             {{name}}
-          </td>
-          <td width="33%">
-            {{#each createdHunts}}
-              {{_str}}
-            {{/each}}
           </td>
         </tr>
         {{/each}}
