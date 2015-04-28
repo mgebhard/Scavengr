@@ -15,6 +15,7 @@ import android.view.View;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -201,22 +202,26 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 for (Task task : currentHunt.getTasks()) {
                     points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
                 }
-                LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
-                LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
-                LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
-                LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
-                mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
-                    @Override
-                    public void onFinish() {
-                        // Do nothing
-                    }
+                Log.d("MapLocationChange", centroid.toString());
+                if (points.size() > 1 || !Double.isNaN(centroid.longitude) || !Double.isNaN(centroid.latitude) ) {
+                    LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+                    LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+                    LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+                    LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+                    mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+                        @Override
+                        public void onFinish() {
+                            // Do nothing
+                        }
 
-                    @Override
-                    public void onCancel() {
-                        // Do nothing
-                    }
-                });
-
+                        @Override
+                        public void onCancel() {
+                            // Do nothing
+                        }
+                    });
+                } else {
+                    mapObject.animateCamera(CameraUpdateFactory.newLatLng(here));
+                }
 //                mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 14));
             }
         }
