@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private boolean isResumed = false;
-    private static User user = null;
+    public static User user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,7 +235,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.go_on_hunt:
                 if (user == null) {
                     Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
-                    break;
+//                    break;
                 }
                 Intent hunt = new Intent(this, HuntsList.class);
                 hunt.putExtra("user", user);
@@ -245,7 +245,32 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             case R.id.create_hunt:
                 if (user == null) {
-                    Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
+                    if (Profile.getCurrentProfile().getId() != null) {
+                        User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(), new User.FacebookLookupDoneCallback() {
+                            @Override
+                            public void usersFound(List<String> ids) {
+                                if (ids.size() > 0) {
+                                    User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
+                                        @Override
+                                        public void userLoaded(User user) {
+                                            MainActivity.user = user;
+                                        }
+
+                                        @Override
+                                        public void userFailedToLoad(Exception ex) {
+                                            Toast.makeText(MainActivity.this, "Something went wrong. Try logging out and back in.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, true);
+                                }
+                            }
+
+                            @Override
+                            public void usersFailedToFind(Exception e) {
+                                Toast.makeText(MainActivity.this, "Facebook Profile does not match user account", Toast.LENGTH_SHORT).show();
+                            }
+                        }, true);
+                        Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 }
                 Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);

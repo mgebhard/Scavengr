@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
@@ -52,6 +53,10 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.review:
+                if (user == null) {
+                    Toast.makeText(this, "You must be logged in to review a hunt", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Intent review = new Intent(this, RateHuntActivity.class);
                 review.putExtra("user", user);
                 review.putExtra("hunt", (Parcelable) hunt);
