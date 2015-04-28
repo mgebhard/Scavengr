@@ -34,6 +34,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
     User currentUser;
     private int hour, minute;
     ListView listView;
+    private boolean editMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,9 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
         setContentView(R.layout.review_created_hunt);
         currentHunt = getIntent().getParcelableExtra("currentHunt");
         currentUser = getIntent().getParcelableExtra("user");
+        if (getIntent().hasExtra("editMode")) {
+            editMode = getIntent().getBooleanExtra("editMode", false);
+        }
         currentHunt.setEstimatedTime(1L, TimeUnit.HOURS);
 
         listView = (ListView) findViewById(R.id.list);
@@ -61,15 +65,13 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
 
         listView.setAdapter(adapter);
 
-        ((EditText)findViewById(R.id.spoof_latitude)).setText(currentHunt.getName());
-        ((EditText)findViewById(R.id.spoof_longitude)).setText(currentHunt.getDescription());
-        String timeText;
-        if (currentHunt.getEstimatedTime() != null) {
+        if (editMode){
+            ((EditText)findViewById(R.id.spoof_latitude)).setText(currentHunt.getName());
+            ((EditText)findViewById(R.id.spoof_longitude)).setText(currentHunt.getDescription());
+            String timeText;
             timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
-        } else {
-            timeText = "";
+            ((EditText)findViewById(R.id.estimated_time)).setText(timeText);
         }
-        ((EditText)findViewById(R.id.estimated_time)).setText(timeText);
     }
 
 

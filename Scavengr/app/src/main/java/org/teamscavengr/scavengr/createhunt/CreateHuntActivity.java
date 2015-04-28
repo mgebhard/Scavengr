@@ -157,6 +157,7 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 reviewCreated.putExtra("currentUser", new User("RANDOM_STRING_ID_WOOO", "tim", Optional.<String>empty(),
                         Optional.<String>empty()));
                 reviewCreated.putExtra("user", currentUser);
+                reviewCreated.putExtra("editMode", editMode);
                 this.startActivity(reviewCreated);
                 break;
 
