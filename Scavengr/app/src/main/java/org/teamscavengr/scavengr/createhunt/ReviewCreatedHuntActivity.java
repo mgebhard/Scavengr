@@ -63,8 +63,12 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
 
         ((EditText)findViewById(R.id.spoof_latitude)).setText(currentHunt.getName());
         ((EditText)findViewById(R.id.spoof_longitude)).setText(currentHunt.getDescription());
-//        String timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
-        String timeText = "1:00";
+        String timeText;
+        if (currentHunt.getEstimatedTime() != null) {
+            timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
+        } else {
+            timeText = "";
+        }
         ((EditText)findViewById(R.id.estimated_time)).setText(timeText);
     }
 
