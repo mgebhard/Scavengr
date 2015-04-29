@@ -5,7 +5,7 @@ Router.route('/hunts', function() {
     this.response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     if(this.request.method == 'GET') {
-        this.response.end(JSON.stringify(Hunts.find({}, { _id: 1 }).fetch().map(function(x) { return { id: x._id._str }})));
+        this.response.end(JSON.stringify(Hunts.find({}, { _id: 1 }).fetch().map(function(x) { return { id: x._id._str, name: x.name}})));
     } else if(this.request.method == 'POST') {
         this.response.end(JSON.stringify(Hunts.insert(this.request.body)));
     } else if(this.request.method == 'OPTIONS') {
