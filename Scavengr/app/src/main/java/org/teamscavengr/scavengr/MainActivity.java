@@ -25,7 +25,10 @@ import com.parse.ParseAnalytics;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     private static final int LOGIN = 0;
@@ -79,6 +82,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                             @Override
                                             public void userLoaded(User user) {
                                                 MainActivity.user = user;
+                                                Map<String, String> dimensions = new HashMap<String, String>();
+                                                dimensions.put("userId", user.getId());
+                                                ParseAnalytics.trackEventInBackground("user-login", dimensions);
                                             }
 
                                             @Override
@@ -262,6 +268,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                         @Override
                                         public void userLoaded(User user) {
                                             MainActivity.user = user;
+                                            Map<String, String> dimensions = new HashMap<String, String>();
+                                            dimensions.put("userId", user.getId());
+                                            ParseAnalytics.trackEventInBackground("user-login", dimensions);
                                         }
 
                                         @Override
@@ -275,6 +284,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                             @Override
                             public void usersFailedToFind(Exception e) {
                                 Toast.makeText(MainActivity.this, "Facebook Profile does not match user account", Toast.LENGTH_SHORT).show();
+//                                User newUser = new User(null, Profile.getCurrentProfile().getName(), Optional.<String>empty(), Optional.of(Profile.getCurrentProfile().getId()));
+//                                    user = newUser;
+//                                    try {
+//                                        newUser.saveUser();
+//                                    } catch (IOException ex) {
+//                                        Toast.makeText(MainActivity.this, "Failed to create new user", Toast.LENGTH_SHORT).show();
+//                                    }
                             }
                         }, true);
                         Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
@@ -284,6 +300,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Intent createHuntIntent = new Intent(this, MyHuntsActivity.class);
                 createHuntIntent.putExtra("user", user);
                 this.startActivity(createHuntIntent);
+                break;
+
+            case R.id.skip_login_button:
+                showFragment(SELECTION, false);
                 break;
 
             default:

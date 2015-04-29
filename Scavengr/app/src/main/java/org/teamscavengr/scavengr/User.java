@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.facebook.Profile;
+import com.parse.ParseAnalytics;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -272,6 +275,10 @@ public class User implements Parcelable {
                 requestMap.put("name", getName());
                 requestMap.put("facebook", getFacebookId());
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
+                Map<String, String> dimensions = new HashMap<String, String>();
+                dimensions.put("userId", id);
+                dimensions.put("facebookId", getFacebookId());
+                ParseAnalytics.trackEventInBackground("user-login", dimensions);
                 requestMap.clear();
                 Log.d("ID_ID", id);
             }

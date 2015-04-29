@@ -477,6 +477,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
+    public void onBackPressed() {
+        // Don't do anything when he user tries to go back
+    }
+
+    @Override
     public void onProviderDisabled(String provider) {
 
     }
