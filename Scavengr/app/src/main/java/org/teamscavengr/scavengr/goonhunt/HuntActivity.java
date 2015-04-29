@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseAnalytics;
 
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.GeofenceManager;
@@ -65,6 +66,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     String currentPhotoPath;
 
+    private long timeStarted;
+
     protected Location lastKnownLocation;
     protected LatLng centroid;
     protected Location centroidLocation;
@@ -79,7 +82,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected Map<Task, Bitmap> images;
 
     private GoogleMap mapObject;
-//    private GeofenceManager manager;
+    //    private GeofenceManager manager;
     protected GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -91,6 +94,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             currentUser = getIntent().getParcelableExtra("user");
         }
         Log.d("HuntActivity", currentUser.toString());
+
+        timeStarted = System.currentTimeMillis();
 
         if (getIntent().hasExtra("huntObject")) {
             Log.d("HuntActivity", "Hunt found________");
@@ -269,7 +274,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         Location completedTaskLocation = completedTask.getLocation();
         mapObject.addMarker(new MarkerOptions()
                 .position(new LatLng(completedTaskLocation.getLatitude(),
-                                    completedTaskLocation.getLongitude()))
+                        completedTaskLocation.getLongitude()))
                 .title(completedTask.getAnswer()));
     }
 
@@ -293,6 +298,15 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.get_photo_recap:
+                // Analytics
+                Map<String, String> dims = new HashMap<>();
+                dims.put("huntId", hunt.getId());
+                if(currentUser != null)
+                    dims.put("userId", currentUser.getId());
+                dims.put("numWaypoints", Integer.toString(hunt.getTasks().size()));
+                dims.put("timeTaken", Long.toString(System.currentTimeMillis() - timeStarted));
+                ParseAnalytics.trackEventInBackground("end-hunt", dims);
+
                 // FINISHED SCAVENGER HUNT
                 Intent photoRecap = new Intent(this, HuntRecapActivity.class);
                 if (hunt != null) {
@@ -343,6 +357,16 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
 
             case R.id.found_it:
+                // Analytics
+                Map<String, String> dimensions = new HashMap<>();
+                dimensions.put("huntId", hunt.getId());
+                if(currentUser != null)
+                    dimensions.put("userId", currentUser.getId());
+                dimensions.put("totalNumWaypoints", Integer.toString(hunt.getTasks().size()));
+                dimensions.put("waypointNum", Integer.toString(currentTaskNumber));
+                ParseAnalytics.trackEventInBackground("found-waypoint", dimensions);
+
+
                 loadCompletedTask(currentTaskNumber);
                 break;
 

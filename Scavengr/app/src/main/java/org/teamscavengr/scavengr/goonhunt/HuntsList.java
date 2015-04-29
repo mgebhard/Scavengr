@@ -24,9 +24,9 @@ import java.util.ArrayList;
 
 public class HuntsList extends ListActivity {
 
-    ArrayAdapter mAdapter;
-    ArrayList<Hunt> mHuntsObj = new ArrayList<Hunt>();
-    ArrayList<String> mHuntNames = new ArrayList<String>();
+    ArrayAdapter<String> mAdapter;
+    ArrayList<Hunt> mHuntsObj = new ArrayList<>();
+    ArrayList<String> mHuntNames = new ArrayList<>();
     private User currentUser;
 
     @Override
@@ -50,9 +50,7 @@ public class HuntsList extends ListActivity {
                    @Override
                    public void huntLoaded(Hunt hunt) {
                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                       int duration = Toast.LENGTH_LONG;
 
-                       //Toast.makeText(HuntsList.this, "Loaded " + hunt.getId(), duration).show();
                        mHuntNames.add(hunt.getName());
                        mHuntsObj.add(hunt);
                        mAdapter.notifyDataSetChanged();
@@ -63,18 +61,16 @@ public class HuntsList extends ListActivity {
                        CharSequence text = "Failed to load a hunt";
                        int duration = Toast.LENGTH_SHORT;
                        Toast.makeText(HuntsList.this, text, duration).show();
-                       //Log.d("JSONError", e.toString());
-                       //Toast.makeText(HuntsList.this, e.getMessage(), duration).show();
                    }
                }, true);
 
-        mAdapter = new ArrayAdapter(this,
+        mAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, mHuntNames);
         setListAdapter(mAdapter);
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {;
+    public void onListItemClick(ListView l, View v, int position, long id) {
         Intent confirmGoingOnHunt = new Intent(this, ConfirmHuntActivity.class);
         confirmGoingOnHunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
         Log.d("HuntList", currentUser.toString());

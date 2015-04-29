@@ -260,6 +260,30 @@ public class Hunt implements Parcelable, Serializable {
         }
     }
 
+    public void saveHuntInBackground(final String creatorId, final HuntSavedCallback hsc, final boolean onUIThread) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    saveHunt(creatorId);
+                    Hunt.run(onUIThread, new Runnable() {
+                        @Override
+                        public void run() {
+                            hsc.huntSaved();
+                        }
+                    });
+                } catch (IOException | RuntimeException ex) {
+                    Hunt.run(onUIThread, new Runnable() {
+                        @Override
+                        public void run() {
+                            hsc.huntFailedToSave(ex);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
     /**
      * Loads a hunt object on the current thread. Assumes a network connection is present.
      * @param id The ID of the hunt in our database.
@@ -516,15 +540,15 @@ public class Hunt implements Parcelable, Serializable {
         private TimeUnit estTimeUnit;
         private long timeCreated;
 */
-        if (name == "" || description == null) {
+        if (name.equals("") || description == null) {
             toastString.append("Name missing\n");
             return false;
         }
-        if (description == "" || description == null) {
+        if (description.equals("") || description == null) {
             toastString.append("Description missing\n");
             return false;
         }
-        if (creatorId == "" || creatorId == null) {
+        if (creatorId.equals("") || creatorId == null) {
             toastString.append("You must be logged in\n");
             return false;
         }
@@ -581,6 +605,13 @@ public class Hunt implements Parcelable, Serializable {
 
     }
 
+    public static interface HuntSavedCallback {
+
+        public void huntSaved();
+
+        public void huntFailedToSave(Exception ex);
+    }
+
     private static List<Task> tasksFromJSONArray(final JSONArray tasks) throws JSONException {
         List<Task> ret = new ArrayList<Task>();
         for(int i = 0; i < tasks.length(); i++) {
@@ -598,7 +629,7 @@ public class Hunt implements Parcelable, Serializable {
                 ret.add(array.getString(i));
             }
             // Dont worry about it bro.
-        } catch (JSONException e ) {
+        } catch (JSONException ignored) {
         }
         return ret;
     }

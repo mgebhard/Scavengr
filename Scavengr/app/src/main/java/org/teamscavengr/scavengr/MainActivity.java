@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -116,8 +115,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         // Hide all fragments at first
         FragmentTransaction transaction = fm.beginTransaction();
-        for(int i = 0; i < fragments.length; i++) {
-            transaction.hide(fragments[i]);
+        for (final Fragment fragment : fragments) {
+            transaction.hide(fragment);
         }
         transaction.commit();
     }
@@ -201,16 +200,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             showFragment(LOGIN, false);
         }
     }
-
-    public void showLoginFragment() {
-        showFragment(LOGIN, true);
-    }
-
-    public void startHomeScreenIntent () {
-        Intent home = new Intent(this, SelectionFragment.class);
-        // Pass in Geo Location of user
-        this.startActivity(home);
-    }
+//
+//    public void showLoginFragment() {
+//        showFragment(LOGIN, true);
+//    }
+//
+//    public void startHomeScreenIntent () {
+//        Intent home = new Intent(this, SelectionFragment.class);
+//        // Pass in Geo Location of user
+//        this.startActivity(home);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
