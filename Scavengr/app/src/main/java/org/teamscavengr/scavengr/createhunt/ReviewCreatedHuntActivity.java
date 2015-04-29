@@ -115,7 +115,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                     Toast.makeText(ReviewCreatedHuntActivity.this, toastString.toString(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
+
                 Hunt.HuntSavedCallback hsc = new Hunt.HuntSavedCallback() {
                     @Override
                     public void huntSaved() {
@@ -146,7 +146,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 myHunts.putExtra("user", currentUser);
                 this.startActivity(myHunts);
                 this.finish();
-                break;
+                break; 
 
             case R.id.back:
                 this.finish(); //not sure if this works/keeps old stuff
