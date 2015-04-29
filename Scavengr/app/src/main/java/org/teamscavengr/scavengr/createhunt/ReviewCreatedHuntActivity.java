@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.parse.ParseAnalytics;
+
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
@@ -21,7 +23,9 @@ import org.teamscavengr.scavengr.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -124,6 +128,20 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                         }
                     }
                 }).start();
+
+                if (editMode){
+                    Map<String, String> createHuntData = new HashMap<>();
+                    createHuntData.put("huntId", currentHunt.getId());
+                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                    createHuntData.put("userId", currentUser.getId());
+                    ParseAnalytics.trackEventInBackground("edit_hunt", createHuntData);
+                } else {
+                    Map<String, String> createHuntData = new HashMap<>();
+                    createHuntData.put("huntId", currentHunt.getId());
+                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                    createHuntData.put("userId", currentUser.getId());
+                    ParseAnalytics.trackEventInBackground("create_hunt", createHuntData);
+                }
 
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
