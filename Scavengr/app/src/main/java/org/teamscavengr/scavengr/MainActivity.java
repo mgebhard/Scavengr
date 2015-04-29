@@ -21,6 +21,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
+import com.parse.ParseCrashReporting;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
@@ -45,7 +46,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
-        // Oooh magic numbers
+        if (!ParseCrashReporting.isCrashReportingEnabled()) {
+            ParseCrashReporting.enable(this);
+        }
         Parse.initialize(this, "cMCitx9vmYz1tuypMXackoJING2zhrJN09qkkHuN",
                 "viVgGhou3pDvH37gV8VuoWQw0jYGXVTHtNstWz4E");
 

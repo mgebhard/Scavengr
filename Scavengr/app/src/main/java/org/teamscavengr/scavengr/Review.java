@@ -78,7 +78,6 @@ public class Review implements Parcelable {
         this.huntId = huntId;
     }
 
-
     public void saveReview() throws IOException, JSONException {
         try {
             URL url;

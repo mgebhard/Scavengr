@@ -45,8 +45,8 @@ public class SelectionFragment extends Fragment {
         if (currentAccessToken != null && Profile.getCurrentProfile() != null) {
             profilePictureView.setProfileId(currentAccessToken.getUserId());
             // Check to see if we need to create a new user
-            User.findUserWithNameInBackground(Profile.getCurrentProfile().getName(),
-                    new User.NameSearchDoneCallback() {
+            User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+                    new User.FacebookLookupDoneCallback() {
                         @Override
                         public void usersFound(final List<String> ids) {
                             if(ids.size() > 0) {
