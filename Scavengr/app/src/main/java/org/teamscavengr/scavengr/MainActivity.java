@@ -25,7 +25,9 @@ import com.parse.ParseAnalytics;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     private static final int LOGIN = 0;
@@ -45,7 +47,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         // Oooh magic numbers
         Parse.initialize(this, "cMCitx9vmYz1tuypMXackoJING2zhrJN09qkkHuN",
                 "viVgGhou3pDvH37gV8VuoWQw0jYGXVTHtNstWz4E");
-        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
+        Map<String, String> dims = new HashMap<>();
+        dims.put("example", "text");
+        ParseAnalytics.trackEventInBackground("app opened", dims);
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -239,12 +244,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.go_on_hunt:
+                Intent hunt = new Intent(this, HuntsList.class);
                 if (user == null) {
                     Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
 //                    break;
+                } else {
+                    hunt.putExtra("user", user);
                 }
-                Intent hunt = new Intent(this, HuntsList.class);
-                hunt.putExtra("user", user);
                 // Pass in Geo Location of user
                 this.startActivity(hunt);
                 break;

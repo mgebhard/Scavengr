@@ -36,7 +36,6 @@ public class HuntsList extends ListActivity {
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
         }
-        Log.d("HuntsList", currentUser.toString());
 
         Hunt.loadAllHuntsInBackground(
             new Hunt.HuntLoadedCallback() {
