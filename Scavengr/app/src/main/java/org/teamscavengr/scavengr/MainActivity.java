@@ -253,6 +253,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 this.startActivity(createHuntIntent);
                 break;
 
+            case R.id.skip_login_button:
+                showFragment(SELECTION, false);
+                break;
+
             default:
                 break;
         }
