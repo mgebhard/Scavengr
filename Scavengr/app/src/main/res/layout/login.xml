@@ -48,6 +48,7 @@
                 android:textSize="15dp"
                 android:textColor="#ffffff"
                 android:onClick="onClick"
+                android:visibility="gone"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/basic_button"
                 android:layout_weight="0.11" />
