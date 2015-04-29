@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -48,9 +49,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Parse.initialize(this, "cMCitx9vmYz1tuypMXackoJING2zhrJN09qkkHuN",
                 "viVgGhou3pDvH37gV8VuoWQw0jYGXVTHtNstWz4E");
 
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
         Map<String, String> dims = new HashMap<>();
         dims.put("example", "text");
-        ParseAnalytics.trackEventInBackground("app opened", dims);
+        ParseAnalytics.trackEventInBackground("app-opened", dims);
+        Log.d("parse", "parse thingy sent");
 
         callbackManager = CallbackManager.Factory.create();
 
