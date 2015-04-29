@@ -1,6 +1,8 @@
 package org.teamscavengr.scavengr.goonhunt;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -501,6 +503,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         // Don't do anything when he user tries to go back
+        DialogInterface.OnClickListener ocl = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // Exit
+                        HuntActivity.super.onBackPressed();
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        // Don't do anything
+                }
+            }
+        };
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setMessage("Are you sure you want to quit this hunt?")
+                .setPositiveButton("Yes", ocl)
+                .setNegativeButton("No", ocl).show();
     }
 
     @Override
