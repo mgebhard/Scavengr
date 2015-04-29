@@ -126,8 +126,8 @@ public class CalcLib {
 //           int percentage = random.nextInt((100 - -100) + 1) + -100;
 //           float multiplier = ((float)percentage)/100f;
 
-           double newLat = radius + answerLocation.getLatitude();
-           double newLong = radius + answerLocation.getLongitude();
+           double newLat = answerLocation.getLatitude();
+           double newLong = answerLocation.getLongitude();
 
            LatLng centroid = new LatLng(newLat, newLong);
            return  new Pair<LatLng, Double>(centroid, radius);
