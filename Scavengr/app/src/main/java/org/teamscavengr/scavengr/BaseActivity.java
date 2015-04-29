@@ -17,8 +17,6 @@ import org.teamscavengr.scavengr.mocklocation.DirectMockLocationProvider;
  */
 public abstract class BaseActivity extends Activity {
 
-    public static DirectMockLocationProvider dmlp;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
