@@ -77,7 +77,7 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
                     this.startActivity(huntIntent);
                 } else {
                     Toast toast = Toast.makeText(this,
-                            "Sorry but you are not allowed to go on a hunt until you turn location on.",
+                            "Please enable location to go on a hunt!",
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
