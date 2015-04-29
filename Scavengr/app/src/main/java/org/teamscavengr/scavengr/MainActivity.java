@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,9 +25,7 @@ import com.parse.ParseAnalytics;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     private static final int LOGIN = 0;
@@ -112,8 +109,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         // Hide all fragments at first
         FragmentTransaction transaction = fm.beginTransaction();
-        for(int i = 0; i < fragments.length; i++) {
-            transaction.hide(fragments[i]);
+        for (final Fragment fragment : fragments) {
+            transaction.hide(fragment);
         }
         transaction.commit();
     }
@@ -197,16 +194,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             showFragment(LOGIN, false);
         }
     }
-
-    public void showLoginFragment() {
-        showFragment(LOGIN, true);
-    }
-
-    public void startHomeScreenIntent () {
-        Intent home = new Intent(this, SelectionFragment.class);
-        // Pass in Geo Location of user
-        this.startActivity(home);
-    }
+//
+//    public void showLoginFragment() {
+//        showFragment(LOGIN, true);
+//    }
+//
+//    public void startHomeScreenIntent () {
+//        Intent home = new Intent(this, SelectionFragment.class);
+//        // Pass in Geo Location of user
+//        this.startActivity(home);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
