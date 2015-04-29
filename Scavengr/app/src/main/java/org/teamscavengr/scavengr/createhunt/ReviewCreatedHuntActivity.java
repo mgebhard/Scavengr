@@ -115,33 +115,31 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                     Toast.makeText(ReviewCreatedHuntActivity.this, toastString.toString(), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                new Thread(new Runnable() {
+                
+                Hunt.HuntSavedCallback hsc = new Hunt.HuntSavedCallback() {
                     @Override
-                    public void run() {
-                        try {
-                            // TODO: remove dependency on facebook profile
-                            currentHunt.saveHunt(currentUser.getId());
-
-                            Log.d("SCV", "saveHunt returned");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    public void huntSaved() {
+                        if (editMode){
+                            Map<String, String> createHuntData = new HashMap<>();
+                            createHuntData.put("huntId", currentHunt.getId());
+                            createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                            createHuntData.put("userId", currentUser.getId());
+                            ParseAnalytics.trackEventInBackground("edit_hunt", createHuntData);
+                        } else {
+                            Map<String, String> createHuntData = new HashMap<>();
+                            createHuntData.put("huntId", currentHunt.getId());
+                            createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                            createHuntData.put("userId", currentUser.getId());
+                            ParseAnalytics.trackEventInBackground("create_hunt", createHuntData);
                         }
                     }
-                }).start();
 
-                if (editMode){
-                    Map<String, String> createHuntData = new HashMap<>();
-                    createHuntData.put("huntId", currentHunt.getId());
-                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
-                    createHuntData.put("userId", currentUser.getId());
-                    ParseAnalytics.trackEventInBackground("edit_hunt", createHuntData);
-                } else {
-                    Map<String, String> createHuntData = new HashMap<>();
-                    createHuntData.put("huntId", currentHunt.getId());
-                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
-                    createHuntData.put("userId", currentUser.getId());
-                    ParseAnalytics.trackEventInBackground("create_hunt", createHuntData);
-                }
+                    @Override
+                    public void huntFailedToSave(Exception ex) {
+
+                    }
+                };
+                currentHunt.saveHuntInBackground(currentUser.getId(), hsc, true);
 
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
                 myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
