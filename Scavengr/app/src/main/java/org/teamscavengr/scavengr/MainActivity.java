@@ -105,6 +105,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         };
 
+
+
         setContentView(R.layout.activity_main);
 
         FragmentManager fm = getSupportFragmentManager();
