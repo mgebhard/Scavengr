@@ -248,8 +248,43 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.go_on_hunt:
                 Intent hunt = new Intent(this, HuntsList.class);
                 if (user == null) {
+                    if (Profile.getCurrentProfile().getId() != null) {
+                        User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(), new User.FacebookLookupDoneCallback() {
+                            @Override
+                            public void usersFound(List<String> ids) {
+                                if (ids.size() > 0) {
+                                    User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
+                                        @Override
+                                        public void userLoaded(User user) {
+                                            MainActivity.user = user;
+                                            Map<String, String> dimensions = new HashMap<String, String>();
+                                            dimensions.put("userId", user.getId());
+                                            ParseAnalytics.trackEventInBackground("user-login", dimensions);
+                                        }
+
+                                        @Override
+                                        public void userFailedToLoad(Exception ex) {
+                                            Toast.makeText(MainActivity.this, "Something went wrong. Try logging out and back in.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }, true);
+                                }
+                            }
+
+                            @Override
+                            public void usersFailedToFind(Exception e) {
+                                Toast.makeText(MainActivity.this, "Facebook Profile does not match user account", Toast.LENGTH_SHORT).show();
+//                                User newUser = new User(null, Profile.getCurrentProfile().getName(), Optional.<String>empty(), Optional.of(Profile.getCurrentProfile().getId()));
+//                                    user = newUser;
+//                                    try {
+//                                        newUser.saveUser();
+//                                    } catch (IOException ex) {
+//                                        Toast.makeText(MainActivity.this, "Failed to create new user", Toast.LENGTH_SHORT).show();
+//                                    }
+                            }
+                        }, true);
+                    }
                     Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
-//                    break;
+                    break;
                 } else {
                     hunt.putExtra("user", user);
                 }
