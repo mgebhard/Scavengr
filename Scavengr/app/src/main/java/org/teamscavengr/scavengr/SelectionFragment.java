@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class SelectionFragment extends Fragment {
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
                                                        AccessToken currentAccessToken) {
                 updateWithToken(currentAccessToken);
+                Log.d("AccessToken", "Updating current access token");
             }
         };
     }
