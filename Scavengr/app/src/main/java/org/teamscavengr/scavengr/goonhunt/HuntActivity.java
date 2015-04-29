@@ -157,7 +157,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("MEGAN", "Location changed to: " + location);
+//        Log.d("MEGAN", "Location changed to: " + location);
         lastKnownLocation = location;
         Task currentTask;
         if (currentTaskNumber < hunt.getTasks().size()) {
