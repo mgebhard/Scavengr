@@ -19,6 +19,8 @@ import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
 
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
@@ -40,6 +42,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
+        // Oooh magic numbers
+        Parse.initialize(this, "cMCitx9vmYz1tuypMXackoJING2zhrJN09qkkHuN",
+                "viVgGhou3pDvH37gV8VuoWQw0jYGXVTHtNstWz4E");
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
         callbackManager = CallbackManager.Factory.create();
 
