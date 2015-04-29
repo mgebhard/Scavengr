@@ -32,15 +32,17 @@ public class Review implements Parcelable {
     private String authorId;
     private float rating;
     private String comments;
+    private String huntId;
 
     public Review(JSONObject obj) throws JSONException {
         this.id = obj.getJSONObject("_id").getString("_str");
     }
 
-    public Review(final String id, final String authorId, final float rating, final String comments) {
+    public Review(final String id, final String authorId, final float rating, final String comments, final String huntId) {
         this.id = id;
         this.authorId = authorId;
         this.rating = rating;
+        this.huntId = huntId;
         this.comments = comments;
     }
 
@@ -72,6 +74,10 @@ public class Review implements Parcelable {
         this.comments = comments;
     }
 
+    public void setHuntId(String huntId) {
+        this.huntId = huntId;
+    }
+
 
     public void saveReview() throws IOException, JSONException {
         try {
@@ -83,6 +89,7 @@ public class Review implements Parcelable {
                 requestMap.put("authorId", authorId);
                 requestMap.put("rating", Float.toString(rating));
                 requestMap.put("comments", comments);
+                requestMap.put("huntId", huntId);
                 id = NetworkHelper.doRequest(url, "POST", true, requestMap).getString("_str");
                 Log.d("SCV", "Got ID for review");
             } else {
@@ -91,6 +98,7 @@ public class Review implements Parcelable {
                 requestMap.put("authorId", authorId);
                 requestMap.put("rating", Float.toString(rating));
                 requestMap.put("comments", comments);
+                requestMap.put("huntId", huntId);
                 NetworkHelper.doRequest(url, "PUT", true, requestMap);
             }
         } catch(IOException ex) {
@@ -126,7 +134,7 @@ public class Review implements Parcelable {
         try {
             URL url = new URL("http://scavengr.meteor.com/reviews/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, Collections.<String, String>emptyMap());
-            return new Review(id, obj.getString("authorId"), (float) obj.getDouble("rating"), obj.getString("comments"));
+            return new Review(id, obj.getString("authorId"), (float) obj.getDouble("rating"), obj.getString("comments"), obj.getString("huntId"));
         } catch (JSONException | IOException e) {
             throw new RuntimeException("could not load review", e);
         }
@@ -178,6 +186,7 @@ public class Review implements Parcelable {
         dest.writeString(id);
         dest.writeFloat(rating);
         dest.writeString(comments);
+        dest.writeString(huntId);
     }
 
     // NOT SURE IF BELOW IS NEEDED COPYING EXAMPLE
@@ -195,5 +204,6 @@ public class Review implements Parcelable {
         id = in.readString();
         rating = in.readFloat();
         comments = in.readString();
+        huntId = in.readString();
     }
 }

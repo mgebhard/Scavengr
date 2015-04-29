@@ -39,7 +39,7 @@ public class RateHuntActivity extends BaseActivity implements View.OnClickListen
                 TextView reviewComments = (TextView) findViewById(R.id.reviewComments);
 
                 Review currentReview = new Review(null, user.getId(),
-                        reviewRating.getRating(), reviewComments.getText().toString());
+                        reviewRating.getRating(), reviewComments.getText().toString(), hunt.getId());
 
 
                 // save the review to the DB

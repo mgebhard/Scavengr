@@ -41,6 +41,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
         setContentView(R.layout.review_created_hunt);
         currentHunt = getIntent().getParcelableExtra("currentHunt");
         currentUser = getIntent().getParcelableExtra("user");
+        currentHunt.setEstimatedTime(1L, TimeUnit.HOURS);
 
         listView = (ListView) findViewById(R.id.list);
         List<String> values = new ArrayList<String>();
@@ -62,7 +63,8 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
 
         ((EditText)findViewById(R.id.spoof_latitude)).setText(currentHunt.getName());
         ((EditText)findViewById(R.id.spoof_longitude)).setText(currentHunt.getDescription());
-        String timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
+//        String timeText = currentHunt.getEstimatedTime().first.toString() + " " + currentHunt.getEstimatedTime().second.toString();
+        String timeText = "1:00";
         ((EditText)findViewById(R.id.estimated_time)).setText(timeText);
     }
 
