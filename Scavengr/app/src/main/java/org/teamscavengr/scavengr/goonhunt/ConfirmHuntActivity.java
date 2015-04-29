@@ -1,6 +1,5 @@
 package org.teamscavengr.scavengr.goonhunt;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.SaveCallback;
 
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
