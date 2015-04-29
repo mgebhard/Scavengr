@@ -51,11 +51,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
-        Map<String, String> dims = new HashMap<>();
-        dims.put("example", "text");
-        ParseAnalytics.trackEventInBackground("app-opened", dims);
-        Log.d("parse", "parse thingy sent");
-
         callbackManager = CallbackManager.Factory.create();
 
         accessTokenTracker = new AccessTokenTracker() {
