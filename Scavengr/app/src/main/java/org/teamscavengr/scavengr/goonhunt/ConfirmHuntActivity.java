@@ -2,9 +2,11 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
@@ -60,11 +62,20 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm_hunt:
-                Intent huntIntent = new Intent(this, HuntActivity.class);
-                huntIntent.putExtra("huntObject", (Parcelable) hunt);
-                huntIntent.putExtra("user", currentUser);
-                Log.d("NULL?", hunt.getName());
-                this.startActivity(huntIntent);
+                LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                if (locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {
+                    Intent huntIntent = new Intent(this, HuntActivity.class);
+                    huntIntent.putExtra("huntObject", (Parcelable) hunt);
+                    huntIntent.putExtra("user", currentUser);
+                    Log.d("NULL?", hunt.getName());
+                    this.startActivity(huntIntent);
+                } else {
+                    Toast toast = Toast.makeText(this,
+                            "Sorry but you are not allowed to go on a hunt until you turn location on.",
+                            Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
                 break;
 
             case R.id.back:
