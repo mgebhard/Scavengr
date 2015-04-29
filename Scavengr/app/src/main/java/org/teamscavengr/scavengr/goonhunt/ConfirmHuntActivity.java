@@ -70,7 +70,8 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
                 ParseAnalytics.trackEventInBackground("start-hunt", dims);
 
                 LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-                if (locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) != null) {
+                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Intent huntIntent = new Intent(this, HuntActivity.class);
                     huntIntent.putExtra("huntObject", (Parcelable) hunt);
                     huntIntent.putExtra("user", currentUser);
