@@ -146,7 +146,7 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                 myHunts.putExtra("user", currentUser);
                 this.startActivity(myHunts);
                 this.finish();
-                break; 
+                break;
 
             case R.id.back:
                 this.finish(); //not sure if this works/keeps old stuff

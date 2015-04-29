@@ -78,6 +78,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
+                android:visibility="gone"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp" />
 
