@@ -169,6 +169,8 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
 
             case R.id.back: //TODO: should this just go back?
                 Intent myHunts = new Intent(this, MyHuntsActivity.class);
+                myHunts.putExtra("currentHunt", (Parcelable) hunt);
+                myHunts.putExtra("user", currentUser);
                 this.startActivity(myHunts);
                 break;
 

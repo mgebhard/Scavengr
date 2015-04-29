@@ -1,6 +1,8 @@
 package org.teamscavengr.scavengr.goonhunt;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -217,8 +219,30 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         // Based on stack overflow post
         // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
 
-        int zoomLevel = getZoomLevel();
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, zoomLevel));
+//        int zoomLevel = getZoomLevel();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 14));
+//        if (!Double.isNaN(centroid.longitude) || !Double.isNaN(centroid.latitude)) {
+//            List<LatLng> points = new ArrayList<LatLng>();
+//            points.add(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+//            for (Task task : hunt.getTasks()) {
+//                points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+//            }
+//            LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+//            LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+//            LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+//            LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+//            mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10), 500, new GoogleMap.CancelableCallback() {
+//                @Override
+//                public void onFinish() {
+//                    // Do nothing
+//                }
+//
+//                @Override
+//                public void onCancel() {
+//                    // Do nothing
+//                }
+//            });
+//        }
 
         map.addCircle(new CircleOptions()
                 .center(centroid)
@@ -479,6 +503,22 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         // Don't do anything when he user tries to go back
+        DialogInterface.OnClickListener ocl = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // Exit
+                        HuntActivity.super.onBackPressed();
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        // Don't do anything
+                }
+            }
+        };
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        adb.setMessage("Are you sure you want to quit this hunt?")
+                .setPositiveButton("Yes", ocl)
+                .setNegativeButton("No", ocl).show();
     }
 
     @Override
