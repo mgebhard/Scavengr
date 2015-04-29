@@ -11,10 +11,17 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
+
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ConfirmHuntActivity extends BaseActivity implements View.OnClickListener {
@@ -40,12 +47,7 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
             ratingBar.setRating(hunt.getRating());
 
         } else {
-            Context context = getApplicationContext();
-            CharSequence text = "The cat is dead - Failed to load data";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+            Toast.makeText(this, "The cat is dead - failed to load data", Toast.LENGTH_SHORT).show();
         }
 
         if (getIntent().hasExtra("user")) {
@@ -60,6 +62,13 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.confirm_hunt:
+                // Analytics
+                Map<String, String> dims = new HashMap<>();
+                dims.put("huntId", hunt.getId());
+                if(currentUser != null)
+                    dims.put("userId", currentUser.getId());
+                ParseAnalytics.trackEventInBackground("start-hunt", dims);
+
                 Intent huntIntent = new Intent(this, HuntActivity.class);
                 huntIntent.putExtra("huntObject", (Parcelable) hunt);
                 huntIntent.putExtra("user", currentUser);
