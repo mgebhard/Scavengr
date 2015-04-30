@@ -1,9 +1,11 @@
 package org.teamscavengr.scavengr.goonhunt;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,22 @@ public class RateHuntActivity extends BaseActivity implements View.OnClickListen
         setContentView(R.layout.activity_review_hunt);
         user = getIntent().getParcelableExtra("user");
         hunt = getIntent().getParcelableExtra("hunt");
+        TextView reviewHuntTitle = (TextView) findViewById(R.id.reviewHuntTitle);
+        reviewHuntTitle.setText(hunt.getName());
+        TextView reviewComments = (TextView) findViewById(R.id.reviewComments);
+        reviewComments.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void onClick(View view) {

@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -147,12 +148,23 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         }
 
         Location curLoc = getIntent().getParcelableExtra("curLoc");
-        if(curLoc != null) {
-            currentLocation = curLoc;
-        } else {
-            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//        if(curLoc != null) {
+//            currentLocation = curLoc;
+//        } else {
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsOn = false;
+        boolean networkOn = false;
+        try {gpsOn = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);} catch (Exception ex){};
+        try {networkOn = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);} catch (Exception ex){};
+        if (gpsOn) {
+            currentLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } else if(networkOn) {
             currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        } else {
+            Toast.makeText(this, "You need location enabled", Toast.LENGTH_SHORT).show();
         }
+
+//        }
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
