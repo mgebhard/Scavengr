@@ -47,7 +47,10 @@ public abstract class BaseActivity extends Activity {
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                MainActivity.waitingLogin = false;
                 this.startActivity(home);
+                this.onDestroy();
                 return super.onOptionsItemSelected(item);
             case R.id.action_home:
                 home = new Intent(this, MainActivity.class);

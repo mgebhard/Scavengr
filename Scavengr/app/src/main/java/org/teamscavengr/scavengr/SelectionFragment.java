@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.List;
@@ -26,28 +27,30 @@ public class SelectionFragment extends Fragment {
     private ProfilePictureView profilePictureView;
     private TextView greeting;
 
-    private AccessTokenTracker accessTokenTracker;
+//    private AccessTokenTracker accessTokenTracker;
     private User user;
+    private ProfileTracker profileTracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        accessTokenTracker = new AccessTokenTracker() {
+        profileTracker = new ProfileTracker() {
             @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken,
-                                                       AccessToken currentAccessToken) {
-                updateWithToken(currentAccessToken);
+            protected void onCurrentProfileChanged(Profile oldProfile,
+                                                       Profile currentProfile) {
+//                updateWithToken(currentAccessToken);
+                updateWithProfile(currentProfile);
                 Log.d("AccessToken", "Updating current access token");
             }
         };
     }
 
-    private void updateWithToken(AccessToken currentAccessToken) {
-        if (currentAccessToken != null && Profile.getCurrentProfile() != null) {
-            profilePictureView.setProfileId(currentAccessToken.getUserId());
+    public void updateWithProfile(final Profile currentProfile) {
+        if (currentProfile != null) {
+            profilePictureView.setProfileId(currentProfile.getId());
             // Check to see if we need to create a new user
-            User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+            User.findUserWithFacebookIdInBackground(currentProfile.getId(),
                     new User.FacebookLookupDoneCallback() {
                         @Override
                         public void usersFound(final List<String> ids) {
@@ -55,8 +58,12 @@ public class SelectionFragment extends Fragment {
                                 // User already exists, take the 1st one.
                                 setCurrentUserFromId(ids.get(0));
                             } else {
-                                // User not in db yet, add it
-                                createAndSaveUser();
+                                if (!MainActivity.waitingLogin) {
+                                    // User not in db yet, add it
+                                    MainActivity.waitingLogin = true;
+                                    createAndSaveUser(currentProfile);
+
+                                }
                             }
                         }
 
@@ -68,15 +75,43 @@ public class SelectionFragment extends Fragment {
                         }
                     }, true);
             greeting.setText(getString(R.string.hello_user, Profile.getCurrentProfile().getFirstName()));
-
-        } else {
-            // Don't know the user
-            // TODO(Gebhard): hide the my hunts button
-            profilePictureView.setProfileId(null);
-            greeting.setText("Welcome");
-
         }
     }
+
+//    private void updateWithToken(AccessToken currentAccessToken) {
+//        if (currentAccessToken != null && Profile.getCurrentProfile() != null) {
+//            profilePictureView.setProfileId(currentAccessToken.getUserId());
+//            // Check to see if we need to create a new user
+//            User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+//                    new User.FacebookLookupDoneCallback() {
+//                        @Override
+//                        public void usersFound(final List<String> ids) {
+//                            if(ids.size() > 0) {
+//                                // User already exists, take the 1st one.
+//                                setCurrentUserFromId(ids.get(0));
+//                            } else {
+//                                // User not in db yet, add it
+//                                createAndSaveUser();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void usersFailedToFind(final Exception ex) {
+//                            Toast.makeText(SelectionFragment.this.getActivity(),
+//                                    "Couldn't load users!", Toast.LENGTH_SHORT).show();
+//                            ex.printStackTrace();
+//                        }
+//                    }, true);
+//            greeting.setText(getString(R.string.hello_user, Profile.getCurrentProfile().getFirstName()));
+//
+//        } else {
+//            // Don't know the user
+//            // TODO(Gebhard): hide the my hunts button
+//            profilePictureView.setProfileId(null);
+//            greeting.setText("Welcome");
+//
+//        }
+//    }
 
     private void setCurrentUserFromId(String id) {
         User.loadUserInBackground(id, new User.UserLoadedCallback() {
@@ -94,10 +129,10 @@ public class SelectionFragment extends Fragment {
         }, true);
     }
 
-    private void createAndSaveUser() {
-        Profile fbProfile = Profile.getCurrentProfile();
-        user = new User(null, fbProfile.getName(),
-                Optional.<String>empty(), Optional.of(fbProfile.getId()));
+    private void createAndSaveUser(Profile currentProfile) {
+//        Profile fbProfile = currentProfile;
+        user = new User(null, currentProfile.getName(),
+                Optional.<String>empty(), Optional.of(currentProfile.getId()));
         user.saveUserInBackground(new User.UserSavedCallback() {
             @Override
             public void userSaved() {
@@ -126,8 +161,9 @@ public class SelectionFragment extends Fragment {
 
         // TODO (gebhard): create a facebook log out system by options of picture click
 
-        updateWithToken(AccessToken.getCurrentAccessToken());
+//        updateWithToken(AccessToken.getCurrentAccessToken());
 
+        updateWithProfile(Profile.getCurrentProfile());
         return view;
     }
 
@@ -145,6 +181,6 @@ public class SelectionFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        accessTokenTracker.stopTracking();
+        profileTracker.stopTracking();
     }
 }
