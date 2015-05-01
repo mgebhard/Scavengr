@@ -1,44 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
+    android:background="@drawable/city_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#ffffff" >
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="3.5">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="5"></LinearLayout>
+            android:layout_height="fill_parent"></LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:weightSum="1">
+
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:weightSum="1">
+            android:layout_weight="1">
 
-            <ImageView
-                android:layout_width="171dp"
-                android:layout_height="147dp"
-                android:layout_gravity="center"
-                android:src="@drawable/scavengr_logo"
-                android:layout_weight="0.07" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/textView13"
+                android:layout_above="@+id/login_button"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:text="Create. Discover. Explore."
+                android:textSize="25dp"
+                android:textColor="#ffffff" />
 
             <com.facebook.login.widget.LoginButton
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="51dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
 
             <Button
                 android:layout_width="221dp"
@@ -53,7 +67,31 @@
                 android:background="@drawable/basic_button"
                 android:layout_weight="0.11" />
 
-        </LinearLayout>
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center"
+                android:src="@drawable/scavengr_logo"
+                android:id="@+id/imageView"
+                android:visibility="invisible"
+                android:layout_below="@+id/textView11"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Scavengr"
+                android:id="@+id/textView11"
+                android:textSize="65dp"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:layout_marginLeft="10dp"
+                android:layout_below="@+id/skip_login_button"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
 
     </LinearLayout>
-</ScrollView>
+
+</LinearLayout>
