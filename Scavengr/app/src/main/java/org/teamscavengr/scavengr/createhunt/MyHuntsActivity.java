@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+//import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 
@@ -54,13 +54,13 @@ public class MyHuntsActivity extends ListActivity {
                     @Override
                     public void numHuntsFound(int num) {
                         Context context = getApplicationContext();
-                        CharSequence text = "Loading " + num + " hunts...";
-                        int duration = Toast.LENGTH_SHORT;
+//                        CharSequence text = "Loading " + num + " hunts...";
+//                        int duration = Toast.LENGTH_SHORT;
                         if (num < 1) {
                             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                         }
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
                     }
 
                     @Override
@@ -75,11 +75,11 @@ public class MyHuntsActivity extends ListActivity {
                     @Override
                     public void huntFailedToLoad(Exception e) {
                         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                        Context context = getApplicationContext();
-                        CharSequence text = "Failed to load a hunt";
-                        int duration = Toast.LENGTH_SHORT;
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
+//                        Context context = getApplicationContext();
+//                        CharSequence text = "Failed to load a hunt";
+//                        int duration = Toast.LENGTH_SHORT;
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
                     }
                 }, true, currentUser);
 

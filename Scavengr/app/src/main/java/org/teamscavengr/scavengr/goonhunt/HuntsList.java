@@ -10,8 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import com.facebook.login.LoginManager;
 
 import org.teamscavengr.scavengr.Hunt;
@@ -41,10 +39,10 @@ public class HuntsList extends ListActivity {
             new Hunt.HuntLoadedCallback() {
                    @Override
                    public void numHuntsFound(int num) {
-                       CharSequence text = "Loading " + num + " hunts...";
-                       int duration = Toast.LENGTH_LONG;
-
-                       Toast.makeText(HuntsList.this, text, duration).show();
+//                       CharSequence text = "Loading " + num + " hunts...";
+//                       int duration = Toast.LENGTH_LONG;
+//
+//                       Toast.makeText(HuntsList.this, text, duration).show();
                    }
 
                    @Override
@@ -58,9 +56,9 @@ public class HuntsList extends ListActivity {
 
                    @Override
                    public void huntFailedToLoad(Exception e) {
-                       CharSequence text = "Failed to load a hunt";
-                       int duration = Toast.LENGTH_SHORT;
-                       Toast.makeText(HuntsList.this, text, duration).show();
+//                       CharSequence text = "Failed to load a hunt";
+//                       int duration = Toast.LENGTH_SHORT;
+//                       Toast.makeText(HuntsList.this, text, duration).show();
                    }
                }, true);
 
