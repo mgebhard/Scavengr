@@ -69,8 +69,8 @@ public class SelectionFragment extends Fragment {
 
                         @Override
                         public void usersFailedToFind(final Exception ex) {
-                            Toast.makeText(SelectionFragment.this.getActivity(),
-                                    "Couldn't load users!", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(SelectionFragment.this.getActivity(),
+//                                    "Couldn't load users!", Toast.LENGTH_SHORT).show();
                             ex.printStackTrace();
                         }
                     }, true);
@@ -122,8 +122,8 @@ public class SelectionFragment extends Fragment {
 
             @Override
             public void userFailedToLoad(final Exception ex) {
-                Toast.makeText(SelectionFragment.this.getActivity(),
-                        "Couldn't load user!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(SelectionFragment.this.getActivity(),
+//                        "Couldn't load user!", Toast.LENGTH_SHORT).show();
                 ex.printStackTrace();
             }
         }, true);
@@ -138,6 +138,7 @@ public class SelectionFragment extends Fragment {
             public void userSaved() {
                 // HOORAY
                 Toast.makeText(getActivity(), "User created", Toast.LENGTH_SHORT).show();
+                MainActivity.userSaved(user);
             }
 
             @Override

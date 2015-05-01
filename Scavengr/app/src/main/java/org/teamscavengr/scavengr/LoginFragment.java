@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -23,6 +25,7 @@ public class LoginFragment extends Fragment {
 
     private LoginButton loginButton;
     private CallbackManager callbackManager;
+    private View view;
 
     public interface SkipLoginCallback {
         void onSkipLoginPressed();
@@ -30,7 +33,7 @@ public class LoginFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.login, container, false);
+        view = inflater.inflate(R.layout.login, container, false);
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) view.findViewById(R.id.login_button);

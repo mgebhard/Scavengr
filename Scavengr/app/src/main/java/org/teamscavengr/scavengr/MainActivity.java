@@ -109,7 +109,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                                             @Override
                                             public void userFailedToLoad(Exception ex) {
-                                                Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
+//                                                Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
                                             }
                                         }, true);
                                     }
@@ -117,7 +117,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                                 @Override
                                 public void usersFailedToFind(Exception e) {
-                                    Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
                                 }
                             }, true);
 
@@ -125,54 +125,54 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //            }
         };
 
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-//                showFragment(LOGIN, false);
-                showFragment(SELECTION, true);
-                User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
-                    new User.FacebookLookupDoneCallback() {
-                        @Override
-                        public void usersFound(List<String> ids) {
-                            if (ids.size() > 0) {
-                                User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
-                                    @Override
-                                    public void userLoaded(User user) {
-                                        MainActivity.user = user;
-                                        Map<String, String> dimensions = new HashMap<String, String>();
-                                        dimensions.put("userId", user.getId());
-                                        ParseAnalytics.trackEventInBackground("user-login", dimensions);
-                                        MainActivity.loggedInSuccess = true;
-                                    }
-
-                                    @Override
-                                    public void userFailedToLoad(Exception ex) {
-                                        Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
-                                    }
-                                }, true);
-                            } else {
-                                Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
-
-                            }
-                        }
-
-                        @Override
-                        public void usersFailedToFind(Exception e) {
-                            Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
-                        }
-                    }, true);
-            }
-
-            @Override
-            public void onCancel() {
-                // Do nothing right now
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                // Do nothing right now
-            }
-        });
+//        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+////                showFragment(LOGIN, false);
+//                showFragment(SELECTION, true);
+//                User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+//                    new User.FacebookLookupDoneCallback() {
+//                        @Override
+//                        public void usersFound(List<String> ids) {
+//                            if (ids.size() > 0) {
+//                                User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
+//                                    @Override
+//                                    public void userLoaded(User user) {
+//                                        MainActivity.user = user;
+//                                        Map<String, String> dimensions = new HashMap<String, String>();
+//                                        dimensions.put("userId", user.getId());
+//                                        ParseAnalytics.trackEventInBackground("user-login", dimensions);
+//                                        MainActivity.loggedInSuccess = true;
+//                                    }
+//
+//                                    @Override
+//                                    public void userFailedToLoad(Exception ex) {
+//                                        Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }, true);
+//                            } else {
+//                                Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+//
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void usersFailedToFind(Exception e) {
+//                            Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }, true);
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                // Do nothing right now
+//            }
+//
+//            @Override
+//            public void onError(FacebookException e) {
+//                // Do nothing right now
+//            }
+//        });
 
 
         setContentView(R.layout.activity_main);
@@ -212,6 +212,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         transaction.commit();
     }
 
+    public static void userSaved(User user) {
+        MainActivity.user = user;
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -225,6 +229,39 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
+        if (user == null && Profile.getCurrentProfile() != null) {
+            User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
+                    new User.FacebookLookupDoneCallback() {
+                        @Override
+                        public void usersFound(List<String> ids) {
+                            if (ids.size() > 0) {
+                                User.loadUserInBackground(ids.get(0), new User.UserLoadedCallback() {
+                                    @Override
+                                    public void userLoaded(User user) {
+                                        MainActivity.user = user;
+                                        Map<String, String> dimensions = new HashMap<String, String>();
+                                        dimensions.put("userId", user.getId());
+                                        ParseAnalytics.trackEventInBackground("user-login", dimensions);
+                                        MainActivity.loggedInSuccess = true;
+                                    }
+
+                                    @Override
+                                    public void userFailedToLoad(Exception ex) {
+//                                        Toast.makeText(MainActivity.this, "Failed to find user", Toast.LENGTH_SHORT).show();
+                                    }
+                                }, true);
+                            } else {
+//                                Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+
+                        @Override
+                        public void usersFailedToFind(Exception e) {
+//                            Toast.makeText(MainActivity.this, "Failed to find user with Facebook ID", Toast.LENGTH_SHORT).show();
+                        }
+                    }, true);
+        }
         isResumed = true;
 
         // Call the 'activateApp' method to log an app event for use in analytics and advertising
@@ -342,7 +379,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                                         @Override
                                         public void userFailedToLoad(Exception ex) {
-                                            Toast.makeText(MainActivity.this, "Something went wrong. Try logging out and back in.", Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(MainActivity.this, "Something went wrong. Try logging out and back in.", Toast.LENGTH_SHORT).show();
                                         }
                                     }, true);
                                 }
@@ -350,7 +387,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                             @Override
                             public void usersFailedToFind(Exception e) {
-                                Toast.makeText(MainActivity.this, "Facebook Profile does not match user account", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(MainActivity.this, "Facebook Profile does not match user account", Toast.LENGTH_SHORT).show();
 //                                User newUser = new User(null, Profile.getCurrentProfile().getName(), Optional.<String>empty(), Optional.of(Profile.getCurrentProfile().getId()));
 //                                    user = newUser;
 //                                    try {
@@ -361,7 +398,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                             }
                         }, true);
                     }
-                    Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "User account not found yet", Toast.LENGTH_SHORT).show();
                     break;
                 } else {
                     hunt.putExtra("user", user);
