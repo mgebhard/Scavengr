@@ -23,8 +23,8 @@ import java.util.ArrayList;
 public class HuntsList extends ListActivity {
 
     ArrayAdapter<String> mAdapter;
-    ArrayList<Hunt> mHuntsObj = new ArrayList<>();
-    ArrayList<String> mHuntNames = new ArrayList<>();
+    ArrayList<Hunt> mHuntsObj = new ArrayList<Hunt>();
+    ArrayList<String> mHuntNames = new ArrayList<String>();
     private User currentUser;
 
     @Override
