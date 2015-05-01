@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,7 +48,7 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     private boolean editMode = false;
 
     public Location currentLocation;
-    public GoogleMap mapObject;
+    public static GoogleMap mapObject;
     private User currentUser;
 
     @Override
@@ -115,7 +116,6 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
         map.setOnInfoWindowClickListener(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude()), 15));
-
         int i = 0;
         for (Task task : currentHunt.getTasks()){
             Location taskLocation = task.getLocation();
@@ -162,10 +162,14 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
                 break;
 
             case R.id.add_waypoint:
+                if (mapObject.getMyLocation() == null) {
+                    Toast.makeText(this, "Waiting for location lock", Toast.LENGTH_SHORT).show();
+                    break;
+                };
                 Intent createTask = new Intent(this, CreateWaypointActivity.class);
                 createTask.putExtra("currentHunt", (Parcelable) currentHunt);
                 createTask.putExtra("user", currentUser);
-                createTask.putExtra("curLoc", currentLocation);
+                createTask.putExtra("curLoc", new Location(mapObject.getMyLocation()));
                 this.startActivity(createTask);
                 break;
 
@@ -192,39 +196,49 @@ public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallba
     public void onLocationChanged(final Location location) {
         if(isBetterLocation(location, currentLocation)) {
             currentLocation = location;
-            if(mapObject != null) {
-                Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(currentHunt);
-                LatLng centroid = geoFence.first;
-                LatLng here =
-                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-                List<LatLng> points = new ArrayList<LatLng>();
-                points.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                for (Task task : currentHunt.getTasks()) {
-                    points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
-                }
-                Log.d("MapLocationChange", centroid.toString());
-                if (points.size() > 1 || !Double.isNaN(centroid.longitude) || !Double.isNaN(centroid.latitude) ) {
-                    LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
-                    LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
-                    LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
-                    LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
-                    mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
-                        @Override
-                        public void onFinish() {
-                            // Do nothing
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            // Do nothing
-                        }
-                    });
-                } else {
-                    mapObject.animateCamera(CameraUpdateFactory.newLatLng(here));
-                }
+//            if(mapObject != null) {
+//                Pair<LatLng, Double> geoFence = CalcLib.calculateCentroidAndRadius(currentHunt);
+//                LatLng centroid = geoFence.first;
+//                LatLng here =
+//                        new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+//
+//                List<LatLng> points = new ArrayList<LatLng>();
+//                points.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+//                for (Task task : currentHunt.getTasks()) {
+//                    points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+//                }
+//                Log.d("MapLocationChange", centroid.toString());
+//                if (points.size() > 1 || !Double.isNaN(centroid.longitude) || !Double.isNaN(centroid.latitude) ) {
+//                    LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+//                    LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+//                    LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+//                    LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+//                    mapObject.animateCamera(CameraUpdateFactory.newLatLng(here), 500, new GoogleMap.CancelableCallback() {
+//                        @Override
+//                        public void onFinish() {
+//                            // Do nothing
+//                        }
+//
+//                        @Override
+//                        public void onCancel() {
+//                            // Do nothing
+//                        }
+//                    });
+//                } else {
+//                mapObject.animateCamera(CameraUpdateFactory.newLatLng(here), 500, new GoogleMap.CancelableCallback() {
+//                        @Override
+//                        public void onFinish() {
+//                            // Do nothing
+//                        }
+//
+//                        @Override
+//                        public void onCancel() {
+//                            // Do nothing
+//                        }
+//                    });
+//                }
 //                mapObject.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 14));
-            }
+//            }
         }
     }
 

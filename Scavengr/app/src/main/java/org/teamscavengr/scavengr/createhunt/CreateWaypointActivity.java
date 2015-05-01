@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -76,7 +77,6 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
         LatLng usersLastKnownLocation = new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude());
-
         if (currentTask!=null){
             usersLastKnownLocation = new LatLng(currentTask.getLocation().getLatitude(),
                     currentTask.getLocation().getLongitude());
@@ -151,9 +151,19 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
             currentLocation = curLoc;
         } else {
             LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            boolean gpsOn = false;
+            boolean networkOn = false;
+            try {gpsOn = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);} catch (Exception ex){};
+            try {networkOn = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);} catch (Exception ex){};
+            if (gpsOn) {
+                currentLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            } else if(networkOn) {
+                currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            } else {
+                Toast.makeText(this, "You need location enabled", Toast.LENGTH_SHORT).show();
+            }
         }
-
+//        currentLocation = CreateHuntActivity.mapObject.getMyLocation();
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -165,6 +175,67 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
         slider.setOnSeekBarChangeListener(this);
 
         buildGoogleApiClient();
+    }
+
+    @Override
+    public void onResume () {
+        super.onResume();
+        if (getIntent().hasExtra("editTaskNum")) {
+            editTaskNum = getIntent().getIntExtra("editTaskNum", editTaskNum);
+        }
+
+        if (getIntent().hasExtra("currentHunt")) {
+            currentHunt = (getIntent().getParcelableExtra("currentHunt"));
+        }
+
+        if (editTaskNum != -1){
+            currentTask = currentHunt.getTasks().get(editTaskNum);
+            progress = (int) (Math.sqrt(((currentTask.getRadius() - 10.0)/maxRadius)* 10000.0));
+            ((EditText)findViewById(R.id.clue)).setText(currentTask.getClue());
+            ((EditText)findViewById(R.id.answer)).setText(currentTask.getAnswer());
+            ((SeekBar)findViewById(R.id.radius_bar)).setProgress(progress);
+            setTitle("Edit Waypoint");
+        } else {
+            (findViewById(R.id.delete)).setVisibility(View.INVISIBLE);
+        }
+
+
+        if (getIntent().hasExtra("user")) {
+            currentUser = getIntent().getParcelableExtra("user");
+        }
+
+        Location curLoc = getIntent().getParcelableExtra("curLoc");
+        if(curLoc != null) {
+            currentLocation = curLoc;
+        } else {
+            LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            boolean gpsOn = false;
+            boolean networkOn = false;
+            try {gpsOn = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);} catch (Exception ex){};
+            try {networkOn = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);} catch (Exception ex){};
+            if (gpsOn) {
+                currentLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            } else if(networkOn) {
+                currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            } else {
+                Toast.makeText(this, "You need location enabled", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+//        Location curLoc = getIntent().getParcelableExtra("curLoc");
+//        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//        boolean gpsOn = false;
+//        boolean networkOn = false;
+//        try {gpsOn = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);} catch (Exception ex){};
+//        try {networkOn = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);} catch (Exception ex){};
+//        if (gpsOn) {
+//            currentLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        } else if(networkOn) {
+//            currentLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        } else {
+//            Toast.makeText(this, "You need location enabled", Toast.LENGTH_SHORT).show();
+//        }
+//        currentLocation = mapObject.getMyLocation();
     }
 
     @Override

@@ -3,6 +3,8 @@ package org.teamscavengr.scavengr;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,11 @@ public class LoginFragment extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Toast.makeText(getActivity(), "Login successful", Toast.LENGTH_SHORT).show();
+                MainActivity.loggedInSuccess = true;
+                FragmentTransaction transaction = MainActivity.fm.beginTransaction();
+                transaction.show(MainActivity.fragments[MainActivity.SELECTION]);
+                transaction.hide(MainActivity.fragments[MainActivity.LOGIN]);
+                transaction.commit();
             }
 
             @Override
