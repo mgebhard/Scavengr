@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -21,6 +23,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -62,11 +65,20 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
     protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
-    protected static final int REQUEST_IMAGE_CAPTURE = 420;
     protected final static String LOCATION_PROVIDER = "network";
-    static final int REQUEST_TAKE_PHOTO = 1;
 
-    String currentPhotoPath;
+    private static final int ACTION_TAKE_PHOTO = 1;
+    private static final String JPEG_FILE_PREFIX = "IMG_";
+    private static final String JPEG_FILE_SUFFIX = ".jpg";
+
+    private static final String BITMAP_STORAGE_KEY = "viewbitmap";
+    private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
+    private ImageView mImageView;
+    private Bitmap mImageBitmap;
+    private String mCurrentPhotoPath;
+    private ArrayList<String> allPhotoPaths = new ArrayList<String>();
+    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+
 
     private long timeStarted;
 
@@ -91,6 +103,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_hunt);
+
+        // Set album directory based on android version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            mAlbumStorageDirFactory = new FroyoAlbumDirFactory();
+        } else {
+            mAlbumStorageDirFactory = new BaseAlbumDirFactory();
+        }
 
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
@@ -206,10 +225,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-    }
-
-    public int getZoomLevel() {
-        return (int) (16 - Math.log((boundingRadius + 0) / 500) / Math.log(2));
     }
 
     @Override
@@ -336,13 +351,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 if (hunt != null) {
                     Log.d("Hunt Activity", "The hunt is not null right now");
                     photoRecap.putExtra("hunt", (Parcelable) hunt);
+                    photoRecap.putStringArrayListExtra("photoPaths", allPhotoPaths);
                 }
                 Log.d("HuntActivity", hunt.toString());
                 Log.d("HuntActivity", currentUser.toString());
                 if (currentUser != null) {
                     photoRecap.putExtra("user", currentUser);
                 }
-                //photoRecap.putExtra("photos", (Parcelable)images);
                 this.startActivity(photoRecap);
                 break;
 
@@ -358,7 +373,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.camera:
                 // Run a camera intent
-//                dispatchTakePictureIntent();
+                dispatchTakePictureIntent(ACTION_TAKE_PHOTO);
                 break;
 
             case R.id.get_hint:
@@ -526,53 +541,106 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private void dispatchTakePictureIntent(int actionCode) {
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        switch(actionCode) {
+            case ACTION_TAKE_PHOTO:
+                File f = null;
+
+                try {
+                    f = setUpPhotoFile();
+                    mCurrentPhotoPath = f.getAbsolutePath();
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    f = null;
+                    mCurrentPhotoPath = null;
+                }
+                break;
+
+            default:
+                break;
+        } // switch
+
+        startActivityForResult(takePictureIntent, actionCode);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            images.put(hunt.getTasks().get(currentTaskNumber), imageBitmap);
-            // mImageView.setImageBitmap(imageBitmap);
+        switch (requestCode) {
+            case ACTION_TAKE_PHOTO: {
+                if (resultCode == RESULT_OK) {
+                    allPhotoPaths.add(mCurrentPhotoPath);
+                    handleBigCameraPhoto();
+                }
+                break;
+            }
         }
     }
 
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        currentPhotoPath = "file:" + image.getAbsolutePath();
-//        return image;
-//    }
+    private File setUpPhotoFile() throws IOException {
 
+        File f = createImageFile();
+        mCurrentPhotoPath = f.getAbsolutePath();
 
-//    private void dispatchTakePictureIntent() {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        // Ensure that there's a camera activity to handle the intent
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                // Error occurred while creating the File
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-//                        Uri.fromFile(photoFile));
-//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-//            }
-//        }
-//    }
+        return f;
+    }
+
+    private void handleBigCameraPhoto() {
+
+        if (mCurrentPhotoPath != null) {
+            galleryAddPic();
+            mCurrentPhotoPath = null;
+        }
+
+    }
+
+    private void galleryAddPic() {
+        Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
+        File albumF = getAlbumDir();
+        File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
+        return imageF;
+    }
+
+    private File getAlbumDir() {
+        File storageDir = null;
+
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+
+            storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+
+            if (storageDir != null) {
+                if (! storageDir.mkdirs()) {
+                    if (! storageDir.exists()){
+                        Log.d("CameraSample", "failed to create directory");
+                        return null;
+                    }
+                }
+            }
+
+        } else {
+            Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+        }
+
+        return storageDir;
+    }
+
+    /* Photo album for this application */
+    private String getAlbumName() {
+        return getString(R.string.album_name);
+    }
 
     @Override
     public void onConnected(Bundle connectionHint) {
