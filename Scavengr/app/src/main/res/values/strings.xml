@@ -31,7 +31,7 @@
     <string name="facebook">Facebook</string>
     <string name="my_name">My Name</string>
     <string name="album_name">Scavengr</string>
-    <string name="hello_user">Hello %1$s!</string>
+    <string name="hello_user">\@%1$s_%2$s</string>
     <string name="skip_login">Continue as a guest.</string>
 
 </resources>

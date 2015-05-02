@@ -74,7 +74,9 @@ public class SelectionFragment extends Fragment {
                             ex.printStackTrace();
                         }
                     }, true);
-            greeting.setText(getString(R.string.hello_user, Profile.getCurrentProfile().getFirstName()));
+            greeting.setText(getString(R.string.hello_user,
+                    Profile.getCurrentProfile().getFirstName(),
+                    Profile.getCurrentProfile().getLastName()));
         }
     }
 
