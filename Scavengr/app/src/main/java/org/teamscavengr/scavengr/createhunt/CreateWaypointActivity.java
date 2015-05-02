@@ -47,7 +47,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
     protected GoogleApiClient mGoogleApiClient;
 
-    public GoogleMap mapObject;
+    public static GoogleMap mapObject;
     public Location currentLocation;
 
     private final double maxRadius = 5000.0; //in meters
@@ -73,6 +73,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
     public void onMapReady(GoogleMap map) {
 //        Log.d("MEGAN", "onMapReady Setting location: " + currentLatitude + currentLongitude);
         mapObject = map;
+        mapObject.clear();
         map.setMyLocationEnabled(true);
 
         LatLng usersLastKnownLocation = new LatLng(currentLocation.getLatitude(),
@@ -170,6 +171,7 @@ public class CreateWaypointActivity extends ActionBarActivity implements OnMapRe
 
         View map = findViewById(R.id.map);
         map.setOnTouchListener(this);
+
 
         SeekBar slider = (SeekBar) findViewById(R.id.radius_bar);
         slider.setOnSeekBarChangeListener(this);

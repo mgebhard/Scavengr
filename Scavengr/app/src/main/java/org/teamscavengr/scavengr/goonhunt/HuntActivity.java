@@ -83,7 +83,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     protected Map<Task, Bitmap> images;
 
-    private GoogleMap mapObject;
+    private static GoogleMap mapObject;
     //    private GeofenceManager manager;
     protected GoogleApiClient mGoogleApiClient;
 
