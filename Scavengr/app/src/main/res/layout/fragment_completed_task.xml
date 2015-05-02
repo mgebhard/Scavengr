@@ -16,19 +16,6 @@
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="30dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="79dp"
-        android:text="Congrats you found the Boston Commons!"
-        android:id="@+id/congrats"
-        android:layout_gravity="center" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:layout_gravity="center_horizontal|bottom" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="188dp"
@@ -61,6 +48,15 @@
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Congrats you found the Boston Commons!"
+            android:id="@+id/congrats"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_above="@+id/next_task"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </FrameLayout>
