@@ -348,6 +348,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             case R.id.action_home:
                 home = new Intent(this, MainActivity.class);
+                home.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(home);
                 break;
 
