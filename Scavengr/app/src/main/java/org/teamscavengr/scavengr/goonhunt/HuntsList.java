@@ -87,9 +87,6 @@ public class HuntsList extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent home;
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);

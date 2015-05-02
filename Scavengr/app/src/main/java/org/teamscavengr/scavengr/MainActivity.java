@@ -335,9 +335,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent home;
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 waitingLogin = false;

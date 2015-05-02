@@ -439,8 +439,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         int id = item.getItemId();
         Intent home;
         switch (id) {
-            case R.id.action_settings:
-                return true;
             /*case R.id.change_location:
                 if(BaseActivity.dmlp == null) {
                     Log.e("SCV", "dmlp is null!");
