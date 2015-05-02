@@ -22,15 +22,17 @@ import java.util.ArrayList;
 
 public class HuntsList extends ListActivity {
 
-    ArrayAdapter<String> mAdapter;
-    ArrayList<Hunt> mHuntsObj = new ArrayList<>();
-    ArrayList<String> mHuntNames = new ArrayList<>();
+    static ArrayAdapter<String> mAdapter;
+    static ArrayList<Hunt> mHuntsObj;
+    static ArrayList<String> mHuntNames;
     private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_list_activity_view);
+        mHuntsObj = new ArrayList<>();
+        mHuntNames = new ArrayList<>();
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
         }
@@ -70,7 +72,8 @@ public class HuntsList extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent confirmGoingOnHunt = new Intent(this, ConfirmHuntActivity.class);
-        confirmGoingOnHunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
+//        confirmGoingOnHunt.putExtra("huntObject", (Parcelable) mHuntsObj.get(position));
+        MainActivity.hunt = mHuntsObj.get(position);
         Log.d("HuntList", currentUser.toString());
         confirmGoingOnHunt.putExtra("user", currentUser);
         this.startActivity(confirmGoingOnHunt);
@@ -81,6 +84,22 @@ public class HuntsList extends ListActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onTrimMemory(int trimStatus) {
+        mHuntsObj = null;
+        mAdapter = null;
+        mHuntNames = null;
+        finish();
+        onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        finish();
+//        onDestroy();
     }
 
     @Override

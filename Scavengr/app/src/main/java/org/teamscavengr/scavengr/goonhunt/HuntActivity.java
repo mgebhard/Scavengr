@@ -118,9 +118,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         timeStarted = System.currentTimeMillis();
 
-        if (getIntent().hasExtra("huntObject")) {
+//        if (getIntent().hasExtra("huntObject")) {
+        if (MainActivity.hunt != null) {
             Log.d("HuntActivity", "Hunt found________");
-            hunt = (getIntent().getParcelableExtra("huntObject"));
+            hunt = MainActivity.hunt;
+//            hunt = (getIntent().getParcelableExtra("huntObject"));
             images = new HashMap<>();
 
             // Get bounding geo fence for hunt
@@ -325,7 +327,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) { mGoogleApiClient.disconnect(); }
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();
-        args.putParcelable("hunt", hunt);
+//        args.putParcelable("hunt", hunt);
         newFragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

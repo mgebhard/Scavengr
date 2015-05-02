@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 
 
@@ -38,8 +39,10 @@ public class CompletedHuntFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            hunt = getArguments().getParcelable("hunt");
+//        if (getArguments() != null) {
+        if (MainActivity.hunt != null) {
+//            hunt = getArguments().getParcelable("hunt");
+            hunt = MainActivity.hunt;
         }
     }
 
@@ -48,6 +51,12 @@ public class CompletedHuntFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_completed_hunt, container, false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        getActivity().finish();
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

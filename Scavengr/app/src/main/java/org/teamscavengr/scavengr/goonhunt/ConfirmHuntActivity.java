@@ -17,6 +17,7 @@ import com.parse.ParseAnalytics;
 
 import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.User;
 
@@ -32,9 +33,10 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_hunt);
-        if (getIntent().hasExtra("huntObject")) {
-            hunt = (getIntent().getParcelableExtra("huntObject"));
-
+//        if (getIntent().hasExtra("huntObject")) {
+        if (MainActivity.hunt != null) {
+//            hunt = (getIntent().getParcelableExtra("huntObject"));
+            hunt = MainActivity.hunt;
             // Grab and set hunt title
             TextView titleText = (TextView) findViewById(R.id.textView3);
             titleText.setText(hunt.getName());
@@ -68,24 +70,29 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
                 if(currentUser != null)
                     dims.put("userId", currentUser.getId());
                 ParseAnalytics.trackEventInBackground("start-hunt", dims);
-
-                LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
-                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                finish();
+//                LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+//                if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ||
+//                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     Intent huntIntent = new Intent(this, HuntActivity.class);
-                    huntIntent.putExtra("huntObject", (Parcelable) hunt);
+                    huntIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                    huntIntent.putExtra("huntObject", (Parcelable) hunt);
                     huntIntent.putExtra("user", currentUser);
                     this.startActivity(huntIntent);
-                } else {
-                    Toast toast = Toast.makeText(this,
-                            "Please enable location to go on a hunt!",
-                            Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
+//                } else {
+//                    Toast toast = Toast.makeText(this,
+//                            "Please enable location to go on a hunt!",
+//                            Toast.LENGTH_LONG);
+//                    toast.setGravity(Gravity.CENTER, 0, 0);
+//                    toast.show();
+//                }
                 break;
 
             case R.id.back:
+                Intent intent= new Intent(this, HuntsList.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("user", currentUser);
+                this.startActivity(intent);
                 this.finish();
 
             default:
@@ -94,4 +101,10 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
+        onDestroy();
+    }
 }

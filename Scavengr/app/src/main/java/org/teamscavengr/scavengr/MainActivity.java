@@ -50,10 +50,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public static User user = null;
     public static boolean loggedInSuccess = false;
     private ProfileTracker profileTracker;
+    public static Hunt hunt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hunt = null;
         FacebookSdk.sdkInitialize(getApplicationContext());
         if (!ParseCrashReporting.isCrashReportingEnabled()) {
             ParseCrashReporting.enable(this);
@@ -80,15 +82,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                    } else {
 //                        showFragment(LOGIN, false);
 //                    }
-
-                    if(currentProfile == null) {
-                        Log.d("Profile", "This shouldnt be null");
-                        // Quick hack to fix some user being stuck being logged in without a user object
-                        Intent home = new Intent(MainActivity.this ,MainActivity.class);
-                        home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(home);
-                        return;
-                    }
                     if (loggedInSuccess) {
                         // Dont bother trying to find user again.
                         return;
@@ -229,6 +222,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
+        hunt = null;
         if (user == null && Profile.getCurrentProfile() != null) {
             User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
                     new User.FacebookLookupDoneCallback() {

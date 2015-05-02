@@ -71,7 +71,9 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         if (getIntent().hasExtra("photoPaths")) {
             photoPaths = getIntent().getStringArrayListExtra("photoPaths");
             Log.d("MEGAN", "GOT PHOTOS: " + photoPaths.toString());
-            setPic(photoPaths.get(photoIndex));
+            if (photoPaths.size() > 0) {
+                setPic(photoPaths.get(photoIndex));
+            }
 
         }
 
