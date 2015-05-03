@@ -71,31 +71,31 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final String BITMAP_STORAGE_KEY = "viewbitmap";
     private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-    private ImageView mImageView;
-    private Bitmap mImageBitmap;
-    private String mCurrentPhotoPath;
-    private ArrayList<String> allPhotoPaths = new ArrayList<String>();
-    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+    private static ImageView mImageView;
+    private static Bitmap mImageBitmap;
+    private static String mCurrentPhotoPath;
+    private static ArrayList<String> allPhotoPaths = new ArrayList<String>();
+    private static AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
 
     private long timeStarted;
 
-    protected Location lastKnownLocation;
-    protected LatLng centroid;
-    protected Location centroidLocation;
-    protected Double boundingRadius;
+    protected static Location lastKnownLocation;
+    protected static LatLng centroid;
+    protected static Location centroidLocation;
+    protected static Double boundingRadius;
 //    protected LocationManager locationManager;
     protected boolean inHuntBoundary = false;
 
-    protected Hunt hunt;
-    protected User currentUser;
-    protected int currentTaskNumber = 0;
+    protected static Hunt hunt;
+    protected static User currentUser;
+    protected static int currentTaskNumber = 0;
 
-    protected Map<Task, Bitmap> images;
+    protected static Map<Task, Bitmap> images;
 
     private static GoogleMap mapObject;
     //    private GeofenceManager manager;
-    protected GoogleApiClient mGoogleApiClient;
+    protected static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -547,12 +547,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         // Don't do anything when he user tries to go back
+        final Context context = this;
         DialogInterface.OnClickListener ocl = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, final int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         // Exit
+                        Intent home = new Intent(context, MainActivity.class);
+                        home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(home);
+                        finish();
                         HuntActivity.super.onBackPressed();
                     case DialogInterface.BUTTON_NEGATIVE:
                         // Don't do anything
