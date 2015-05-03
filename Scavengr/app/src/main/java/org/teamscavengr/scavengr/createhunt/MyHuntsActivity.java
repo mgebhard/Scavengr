@@ -124,7 +124,6 @@ public class MyHuntsActivity extends ListActivity {
         int id = item.getItemId();
         Intent home;
         switch (id) {
-
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);
