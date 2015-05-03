@@ -37,7 +37,7 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:id="@+id/greeting"
                 android:textColor="#ffffff"
-                android:textSize="28dp"
+                android:textSize="26dp"
                 android:text="\@MIT_Scavengr"
                 android:layout_below="@+id/profilePicture"
                 android:layout_centerHorizontal="true"
@@ -73,16 +73,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Hunt"
-                android:id="@+id/textView5"
-                android:paddingLeft="5dp"
-                android:paddingTop="5dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="5dp"
+                android:text="Create"
+                android:id="@+id/goOnHuntText"
+                android:layout_gravity="right"
                 android:gravity="center"
-                android:editable="false"
-                android:layout_below="@+id/create_hunt"
+                android:padding="5dp"
+                android:autoText="false"
+                android:layout_above="@+id/create_hunt"
                 android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -105,14 +104,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Create"
-                android:id="@+id/textView10"
-                android:layout_gravity="right"
+                android:text="Hunt"
+                android:id="@+id/creatHuntText"
+                android:paddingLeft="5dp"
+                android:paddingTop="5dp"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp"
                 android:gravity="center"
-                android:padding="5dp"
-                android:autoText="false"
-                android:layout_below="@+id/go_on_hunt"
+                android:editable="false"
+                android:layout_above="@+id/go_on_hunt"
                 android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
