@@ -61,37 +61,6 @@
             <Button
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:id="@+id/create_hunt"
-                android:onClick="onClick"
-                android:layout_gravity="left|center_vertical"
-                android:layout_marginRight="30dp"
-                android:background="@drawable/my_hunts_button"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Create"
-                android:id="@+id/goOnHuntText"
-                android:layout_gravity="right"
-                android:gravity="center"
-                android:padding="5dp"
-                android:autoText="false"
-                android:layout_above="@+id/create_hunt"
-                android:layout_centerHorizontal="true" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:layout_width="90dp"
-                android:layout_height="90dp"
                 android:id="@+id/go_on_hunt"
                 android:onClick="onClick"
                 android:layout_gravity="right"
@@ -116,5 +85,37 @@
                 android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:id="@+id/create_hunt"
+                android:onClick="onClick"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginRight="30dp"
+                android:background="@drawable/my_hunts_button"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Create"
+                android:id="@+id/goOnHuntText"
+                android:layout_gravity="right"
+                android:gravity="center"
+                android:padding="5dp"
+                android:autoText="false"
+                android:layout_above="@+id/create_hunt"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 </LinearLayout>
