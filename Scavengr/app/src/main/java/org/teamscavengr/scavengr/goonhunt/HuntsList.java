@@ -111,9 +111,6 @@ public class HuntsList extends ListActivity {
         int id = item.getItemId();
         Intent home;
         switch (id) {
-            case R.id.action_settings:
-                return true;
-
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);

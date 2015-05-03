@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 //import android.util.Log;
+import android.text.Selection;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -331,6 +332,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             if (LoginFragment.backgroundImage != null) {
                 LoginFragment.backgroundImage.setImageBitmap(null);
             }
+            if (SelectionFragment.profileBanner != null) {
+                SelectionFragment.profileBanner.setImageBitmap(null);
+            }
         }
     }
 
@@ -338,9 +342,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent home;
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 waitingLogin = false;

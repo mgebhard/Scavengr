@@ -31,11 +31,6 @@
         android:layout_height="fill_parent"
         android:layout_weight="3.5">
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"></LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -106,7 +101,8 @@
                 android:textStyle="bold"
                 android:layout_marginLeft="10dp"
                 android:layout_below="@+id/skip_login_button"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:singleLine="false" />
         </RelativeLayout>
 
     </LinearLayout>

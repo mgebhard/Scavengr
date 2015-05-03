@@ -61,9 +61,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener, ResultCallback<Status> {
 
-    protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
-    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
-    protected final static String LOCATION_PROVIDER = "network";
+//    protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+//    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
+//    protected final static String LOCATION_PROVIDER = "network";
 
     private static final int ACTION_TAKE_PHOTO = 1;
     private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -351,7 +351,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 //        transaction.addToBackStack(null);
 //        transaction.commit();
 
-        Log.d("MEGAN", "LOADING TASK");
+//        Log.d("MEGAN", "LOADING TASK");
     }
 
     /**
@@ -502,71 +502,29 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        Intent home;
-//        switch (id) {
-//            case R.id.action_settings:
-//                return true;
-//            /*case R.id.change_location:
-//                if(BaseActivity.dmlp == null) {
-//                    Log.e("SCV", "dmlp is null!");
-//                }
-//
-//                AlertDialog.Builder b = new AlertDialog.Builder(this);
-//                b.setTitle("Location?");
-//                LayoutInflater inflater = getLayoutInflater();
-//                View v = inflater.inflate(R.layout.stuff, null);
-//                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
-//                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
-//
-//                b.setView(v);
-//                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(final DialogInterface dialog, final int which) {
-//                        dialog.cancel();
-//                    }
-//                });
-//                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(final DialogInterface dialog, final int which) {
-//                        try {
-//                            Double la = Double.parseDouble(lat.getText().toString());
-//                            Double lo = Double.parseDouble(lon.getText().toString());
-//                            Log.d("lat", la.toString());
-//                            Log.d("lng", lo.toString());
-//                            BaseActivity.dmlp.setLocation(la, lo);
-//                            BaseActivity.dmlp.update();
-//
-//                        } catch (NumberFormatException ex) {
-//                            ex.printStackTrace();
-//                        } finally {
-//                            dialog.dismiss();
-//                        }
-//                    }
-//                });
-//                b.show();
-//                break;*/
-//            case R.id.logout:
-//                LoginManager.getInstance().logOut();
-//                home = new Intent(this, MainActivity.class);
-//                this.startActivity(home);
-//                return super.onOptionsItemSelected(item);
-//            case R.id.action_home:
-//                home = new Intent(this, MainActivity.class);
-//                this.startActivity(home);
-//                break;
-//            default:
-//                break;
-//        }
-//
-//        return true;
-//    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        Intent home;
+        switch (id) {
+            case R.id.logout:
+                LoginManager.getInstance().logOut();
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                return super.onOptionsItemSelected(item);
+            case R.id.action_home:
+                home = new Intent(this, MainActivity.class);
+                this.startActivity(home);
+                break;
+            default:
+                break;
+        }
 
+        return true;
+    }
     //    protected synchronized void buildGoogleApiClient() {
     //        mGoogleApiClient = new GoogleApiClient.Builder(this)
     //                .addConnectionCallbacks(this)
