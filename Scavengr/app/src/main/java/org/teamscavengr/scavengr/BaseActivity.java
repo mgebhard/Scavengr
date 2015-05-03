@@ -65,5 +65,4 @@ public abstract class BaseActivity extends Activity {
         return true;
     }
 
-
 }

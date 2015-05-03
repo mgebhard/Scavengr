@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -339,13 +340,16 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         TaskFragment newFragmentTask = TaskFragment.newInstance("Clue: " + newTask.getClue(),
                 "Task: " + (taskNum+1) + " out of " + Integer.toString(hunt.getTasks().size()));
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragmentTask);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragmentTask).addToBackStack(null).commit();
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack so the user can navigate back
+//        transaction.replace(R.id.fragment_container, newFragmentTask);
+//
+//        transaction.addToBackStack(null);
+//        transaction.commit();
 
         Log.d("MEGAN", "LOADING TASK");
     }
@@ -364,11 +368,14 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         args.putParcelable("task", hunt.getTasks().get(currentTaskNumber));
         newFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).addToBackStack(null).commit();
 
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//
+//        transaction.replace(R.id.fragment_container, newFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
 
         // SNAIL TRAIL
         Location completedTaskLocation = completedTask.getLocation();
@@ -390,10 +397,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 //        args.putParcelable("hunt", hunt);
         newFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).addToBackStack(null).commit();
+
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.replace(R.id.fragment_container, newFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
     }
 
     public void onClick(View view) {
@@ -415,12 +425,13 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     photoRecap.putExtra("hunt", (Parcelable) hunt);
                     photoRecap.putStringArrayListExtra("photoPaths", allPhotoPaths);
                 }
-                Log.d("HuntActivity", hunt.toString());
-                Log.d("HuntActivity", currentUser.toString());
+//                Log.d("HuntActivity", hunt.toString());
+//                Log.d("HuntActivity", currentUser.toString());
                 if (currentUser != null) {
                     photoRecap.putExtra("user", currentUser);
                 }
                 this.startActivity(photoRecap);
+                finish();
                 break;
 
             case R.id.next_task:
@@ -457,19 +468,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 toast.show();
                 break;
 
-            case R.id.found_it:
-                // Analytics
-                Map<String, String> dimensions = new HashMap<>();
-                dimensions.put("huntId", hunt.getId());
-                if(currentUser != null)
-                    dimensions.put("userId", currentUser.getId());
-                dimensions.put("totalNumWaypoints", Integer.toString(hunt.getTasks().size()));
-                dimensions.put("waypointNum", Integer.toString(currentTaskNumber));
-                ParseAnalytics.trackEventInBackground("found-waypoint", dimensions);
-
-
-                loadCompletedTask(currentTaskNumber);
-                break;
+//            case R.id.found_it:
+//                // Analytics
+//                Map<String, String> dimensions = new HashMap<>();
+//                dimensions.put("huntId", hunt.getId());
+//                if(currentUser != null)
+//                    dimensions.put("userId", currentUser.getId());
+//                dimensions.put("totalNumWaypoints", Integer.toString(hunt.getTasks().size()));
+//                dimensions.put("waypointNum", Integer.toString(currentTaskNumber));
+//                ParseAnalytics.trackEventInBackground("found-waypoint", dimensions);
+//                loadCompletedTask(currentTaskNumber);
+//                break;
 
             default:
                 break;
@@ -493,70 +502,70 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        Intent home;
-        switch (id) {
-            case R.id.action_settings:
-                return true;
-            /*case R.id.change_location:
-                if(BaseActivity.dmlp == null) {
-                    Log.e("SCV", "dmlp is null!");
-                }
-
-                AlertDialog.Builder b = new AlertDialog.Builder(this);
-                b.setTitle("Location?");
-                LayoutInflater inflater = getLayoutInflater();
-                View v = inflater.inflate(R.layout.stuff, null);
-                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
-                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
-
-                b.setView(v);
-                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        dialog.cancel();
-                    }
-                });
-                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        try {
-                            Double la = Double.parseDouble(lat.getText().toString());
-                            Double lo = Double.parseDouble(lon.getText().toString());
-                            Log.d("lat", la.toString());
-                            Log.d("lng", lo.toString());
-                            BaseActivity.dmlp.setLocation(la, lo);
-                            BaseActivity.dmlp.update();
-
-                        } catch (NumberFormatException ex) {
-                            ex.printStackTrace();
-                        } finally {
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                b.show();
-                break;*/
-            case R.id.logout:
-                LoginManager.getInstance().logOut();
-                home = new Intent(this, MainActivity.class);
-                this.startActivity(home);
-                return super.onOptionsItemSelected(item);
-            case R.id.action_home:
-                home = new Intent(this, MainActivity.class);
-                this.startActivity(home);
-                break;
-            default:
-                break;
-        }
-
-        return true;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//        Intent home;
+//        switch (id) {
+//            case R.id.action_settings:
+//                return true;
+//            /*case R.id.change_location:
+//                if(BaseActivity.dmlp == null) {
+//                    Log.e("SCV", "dmlp is null!");
+//                }
+//
+//                AlertDialog.Builder b = new AlertDialog.Builder(this);
+//                b.setTitle("Location?");
+//                LayoutInflater inflater = getLayoutInflater();
+//                View v = inflater.inflate(R.layout.stuff, null);
+//                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
+//                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
+//
+//                b.setView(v);
+//                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(final DialogInterface dialog, final int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(final DialogInterface dialog, final int which) {
+//                        try {
+//                            Double la = Double.parseDouble(lat.getText().toString());
+//                            Double lo = Double.parseDouble(lon.getText().toString());
+//                            Log.d("lat", la.toString());
+//                            Log.d("lng", lo.toString());
+//                            BaseActivity.dmlp.setLocation(la, lo);
+//                            BaseActivity.dmlp.update();
+//
+//                        } catch (NumberFormatException ex) {
+//                            ex.printStackTrace();
+//                        } finally {
+//                            dialog.dismiss();
+//                        }
+//                    }
+//                });
+//                b.show();
+//                break;*/
+//            case R.id.logout:
+//                LoginManager.getInstance().logOut();
+//                home = new Intent(this, MainActivity.class);
+//                this.startActivity(home);
+//                return super.onOptionsItemSelected(item);
+//            case R.id.action_home:
+//                home = new Intent(this, MainActivity.class);
+//                this.startActivity(home);
+//                break;
+//            default:
+//                break;
+//        }
+//
+//        return true;
+//    }
 
     //    protected synchronized void buildGoogleApiClient() {
     //        mGoogleApiClient = new GoogleApiClient.Builder(this)

@@ -26,6 +26,7 @@ public class HuntsList extends ListActivity {
     static ArrayList<Hunt> mHuntsObj;
     static ArrayList<String> mHuntNames;
     private User currentUser;
+    private static int REQUEST_EXIT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class HuntsList extends ListActivity {
         MainActivity.hunt = mHuntsObj.get(position);
         Log.d("HuntList", currentUser.toString());
         confirmGoingOnHunt.putExtra("user", currentUser);
-        this.startActivity(confirmGoingOnHunt);
+        startActivityForResult(confirmGoingOnHunt, REQUEST_EXIT);
     }
 
     @Override
@@ -104,22 +105,29 @@ public class HuntsList extends ListActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
         Intent home;
-        switch (item.getItemId()) {
+        switch (id) {
             case R.id.action_settings:
                 return true;
 
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                MainActivity.waitingLogin = false;
                 this.startActivity(home);
+                this.onDestroy();
                 return super.onOptionsItemSelected(item);
-
             case R.id.action_home:
                 home = new Intent(this, MainActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(home);
+                finish();
                 break;
-
             default:
                 break;
         }
@@ -127,5 +135,15 @@ public class HuntsList extends ListActivity {
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_EXIT) {
+            if (resultCode == RESULT_OK) {
+                this.finish();
+
+            }
+        }
+    }
 
 }

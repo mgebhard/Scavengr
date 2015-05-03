@@ -1,14 +1,18 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -26,6 +30,7 @@ public class LoginFragment extends Fragment {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private View view;
+    public static ImageView backgroundImage;
 
     public interface SkipLoginCallback {
         void onSkipLoginPressed();
@@ -37,6 +42,9 @@ public class LoginFragment extends Fragment {
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
+        backgroundImage = (ImageView) view.findViewById(R.id.backgroundImage);
+        Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), R.drawable.city_background, 100, 100);
+        backgroundImage.setImageBitmap(bitmap);
         loginButton.setReadPermissions("user_friends");
         loginButton.setFragment(this);
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -61,6 +69,9 @@ public class LoginFragment extends Fragment {
             }
         });
 
+//        Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), R.drawable.city_background, 100, 100);
+//        getActivity().getWindow().setBackgroundDrawableResource(R.drawable.city_background);
+
 
         return view;
     }
@@ -68,6 +79,10 @@ public class LoginFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+//        if (backgroundImage != null) {
+//            backgroundImage.setImageBitmap(null);
+//        }
+//        getActivity().getWindow().setBackgroundDrawableResource(-1);
         onDestroy();
     }
 

@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,14 +16,14 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
+//import com.facebook.FacebookCallback;
+//import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
+//import com.facebook.login.LoginResult;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseCrashReporting;
@@ -31,7 +31,7 @@ import com.parse.ParseCrashReporting;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +44,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public static boolean waitingLogin = false;
     public static FragmentManager fm;
 
-    private CallbackManager callbackManager;
-    private AccessTokenTracker accessTokenTracker;
-    private boolean isResumed = false;
+    private static CallbackManager callbackManager;
+//    private AccessTokenTracker accessTokenTracker;
+//    private boolean isResumed = false;
     public static User user = null;
     public static boolean loggedInSuccess = false;
-    private ProfileTracker profileTracker;
+    private static ProfileTracker profileTracker;
     public static Hunt hunt;
 
     @Override
@@ -256,7 +256,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         }
                     }, true);
         }
-        isResumed = true;
+//        isResumed = true;
 
         // Call the 'activateApp' method to log an app event for use in analytics and advertising
         // reporting.  Do so in the onResume methods of the primary Activities that an app may be
@@ -267,7 +267,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onPause() {
         super.onPause();
-        isResumed = false;
+//        isResumed = false;
 
         // Call the 'deactivateApp' method to log an app event for use in analytics and advertising
         // reporting.  Do so in the onPause methods of the primary Activities that an app may be
@@ -307,7 +307,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             showFragment(LOGIN, false);
         }
     }
-//
+
 //    public void showLoginFragment() {
 //        showFragment(LOGIN, true);
 //    }
@@ -323,6 +323,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onTrimMemory(int trimLevel) {
+        if (trimLevel == TRIM_MEMORY_COMPLETE || trimLevel == TRIM_MEMORY_MODERATE) {
+            if (LoginFragment.backgroundImage != null) {
+                LoginFragment.backgroundImage.setImageBitmap(null);
+            }
+        }
     }
 
     @Override

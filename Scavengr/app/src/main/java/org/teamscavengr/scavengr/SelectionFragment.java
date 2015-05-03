@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class SelectionFragment extends Fragment {
 
-    private ProfilePictureView profilePictureView;
+    public static ProfilePictureView profilePictureView;
     private TextView greeting;
 
 //    private AccessTokenTracker accessTokenTracker;

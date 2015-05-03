@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.facebook.login.LoginManager;
 
+import org.teamscavengr.scavengr.BaseActivity;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
@@ -130,18 +131,21 @@ public class MyHuntsActivity extends ListActivity {
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                MainActivity.waitingLogin = false;
                 this.startActivity(home);
+                this.onDestroy();
                 return super.onOptionsItemSelected(item);
-
             case R.id.action_home:
                 home = new Intent(this, MainActivity.class);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(home);
+                finish();
                 break;
-
             default:
                 break;
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }
