@@ -6,15 +6,14 @@
 
 <template name="appLayout">
   <main id="appLayout">
-    {{> headerNavBar }}
     {{> yield }}
-    {{> footerNavBar}}
   </main>
 </template>
 
 
 
 <template name="homePage">
+  {{> headerNavBar }}
   <div id="homePage" class="container page">
     {{> restStats }}
     {{> restApi }}
@@ -23,6 +22,7 @@
     {{> databaseCollectionReviews }}
     {{> databaseCollectionUsers }}
   </div>
+  {{> footerNavBar}}
 </template>
 
 
@@ -379,4 +379,125 @@
 
     </div>
   </div>
+</template>
+
+
+<template name="userLandingPage">
+  {{script}}
+  <div id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#contact">
+                    <i class="fa fa-play-circle"></i>  <span class="light">Team</span> Scavengr
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#download">Download</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="intro-background"></div>
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">Scavengr</h1>
+                        <p class="intro-text">Create. Discover. Explore.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- About Section -->
+    <section id="about" class="container content-section text-center">
+      <div class="row">
+        <img class="screenshot" src="/images/scavengerFramed.png" alt="Scavengr Framed Image"/>
+        <img class="screenshot" src="/images/scavengrSelection.png" alt="Scavengr Selection Image"/>
+      </div>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>About Scavengr</h2>
+                <p>Scavengr is an application in which you can create and go on location-based scavenger hunts.</p>
+                <p>This app is currently in Beta and is taking feature requests to shape its future.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Download Scavengr</h2>
+                    <p>Click on the link below to download the latest stable build of our app.</p>
+                    <a href="#" class="btn btn-default btn-lg apk-link">Download APK</a><br><br>
+                    <p>
+                      To install just tap on the downloaded file and the installation should start. You may need to inable installion of applications out side of the Google Play Market from your settings. If you have any trouble with this shoot us an <a href="#contact">email</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <img class="logo" src="/images/scavengr_logo.png" alt="Scavengr Logo"/>
+                <h2>Contact Us</h2>
+                <p>In case you were wondering, we are looking for new users to test our app to figure out how to best build it out.</p>
+                <p>If you would like to help its development by becoming one of our Beta-testers, shoot us an email! We'll get back to you ASAP.</p>
+                <p><a href="mailto:teamscavengr@mit.edu">teamscavengr@mit.edu</a></p>
+                <!-- <ul class="list-inline banner-social-buttons">
+                    <li>
+                        <a href="#" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li>
+                        <a href="#" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li>
+                        <a href="#" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p><small>Copyright &copy; Team Scavengr 2015</small></p>
+        </div>
+    </footer>
+
+  </div>
+
 </template>
