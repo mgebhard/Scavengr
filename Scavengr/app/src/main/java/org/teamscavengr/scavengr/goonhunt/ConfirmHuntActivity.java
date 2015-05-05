@@ -73,8 +73,9 @@ public class ConfirmHuntActivity extends BaseActivity implements View.OnClickLis
                 // Analytics
                 Map<String, String> dims = new HashMap<>();
                 dims.put("huntId", hunt.getId());
-                if(currentUser != null)
+                if(currentUser != null) {
                     dims.put("userId", currentUser.getId());
+                }
                 ParseAnalytics.trackEventInBackground("start-hunt", dims);
                 setResult(RESULT_OK, null);
                 finish();
