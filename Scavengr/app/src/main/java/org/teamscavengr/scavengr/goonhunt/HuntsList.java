@@ -3,6 +3,7 @@ package org.teamscavengr.scavengr.goonhunt;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
 
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
@@ -23,10 +29,10 @@ import org.teamscavengr.scavengr.User;
 import java.util.ArrayList;
 
 
-public class HuntsList extends Activity{
+public class HuntsList extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static RecyclerView mRecyclerView;
-    private static RecyclerView.Adapter mAdapter;
+    private static HuntsAdapter mAdapter;
     private static RecyclerView.LayoutManager mLayoutManager;
 
 //    static ArrayAdapter<String> mAdapter;
@@ -34,19 +40,20 @@ public class HuntsList extends Activity{
     static ArrayList<String> mHuntNames;
     private User currentUser;
     private static int REQUEST_EXIT;
-
+    public static GoogleApiClient mGoogleApiClient;
+    public static Location mLastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        buildGoogleApiClient();
+        mGoogleApiClient.connect();
         setContentView(R.layout.activity_go_on_hunt_list);
         mHuntsObj = new ArrayList<>();
         mHuntNames = new ArrayList<>();
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
         }
-
 
 //        setContentView(R.layout.activity_go_on_hunt_list);
 
@@ -111,10 +118,30 @@ public class HuntsList extends Activity{
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onResume() {
+        super.onResume();
+//        mGoogleApiClient.disconnect();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
 //        finish();
 //        onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        mGoogleApiClient.disconnect();
+//        finish();
+//        onDestroy();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -157,6 +184,35 @@ public class HuntsList extends Activity{
         }
     }
 
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            mAdapter.notifyDataSetChanged();
+            Toast.makeText(this, mLastLocation.toString(), Toast.LENGTH_SHORT).show();
+            Log.d("Location set", mLastLocation.toString());
+        }
+        Log.d("Location set", "mLastLocation = null");
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+    }
 
 
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // just chill for right now
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // just chill for right now
+    }
 }

@@ -130,7 +130,7 @@ public class CalcLib {
            double newLong = answerLocation.getLongitude();
 
            LatLng centroid = new LatLng(newLat, newLong);
-           return  new Pair<LatLng, Double>(centroid, radius);
+           return  new Pair<LatLng, Double>(centroid, radius*2);
        }
 
         double radius = 0.0;
@@ -165,6 +165,6 @@ public class CalcLib {
                 }
             }
         }
-        return  new Pair<LatLng, Double>(centroid, radius*1.1);
+        return  new Pair<LatLng, Double>(centroid, Math.max(200, radius*1.1));
     }
 }

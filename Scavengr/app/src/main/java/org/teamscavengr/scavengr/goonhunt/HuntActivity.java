@@ -80,20 +80,20 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     private long timeStarted;
 
-    protected static Location lastKnownLocation;
-    protected static LatLng centroid;
-    protected static Location centroidLocation;
-    protected static Double boundingRadius;
+    protected Location lastKnownLocation;
+    protected LatLng centroid;
+    protected Location centroidLocation;
+    protected Double boundingRadius;
 //    protected LocationManager locationManager;
     protected boolean inHuntBoundary = false;
 
-    protected static Hunt hunt;
+    protected Hunt hunt;
     protected static User currentUser;
-    protected static int currentTaskNumber = 0;
+    protected int currentTaskNumber = 0;
 
     protected static Map<Task, Bitmap> images;
 
-    private static GoogleMap mapObject;
+    public GoogleMap mapObject;
     //    private GeofenceManager manager;
     protected static GoogleApiClient mGoogleApiClient;
 
@@ -275,10 +275,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 loadTask(currentTaskNumber);
             }
         }
+        Toast.makeText(this, "Making location Listener", Toast.LENGTH_SHORT).show();
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
                 lastKnownLocation = location;
+                Log.d("Location changed:", location.toString());
                 Task currentTask;
                 if (currentTaskNumber < hunt.getTasks().size()) {
                     currentTask = hunt.getTasks().get(currentTaskNumber);

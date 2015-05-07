@@ -2,15 +2,20 @@ package org.teamscavengr.scavengr.goonhunt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
@@ -27,6 +32,7 @@ public class HuntsAdapter extends RecyclerView.Adapter<HuntsAdapter.ViewHolder> 
     private ArrayList<Hunt> mCurrentHunts;
     private User mCurrentUser;
     private Context mContext;
+    private Location location;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,10 +40,12 @@ public class HuntsAdapter extends RecyclerView.Adapter<HuntsAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
         public TextView mTextView;
+        public TextView distance;
         public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             mTextView = (TextView)v.findViewById(R.id.title);
+            distance = (TextView)v.findViewById(R.id.distance);
         }
 
         @Override
@@ -66,6 +74,7 @@ public class HuntsAdapter extends RecyclerView.Adapter<HuntsAdapter.ViewHolder> 
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_hunt, parent, false);
+        location = HuntsList.mLastLocation;
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -77,6 +86,19 @@ public class HuntsAdapter extends RecyclerView.Adapter<HuntsAdapter.ViewHolder> 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset.get(position));
+        if (location != null) {
+            Pair<LatLng, Double> pair = CalcLib.calculateCentroidAndRadius(mCurrentHunts.get(position));
+            Double distance = CalcLib.distanceFromLatLng(new LatLng(location.getLatitude(), location.getLongitude()), pair.first );
+            if (distance - pair.second < 0) {
+                holder.distance.setText("You can start this hunt right away.");
+            } else if (distance - pair.second < 1000){
+                holder.distance.setText((int) (distance-pair.second) + " m away.");
+            } else if (distance-pair.second < 60000) {
+                holder.distance.setText(((int) (distance-pair.second) / 1000) + " km away.");
+            }else {
+                holder.distance.setText("+60km away");
+            }
+        }
 
     }
 
