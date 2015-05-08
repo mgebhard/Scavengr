@@ -48,7 +48,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
         super.onCreate(savedInstanceState);
         buildGoogleApiClient();
         mGoogleApiClient.connect();
-        setContentView(R.layout.activity_go_on_hunt_list);
+        setContentLayout();
         mHuntsObj = new ArrayList<>();
         mHuntNames = new ArrayList<>();
         if (getIntent().hasExtra("user")) {
@@ -56,32 +56,8 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
         }
 
 //        setContentView(R.layout.activity_go_on_hunt_list);
-
-        Hunt.loadAllHuntsInBackground(
-                new Hunt.HuntLoadedCallback() {
-                    @Override
-                    public void numHuntsFound(int num) {
-//                       CharSequence text = "Loading " + num + " hunts...";
-//                       int duration = Toast.LENGTH_LONG;
-//                       Toast.makeText(HuntsList.this, text, duration).show();
-                    }
-
-                    @Override
-                    public void huntLoaded(Hunt hunt) {
-                       findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-
-                        mHuntNames.add(hunt.getName());
-                        mHuntsObj.add(hunt);
-                        mAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void huntFailedToLoad(Exception e) {
-//                       CharSequence text = "Failed to load a hunt";
-//                       int duration = Toast.LENGTH_SHORT;
-//                       Toast.makeText(HuntsList.this, text, duration).show();
-                    }
-                }, true);
+        // Load hunts
+        loadHunts();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         // use this setting to improve performance if you know that changes
@@ -96,7 +72,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
             currentUser = getIntent().getParcelableExtra("user");
         }
 
-        mAdapter = new HuntsAdapter(this, mHuntNames, currentUser, mHuntsObj);
+        setAdapter();
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -190,10 +166,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
                 mGoogleApiClient);
         if (mLastLocation != null) {
             mAdapter.notifyDataSetChanged();
-            Toast.makeText(this, mLastLocation.toString(), Toast.LENGTH_SHORT).show();
-            Log.d("Location set", mLastLocation.toString());
         }
-        Log.d("Location set", "mLastLocation = null");
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -214,5 +187,41 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // just chill for right now
+    }
+
+    public void loadHunts() {
+        Hunt.loadAllHuntsInBackground(
+                new Hunt.HuntLoadedCallback() {
+                    @Override
+                    public void numHuntsFound(int num) {
+//                       CharSequence text = "Loading " + num + " hunts...";
+//                       int duration = Toast.LENGTH_LONG;
+//                       Toast.makeText(HuntsList.this, text, duration).show();
+                    }
+
+                    @Override
+                    public void huntLoaded(Hunt hunt) {
+                        findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+
+                        mHuntNames.add(hunt.getName());
+                        mHuntsObj.add(hunt);
+                        mAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void huntFailedToLoad(Exception e) {
+//                       CharSequence text = "Failed to load a hunt";
+//                       int duration = Toast.LENGTH_SHORT;
+//                       Toast.makeText(HuntsList.this, text, duration).show();
+                    }
+                }, true);
+    }
+
+    public void setContentLayout() {
+        setContentView(R.layout.activity_go_on_hunt_list);
+    }
+
+    public void setAdapter() {
+        mAdapter = new HuntsAdapter(this, mHuntNames, currentUser, mHuntsObj);
     }
 }

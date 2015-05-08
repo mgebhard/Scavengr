@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
+import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
@@ -70,8 +71,8 @@ public class HuntDetailsActivity extends ActionBarActivity implements OnMapReady
         buildGoogleApiClient();
         //getActionBar().setIcon(R.drawable.scavengr_logo);
 
-        if (getIntent().hasExtra("huntObject")) {
-            hunt = (getIntent().getParcelableExtra("huntObject"));
+        if (MainActivity.hunt != null) {
+            hunt = MainActivity.hunt;
         }
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
