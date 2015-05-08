@@ -38,11 +38,13 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
         // each data item is just a string in this case
         public TextView mTextView;
         public TextView distance;
+        public TextView waypoints;
         public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             mTextView = (TextView)v.findViewById(R.id.title);
             distance = (TextView)v.findViewById(R.id.distance);
+            waypoints = (TextView)v.findViewById(R.id.waypoints);
         }
 
         @Override
@@ -82,6 +84,13 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset.get(position));
+
+        int numWaypoints = mCurrentHunts.get(position).getTasks().size();
+        if (numWaypoints == 1) {
+            holder.waypoints.setText("1 task");
+        } else {
+            holder.waypoints.setText(numWaypoints + " tasks");
+        }
         if (location != null) {
             Pair<LatLng, Double> pair = CalcLib.calculateCentroidAndRadius(mCurrentHunts.get(position));
             Double distance = CalcLib.distanceFromLatLng(new LatLng(location.getLatitude(), location.getLongitude()), pair.first );
