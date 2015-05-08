@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,13 +21,17 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 
+import org.teamscavengr.scavengr.CalcLib;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class HuntsList extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -37,7 +42,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
 
 //    static ArrayAdapter<String> mAdapter;
     static ArrayList<Hunt> mHuntsObj;
-    static ArrayList<String> mHuntNames;
+//    static ArrayList<String> mHuntNames;
     private User currentUser;
     private static int REQUEST_EXIT;
     public static GoogleApiClient mGoogleApiClient;
@@ -50,7 +55,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
         mGoogleApiClient.connect();
         setContentLayout();
         mHuntsObj = new ArrayList<>();
-        mHuntNames = new ArrayList<>();
+//        mHuntNames = new ArrayList<>();
         if (getIntent().hasExtra("user")) {
             currentUser = getIntent().getParcelableExtra("user");
         }
@@ -88,7 +93,7 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
         if (trimStatus == TRIM_MEMORY_COMPLETE || trimStatus == TRIM_MEMORY_MODERATE) {
             mHuntsObj = null;
             mAdapter = null;
-            mHuntNames = null;
+//            mHuntNames = null;
             finish();
         }
     }
@@ -202,9 +207,13 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
                     @Override
                     public void huntLoaded(Hunt hunt) {
                         findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+                        Pair<LatLng, Double> pair = CalcLib.calculateCentroidAndRadius(hunt);
+                        int distance = (int) (CalcLib.distanceFromLatLng(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pair.first) - pair.second);
+                        hunt.setListViewDistance(distance);
 
-                        mHuntNames.add(hunt.getName());
+//                mHuntNames.add(hunt.getName());
                         mHuntsObj.add(hunt);
+                        Collections.sort(mHuntsObj, new DistanceComparator());
                         mAdapter.notifyDataSetChanged();
                     }
 
@@ -222,6 +231,18 @@ public class HuntsList extends Activity implements GoogleApiClient.ConnectionCal
     }
 
     public void setAdapter() {
-        mAdapter = new HuntsAdapter(this, mHuntNames, currentUser, mHuntsObj);
+        mAdapter = new HuntsAdapter(this, currentUser, mHuntsObj);
+    }
+}
+
+
+class DistanceComparator implements Comparator<Hunt> {
+    @Override
+    public int compare(Hunt o1, Hunt o2) {
+        if (o1.getListViewDistance() != null || o2.getListViewDistance() != null) {
+            return o1.getListViewDistance().compareTo(o2.getListViewDistance());
+        } else {
+            return -1;
+        }
     }
 }

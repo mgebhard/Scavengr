@@ -20,12 +20,14 @@ import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by erosales on 5/7/15.
  */
 public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHolder>{
-    private ArrayList<String> mDataset;
+//    private ArrayList<String> mDataset;
     private ArrayList<Hunt> mCurrentHunts;
     private User mCurrentUser;
     private Context mContext;
@@ -58,8 +60,8 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyHuntsAdapter(Context context, ArrayList<String> myDataset, User currentUser, ArrayList<Hunt> currentHunts ) {
-        mDataset = myDataset;
+    public MyHuntsAdapter(Context context, User currentUser, ArrayList<Hunt> currentHunts ) {
+//        mDataset = myDataset;
         mCurrentHunts = currentHunts;
         mCurrentUser = currentUser;
         mContext = context;
@@ -83,36 +85,50 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position));
-
+        holder.mTextView.setText(mCurrentHunts.get(position).getName());
         int numWaypoints = mCurrentHunts.get(position).getTasks().size();
         if (numWaypoints == 1) {
             holder.waypoints.setText("1 task");
         } else {
             holder.waypoints.setText(numWaypoints + " tasks");
         }
-        if (location != null) {
-            Pair<LatLng, Double> pair = CalcLib.calculateCentroidAndRadius(mCurrentHunts.get(position));
-            Double distance = CalcLib.distanceFromLatLng(new LatLng(location.getLatitude(), location.getLongitude()), pair.first );
-            if (distance - pair.second < 0) {
-                holder.distance.setText("You can start this hunt right away.");
-            } else if (distance - pair.second < 1000){
-                holder.distance.setText((int) (distance-pair.second) + " m away.");
-            } else if (distance-pair.second < 60000) {
-                holder.distance.setText(((int) (distance-pair.second) / 1000) + " km away.");
-            }else {
-                holder.distance.setText("+60km away");
+        if (mCurrentHunts.get(position).getListViewDistance() == null) {
+            if (location != null) {
+                Pair<LatLng, Double> pair = CalcLib.calculateCentroidAndRadius(mCurrentHunts.get(position));
+                int distance = (int) (CalcLib.distanceFromLatLng(new LatLng(location.getLatitude(), location.getLongitude()), pair.first) - pair.second);
+                mCurrentHunts.get(position).setListViewDistance(distance);
+                if (distance< 0) {
+                    holder.distance.setText("You can start this hunt right away.");
+                } else if (distance < 1000) {
+                    holder.distance.setText((distance) + " m away.");
+                } else if (distance< 60000) {
+                    holder.distance.setText(((distance) / 1000) + " km away.");
+                } else {
+                    holder.distance.setText("+60km away");
+                }
+            } else {
+                Log.d("Location", "Location is set to null");
             }
         } else {
-            Log.d("Location", "Location is set to null");
+            int distance = mCurrentHunts.get(position).getListViewDistance();
+            if (distance< 0) {
+                holder.distance.setText("You can start this hunt right away.");
+            } else if (distance < 1000) {
+                holder.distance.setText((distance) + " m away.");
+            } else if (distance< 60000) {
+                holder.distance.setText(((distance) / 1000) + " km away.");
+            } else {
+                holder.distance.setText("+60km away");
+            }
         }
-
     }
+
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return mCurrentHunts.size();
     }
 
 }

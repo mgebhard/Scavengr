@@ -52,6 +52,7 @@ public class Hunt implements Parcelable, Serializable {
     private String description;
     private String creatorId;
     private long estTime;
+    private Integer listViewDistance;
     private TimeUnit estTimeUnit;
     private long timeCreated; // seconds past epoch
 
@@ -483,6 +484,14 @@ public class Hunt implements Parcelable, Serializable {
                 }
             }
         }).start();
+    }
+
+    public void setListViewDistance(int distance) {
+        listViewDistance = distance;
+    }
+
+    public Integer getListViewDistance() {
+        return listViewDistance;
     }
 
     public static void loadUsersHuntsInBackground(final HuntLoadedCallback hlc,

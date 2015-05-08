@@ -275,12 +275,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                 loadTask(currentTaskNumber);
             }
         }
-        Toast.makeText(this, "Making location Listener", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Making location Listener", Toast.LENGTH_SHORT).show();
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
                 lastKnownLocation = location;
-                Log.d("Location changed:", location.toString());
+//                Log.d("Location changed:", location.toString());
                 Task currentTask;
                 if (currentTaskNumber < hunt.getTasks().size()) {
                     currentTask = hunt.getTasks().get(currentTaskNumber);
@@ -292,7 +292,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                             lastKnownLocation.getLongitude()), centroid);
 
                     if (distanceFromAnswer < currentTask.getRadius()) {
-                        Log.d("MEGAN", "FOUND TASK");
+//                        Log.d("MEGAN", "FOUND TASK");
                         loadCompletedTask(currentTaskNumber);
                     } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
                         // Just entered the hunt boundary
@@ -464,10 +464,7 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     hintText = "Sorry your location dropped.";
                 }
 
-                Toast toast = Toast.makeText(this,
-                        hintText,
-                        Toast.LENGTH_LONG);
-                toast.show();
+                Toast.makeText(this, hintText, Toast.LENGTH_LONG).show();
                 break;
 
 //            case R.id.found_it:
