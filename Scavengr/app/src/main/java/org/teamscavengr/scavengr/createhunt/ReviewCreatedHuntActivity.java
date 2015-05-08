@@ -1,6 +1,12 @@
 package org.teamscavengr.scavengr.createhunt;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -113,6 +119,67 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                     return;
                 }
 
+                // Create and show Progress dialog
+                final ProgressDialog progress = new ProgressDialog(this);
+                progress.setMessage("Saving hunt, please wait");
+                progress.show();
+                final ReviewCreatedHuntActivity temp = this;
+
+                // Create failed to save hunt dialog
+                final AlertDialog.Builder failedDialog = new AlertDialog.Builder(this)
+                        .setMessage("Hunt failed to save. Try again?")
+                        .setNegativeButton("Give up", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent myHunts = new Intent(temp, MyHuntsActivity.class);
+                                myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                myHunts.putExtra("user", currentUser);
+                                startActivity(myHunts);
+                                finish();
+                            }
+                        });
+
+                // Now that we can access the failedDialog object, add the positive onclick listener
+                // which will show this dialog again if it fails to save again
+                failedDialog.setPositiveButton("Save again", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        progress.show();
+                        currentHunt.saveHuntInBackground(currentUser.getId(), new Hunt.HuntSavedCallback() {
+                            @Override
+                            public void huntSaved() {
+                                if (editMode){
+                                    Map<String, String> createHuntData = new HashMap<>();
+                                    createHuntData.put("huntId", currentHunt.getId());
+                                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                                    createHuntData.put("userId", currentUser.getId());
+                                    ParseAnalytics.trackEventInBackground("edit_hunt", createHuntData);
+                                } else {
+                                    Map<String, String> createHuntData = new HashMap<>();
+                                    createHuntData.put("huntId", currentHunt.getId());
+                                    createHuntData.put("numWaypoints", Integer.toString((currentHunt.getTasks().size())));
+                                    createHuntData.put("userId", currentUser.getId());
+                                    ParseAnalytics.trackEventInBackground("create_hunt", createHuntData);
+                                }
+                                progress.dismiss();
+                                // Start the next activity after successful submission to the server
+                                Intent myHunts = new Intent(temp, MyHuntsActivity.class);
+                                myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                myHunts.putExtra("user", currentUser);
+                                startActivity(myHunts);
+                                finish();
+                            }
+
+                            @Override
+                            public void huntFailedToSave(Exception ex) {
+                                progress.dismiss();
+                                failedDialog.show();
+                            }
+                        }, true);
+                    }
+                });
+
+                // The initial huntSavedCallback
                 Hunt.HuntSavedCallback hsc = new Hunt.HuntSavedCallback() {
                     @Override
                     public void huntSaved() {
@@ -129,20 +196,25 @@ public class ReviewCreatedHuntActivity extends ActionBarActivity implements View
                             createHuntData.put("userId", currentUser.getId());
                             ParseAnalytics.trackEventInBackground("create_hunt", createHuntData);
                         }
+                        progress.dismiss();
+                        // Start the next activity after successful submission to the server
+                        Intent myHunts = new Intent(temp, MyHuntsActivity.class);
+                        myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        myHunts.putExtra("user", currentUser);
+                        startActivity(myHunts);
+                        finish();
                     }
 
                     @Override
                     public void huntFailedToSave(Exception ex) {
+                        progress.dismiss();
+                        failedDialog.show();
 
                     }
                 };
                 currentHunt.saveHuntInBackground(currentUser.getId(), hsc, true);
 
-                Intent myHunts = new Intent(this, MyHuntsActivity.class);
-                myHunts.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                myHunts.putExtra("user", currentUser);
-                this.startActivity(myHunts);
-                this.finish();
+
                 break;
 
             case R.id.back:
