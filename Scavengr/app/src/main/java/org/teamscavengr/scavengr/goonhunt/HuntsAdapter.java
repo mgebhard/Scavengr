@@ -63,7 +63,6 @@ public class HuntsAdapter extends RecyclerView.Adapter<HuntsAdapter.ViewHolder> 
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public HuntsAdapter(Context context, User currentUser, ArrayList<Hunt> currentHunts ) {
-//        mDataset = myDataset;
         mCurrentHunts = currentHunts;
         mCurrentUser = currentUser;
         mContext = context;

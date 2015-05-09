@@ -20,14 +20,11 @@ import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by erosales on 5/7/15.
  */
 public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHolder>{
-//    private ArrayList<String> mDataset;
     private ArrayList<Hunt> mCurrentHunts;
     private User mCurrentUser;
     private Context mContext;
@@ -52,7 +49,6 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
         @Override
         public void onClick(View v) {
             Intent confirmGoingOnHunt = new Intent(mContext, HuntDetailsActivity.class);
-//            confirmGoingOnHunt.putExtra("huntObject", (Parcelable) mCurrentHunts.get(getPosition()));
             MainActivity.hunt = mCurrentHunts.get(getPosition());
             confirmGoingOnHunt.putExtra("user", mCurrentUser);
             mContext.startActivity(confirmGoingOnHunt);
@@ -61,7 +57,6 @@ public class MyHuntsAdapter extends RecyclerView.Adapter<MyHuntsAdapter.ViewHold
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MyHuntsAdapter(Context context, User currentUser, ArrayList<Hunt> currentHunts ) {
-//        mDataset = myDataset;
         mCurrentHunts = currentHunts;
         mCurrentUser = currentUser;
         mContext = context;
