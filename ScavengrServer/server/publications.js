@@ -1,6 +1,3 @@
-
-
-
 Meteor.startup(function(){
 
   Meteor.publish("posts", function () {
@@ -32,6 +29,10 @@ Meteor.startup(function(){
 
   Meteor.publish("users", function() {
     return Users.find();
+  });
+
+  Meteor.publish("huntBackup", function() {
+    return HuntsBackup.find();
   });
 
 
@@ -102,6 +103,16 @@ Meteor.startup(function(){
               },
           ],
       });
+  };
+
+  if(Hunts.find().count() != 0) {
+    var huntsFound = Hunts.find().fetch();
+    for (var i=0; i < huntsFound.length; i++) {
+      var targetHunt = huntsFound[i]
+      if (HuntsBackup.find({_id: targetHunt["_id"]}).count() < 1) {
+        HuntsBackup.insert(huntsFound[i]);
+      }
+    }
   };
 
   if(Reviews.find().count() == 0) {
