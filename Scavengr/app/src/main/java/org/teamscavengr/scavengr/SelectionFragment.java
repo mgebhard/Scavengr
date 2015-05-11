@@ -1,12 +1,16 @@
 package org.teamscavengr.scavengr;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,12 +28,13 @@ import java.util.List;
  */
 public class SelectionFragment extends Fragment {
 
-    private ProfilePictureView profilePictureView;
+    public static ProfilePictureView profilePictureView;
     private TextView greeting;
 
 //    private AccessTokenTracker accessTokenTracker;
     private User user;
-    private ProfileTracker profileTracker;
+    public static ImageView profileBanner;
+    private static ProfileTracker profileTracker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +49,7 @@ public class SelectionFragment extends Fragment {
                 Log.d("AccessToken", "Updating current access token");
             }
         };
+
     }
 
     public void updateWithProfile(final Profile currentProfile) {
@@ -157,7 +163,10 @@ public class SelectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.selection, container, false);
-
+        profileBanner = (ImageView) view.findViewById(R.id.profileBannerImage);
+        Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), R.drawable.city_background, 100, 50);
+//        profileBanner.setImageBitmap(bitmap);
+        profileBanner.setBackground(new BitmapDrawable(bitmap));
         profilePictureView = (ProfilePictureView) view.findViewById(R.id.profilePicture);
         greeting = (TextView) view.findViewById(R.id.greeting);
         profilePictureView.setCropped(true);

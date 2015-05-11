@@ -35,8 +35,6 @@ import org.teamscavengr.scavengr.R;
 import org.teamscavengr.scavengr.Task;
 import org.teamscavengr.scavengr.User;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateHuntActivity extends BaseActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,

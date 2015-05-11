@@ -64,3 +64,16 @@ Reviews.allow({
     return true;
   }
 });
+
+HuntsBackup = new Meteor.Collection("huntBackup", {idGeneration: 'MONGO'});
+HuntsBackup.allow({
+  insert: function() {
+    return true;
+  },
+  update: function() {
+    return true;
+  },
+  remove: function() {
+    return false;
+  }
+});

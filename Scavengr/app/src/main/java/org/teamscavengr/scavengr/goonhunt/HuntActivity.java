@@ -1,6 +1,7 @@
 package org.teamscavengr.scavengr.goonhunt;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,8 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,12 +59,11 @@ import java.util.Map;
 
 public class HuntActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener, LocationListener, GeofenceManager.GeofenceListener,
-        ResultCallback<Status> {
+        View.OnClickListener, ResultCallback<Status> {
 
-    protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
-    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
-    protected final static String LOCATION_PROVIDER = "network";
+//    protected final static int REQUEST_LOCATION_UPDATE_TIMER =  10*1000;
+//    protected final static int REQUEST_LOCATION_UPDATE_MINDISTANCE_METER = 2;
+//    protected final static String LOCATION_PROVIDER = "network";
 
     private static final int ACTION_TAKE_PHOTO = 1;
     private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -73,11 +71,11 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     private static final String BITMAP_STORAGE_KEY = "viewbitmap";
     private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
-    private ImageView mImageView;
-    private Bitmap mImageBitmap;
-    private String mCurrentPhotoPath;
-    private ArrayList<String> allPhotoPaths = new ArrayList<String>();
-    private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+    private static ImageView mImageView;
+    private static Bitmap mImageBitmap;
+    private static String mCurrentPhotoPath;
+    private static ArrayList<String> allPhotoPaths = new ArrayList<String>();
+    private static AlbumStorageDirFactory mAlbumStorageDirFactory = null;
 
 
     private long timeStarted;
@@ -86,18 +84,18 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     protected LatLng centroid;
     protected Location centroidLocation;
     protected Double boundingRadius;
-    protected LocationManager locationManager;
+//    protected LocationManager locationManager;
     protected boolean inHuntBoundary = false;
 
     protected Hunt hunt;
-    protected User currentUser;
+    protected static User currentUser;
     protected int currentTaskNumber = 0;
 
-    protected Map<Task, Bitmap> images;
+    protected static Map<Task, Bitmap> images;
 
-    private static GoogleMap mapObject;
+    public GoogleMap mapObject;
     //    private GeofenceManager manager;
-    protected GoogleApiClient mGoogleApiClient;
+    protected static GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +116,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
         timeStarted = System.currentTimeMillis();
 
-        if (getIntent().hasExtra("huntObject")) {
+        if (MainActivity.hunt != null) {
             Log.d("HuntActivity", "Hunt found________");
-            hunt = (getIntent().getParcelableExtra("huntObject"));
+            hunt = MainActivity.hunt;
             images = new HashMap<>();
 
             // Get bounding geo fence for hunt
@@ -131,41 +129,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
             centroidLocation.setLatitude(centroid.latitude);
             centroidLocation.setLongitude(centroid.longitude);
 
-            locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(
-                    LOCATION_PROVIDER,
-                    REQUEST_LOCATION_UPDATE_TIMER,
-                    REQUEST_LOCATION_UPDATE_MINDISTANCE_METER,
-                    this);
-            lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-            if (lastKnownLocation != null) {
-                lastKnownLocation.setAccuracy(1);
-                Log.d("MEGAN", "Found current last location");
-
-                // If not in radius show start screen
-                Double distanceFromCentroid = CalcLib.distanceFromLatLng(
-                        new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()),
-                        centroid);
-
-                if (distanceFromCentroid > boundingRadius) {
-                    Log.d("MEGAN", "Not inside hunt boundaries");
-                    getSupportFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                             .add(R.id.fragment_container, new StartHuntFragment()).commit();
-                } else {
-                    Log.d("MEGAN", "Inside hunt boundaries");
-                    inHuntBoundary = true;
-                    loadTask(currentTaskNumber);
-                }
-
-            } else {
-                Log.d("MEGAN", "DON'T KNOW LOCATION");
-                Toast toast = Toast.makeText(this,
-                        "Make sure location is turned on!",
-                        Toast.LENGTH_LONG);
-                toast.show();
-            }
-
             try{
                 MapFragment mapFragment = (MapFragment) getFragmentManager()
                         .findFragmentById(R.id.map);
@@ -177,93 +142,81 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-//        Log.d("MEGAN", "Location changed to: " + location);
-        lastKnownLocation = location;
-        Task currentTask;
-        if (currentTaskNumber < hunt.getTasks().size()) {
-            currentTask = hunt.getTasks().get(currentTaskNumber);
-            Double distanceFromAnswer = CalcLib.distanceFromLatLng(
-                    new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()),
-                    new LatLng(currentTask.getLocation().getLatitude(),
-                            currentTask.getLocation().getLongitude()));
-            Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(lastKnownLocation.getLatitude(),
-                    lastKnownLocation.getLongitude()), centroid);
-
-            if (distanceFromAnswer < currentTask.getRadius()) {
-                Log.d("MEGAN", "FOUND TASK");
-                loadCompletedTask(currentTaskNumber);
-            } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
-                // Just entered the hunt boundary
-                loadTask(currentTaskNumber);
-                inHuntBoundary = true;
-            } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
-                // Exited the hunt boundary
-                inHuntBoundary = false;
-                // TODO (GEBHARD): PAUSE APP
-            }
-
-
-            List<LatLng> points = new ArrayList<LatLng>();
-            points.add(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
-            for (Task task : hunt.getTasks()) {
-                points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
-            }
-            LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
-            LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
-            LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
-            LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
-            mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
-                @Override
-                public void onFinish() {
-                    // Do nothing
-                }
-
-                @Override
-                public void onCancel() {
-                    // Do nothing
-                }
-            });
-        }
-    }
-
-    @Override
     public void onMapReady(GoogleMap map) {
         mapObject = map;
         map.setMyLocationEnabled(true);
-        // Based on stack overflow post
-        // http://stackoverflow.com/questions/6002563/android-how-do-i-set-the-zoom-level-of-map-view-to-1-km-radius-around-my-curren
-
-//        int zoomLevel = getZoomLevel();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(centroid, 14));
-//        if (!Double.isNaN(centroid.longitude) || !Double.isNaN(centroid.latitude)) {
-//            List<LatLng> points = new ArrayList<LatLng>();
-//            points.add(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
-//            for (Task task : hunt.getTasks()) {
-//                points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
-//            }
-//            LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
-//            LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
-//            LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
-//            LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
-//            mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 10), 500, new GoogleMap.CancelableCallback() {
-//                @Override
-//                public void onFinish() {
-//                    // Do nothing
-//                }
-//
-//                @Override
-//                public void onCancel() {
-//                    // Do nothing
-//                }
-//            });
-//        }
 
         map.addCircle(new CircleOptions()
                 .center(centroid)
                 .radius(boundingRadius)
                 .strokeColor(Color.argb(256, 0, 0, 256))
                 .fillColor(Color.argb(100, 0, 0, 256)));
+
+        if (map.getMyLocation() != null) {
+            Double distanceFromCentroid = CalcLib.distanceFromLatLng(
+                    new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()),
+                    centroid);
+
+            if (distanceFromCentroid > boundingRadius) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, new StartHuntFragment()).commit();
+            } else {
+                inHuntBoundary = true;
+                loadTask(currentTaskNumber);
+            }
+        }
+        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location location) {
+                lastKnownLocation = location;
+                Task currentTask;
+                if (currentTaskNumber < hunt.getTasks().size()) {
+                    currentTask = hunt.getTasks().get(currentTaskNumber);
+                    Double distanceFromAnswer = CalcLib.distanceFromLatLng(
+                            new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()),
+                            new LatLng(currentTask.getLocation().getLatitude(),
+                                    currentTask.getLocation().getLongitude()));
+                    Double distanceFromCentroid = CalcLib.distanceFromLatLng(new LatLng(lastKnownLocation.getLatitude(),
+                            lastKnownLocation.getLongitude()), centroid);
+
+                    if (distanceFromAnswer < currentTask.getRadius()) {
+//                        Log.d("MEGAN", "FOUND TASK");
+                        loadCompletedTask(currentTaskNumber);
+                    } else if (!inHuntBoundary && distanceFromCentroid < boundingRadius) {
+                        // Just entered the hunt boundary
+                        loadTask(currentTaskNumber);
+                        inHuntBoundary = true;
+                    } else if (inHuntBoundary && distanceFromCentroid > boundingRadius) {
+                        // Exited the hunt boundary
+                        inHuntBoundary = false;
+                        // TODO (GEBHARD): PAUSE APP
+                    }
+
+
+                    List<LatLng> points = new ArrayList<LatLng>();
+                    points.add(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+                    for (Task task : hunt.getTasks()) {
+                        points.add(new LatLng(task.getLocation().getLatitude(), task.getLocation().getLongitude()));
+                    }
+                    LatLng diffLatLng = CalcLib.maxDistanceFromCentroid(centroid, points);
+                    LatLng northEastCent = new LatLng(centroid.latitude + diffLatLng.latitude * 1.1, centroid.longitude + diffLatLng.longitude * 1.1);
+                    LatLng southWestCent = new LatLng(centroid.latitude - diffLatLng.latitude * 1.1, centroid.longitude - diffLatLng.longitude * 1.1);
+                    LatLngBounds bounds = new LatLngBounds(southWestCent, northEastCent);
+                    mapObject.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20), 500, new GoogleMap.CancelableCallback() {
+                        @Override
+                        public void onFinish() {
+                            // Do nothing
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            // Do nothing
+                        }
+                    });
+                }
+            }
+        });
     }
 
     /**
@@ -278,15 +231,8 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         TaskFragment newFragmentTask = TaskFragment.newInstance("Clue: " + newTask.getClue(),
                 "Task: " + (taskNum+1) + " out of " + Integer.toString(hunt.getTasks().size()));
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragment_container, newFragmentTask);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-        Log.d("MEGAN", "LOADING TASK");
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragmentTask).addToBackStack(null).commit();
     }
 
     /**
@@ -303,11 +249,9 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         args.putParcelable("task", hunt.getTasks().get(currentTaskNumber));
         newFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).addToBackStack(null).commit();
 
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
 
         // SNAIL TRAIL
         Location completedTaskLocation = completedTask.getLocation();
@@ -321,17 +265,17 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
      * Transitions the fragment to show a congrats message before exiting this activity.
      */
     public void finishedPuzzle(){
-        locationManager.removeUpdates(this);
+//        locationManager.removeUpdates(this);
         if (mGoogleApiClient != null) { mGoogleApiClient.disconnect(); }
+        mapObject.clear();
         CompletedHuntFragment newFragment = new CompletedHuntFragment();
         Bundle args = new Bundle();
-        args.putParcelable("hunt", hunt);
+//        args.putParcelable("hunt", hunt);
         newFragment.setArguments(args);
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, newFragment).addToBackStack(null).commit();
+
     }
 
     public void onClick(View view) {
@@ -353,12 +297,12 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     photoRecap.putExtra("hunt", (Parcelable) hunt);
                     photoRecap.putStringArrayListExtra("photoPaths", allPhotoPaths);
                 }
-                Log.d("HuntActivity", hunt.toString());
-                Log.d("HuntActivity", currentUser.toString());
+
                 if (currentUser != null) {
                     photoRecap.putExtra("user", currentUser);
                 }
                 this.startActivity(photoRecap);
+                finish();
                 break;
 
             case R.id.next_task:
@@ -389,33 +333,24 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
                     hintText = "Sorry your location dropped.";
                 }
 
-                Toast toast = Toast.makeText(this,
-                        hintText,
-                        Toast.LENGTH_LONG);
-                toast.show();
+                Toast.makeText(this, hintText, Toast.LENGTH_LONG).show();
                 break;
 
-            case R.id.found_it:
-                // Analytics
-                Map<String, String> dimensions = new HashMap<>();
-                dimensions.put("huntId", hunt.getId());
-                if(currentUser != null)
-                    dimensions.put("userId", currentUser.getId());
-                dimensions.put("totalNumWaypoints", Integer.toString(hunt.getTasks().size()));
-                dimensions.put("waypointNum", Integer.toString(currentTaskNumber));
-                ParseAnalytics.trackEventInBackground("found-waypoint", dimensions);
-
-
-                loadCompletedTask(currentTaskNumber);
-                break;
+//                // Analytics found it
+//                Map<String, String> dimensions = new HashMap<>();
+//                dimensions.put("huntId", hunt.getId());
+//                if(currentUser != null)
+//                    dimensions.put("userId", currentUser.getId());
+//                dimensions.put("totalNumWaypoints", Integer.toString(hunt.getTasks().size()));
+//                dimensions.put("waypointNum", Integer.toString(currentTaskNumber));
+//                ParseAnalytics.trackEventInBackground("found-waypoint", dimensions);
+//                loadCompletedTask(currentTaskNumber);
+//                break;
 
             default:
                 break;
         }
     }
-
-    @Override
-    public void geofenceTriggered(final GeofenceManager.GeofenceEvent event) {}
 
     @Override
     public void onResult(final Status status) {
@@ -439,45 +374,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         int id = item.getItemId();
         Intent home;
         switch (id) {
-            /*case R.id.change_location:
-                if(BaseActivity.dmlp == null) {
-                    Log.e("SCV", "dmlp is null!");
-                }
-
-                AlertDialog.Builder b = new AlertDialog.Builder(this);
-                b.setTitle("Location?");
-                LayoutInflater inflater = getLayoutInflater();
-                View v = inflater.inflate(R.layout.stuff, null);
-                final EditText lat = (EditText) v.findViewById(R.id.spoof_latitude);
-                final EditText lon = (EditText) v.findViewById(R.id.spoof_longitude);
-
-                b.setView(v);
-                b.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        dialog.cancel();
-                    }
-                });
-                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, final int which) {
-                        try {
-                            Double la = Double.parseDouble(lat.getText().toString());
-                            Double lo = Double.parseDouble(lon.getText().toString());
-                            Log.d("lat", la.toString());
-                            Log.d("lng", lo.toString());
-                            BaseActivity.dmlp.setLocation(la, lo);
-                            BaseActivity.dmlp.update();
-
-                        } catch (NumberFormatException ex) {
-                            ex.printStackTrace();
-                        } finally {
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                b.show();
-                break;*/
             case R.id.logout:
                 LoginManager.getInstance().logOut();
                 home = new Intent(this, MainActivity.class);
@@ -494,34 +390,21 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         return true;
     }
 
-    //    protected synchronized void buildGoogleApiClient() {
-    //        mGoogleApiClient = new GoogleApiClient.Builder(this)
-    //                .addConnectionCallbacks(this)
-    //                .addOnConnectionFailedListener(this)
-    //                .addApi(LocationServices.API)
-    //                .build();
-    //        mGoogleApiClient.connect();
-    //    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
 
     @Override
     public void onBackPressed() {
         // Don't do anything when he user tries to go back
+        final Context context = this;
         DialogInterface.OnClickListener ocl = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, final int which) {
                 switch (which){
                     case DialogInterface.BUTTON_POSITIVE:
                         // Exit
+                        Intent home = new Intent(context, MainActivity.class);
+                        home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(home);
+                        finish();
                         HuntActivity.super.onBackPressed();
                     case DialogInterface.BUTTON_NEGATIVE:
                         // Don't do anything
@@ -532,11 +415,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
         adb.setMessage("Are you sure you want to quit this hunt?")
                 .setPositiveButton("Yes", ocl)
                 .setNegativeButton("No", ocl).show();
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
     private void dispatchTakePictureIntent(int actionCode) {
@@ -642,12 +520,6 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(Bundle connectionHint) {
-//        Log.d("MEGAN", "CONNCETED FUCK YEAA");
-//
-//        boolean added = manager.addGeofence("fullHuntFence", centroidLocation, boundingRadius.floatValue(),
-//                Geofence.NEVER_EXPIRE, this, this);
-//
-//        Log.d("MEGAN", "GEO FENCE ACTUALLY ADDED: " + added);
 
     }
 
@@ -658,8 +530,5 @@ public class HuntActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionFailed(final ConnectionResult connectionResult) {}
-
-
-
 
 }

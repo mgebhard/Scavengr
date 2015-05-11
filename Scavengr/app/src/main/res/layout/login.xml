@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillViewport="true"
-    android:background="@drawable/city_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout"
+    android:orientation="vertical">
+
+    <ImageView
+        style="@style/BackGroundImageView"
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"/>
+
+
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/loginLayout"
@@ -92,3 +108,6 @@
     </LinearLayout>
 
 </LinearLayout>
+
+</RelativeLayout>
+

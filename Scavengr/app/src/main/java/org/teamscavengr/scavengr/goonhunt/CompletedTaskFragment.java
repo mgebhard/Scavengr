@@ -66,6 +66,13 @@ public class CompletedTaskFragment extends Fragment {
         return myInflatedView;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+//        getActivity().finish();
+        onDestroy();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

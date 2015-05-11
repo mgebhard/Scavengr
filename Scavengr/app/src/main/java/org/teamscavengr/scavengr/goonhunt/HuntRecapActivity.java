@@ -23,6 +23,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import org.teamscavengr.scavengr.BaseActivity;
+import org.teamscavengr.scavengr.BitmapUtils;
 import org.teamscavengr.scavengr.Hunt;
 import org.teamscavengr.scavengr.MainActivity;
 import org.teamscavengr.scavengr.R;
@@ -41,11 +42,15 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
     private ArrayList<String> photoPaths;
     private ImageSwitcher imageSwitcher;
     private int photoIndex = 0;
+    private ImageView defaultImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hunt_recap);
+        defaultImage = (ImageView) findViewById(R.id.photoFromTask);
+        Bitmap bitmap = BitmapUtils.decodeSampledBitmapFromResource(getResources(), R.drawable.map_filler_pic, 310 , 210);
+        defaultImage.setImageBitmap(bitmap);
         imageSwitcher = (ImageSwitcher)findViewById(R.id.imageSwitcher);
         Animation in = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
         Animation out = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
@@ -71,7 +76,9 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         if (getIntent().hasExtra("photoPaths")) {
             photoPaths = getIntent().getStringArrayListExtra("photoPaths");
             Log.d("MEGAN", "GOT PHOTOS: " + photoPaths.toString());
-            setPic(photoPaths.get(photoIndex));
+            if (photoPaths.size() > 0) {
+                setPic(photoPaths.get(photoIndex));
+            }
 
         }
 
@@ -171,6 +178,15 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
         return rotate;
     }
 
+    @Override
+    public void onTrimMemory(int trimLevel) {
+        if (trimLevel == TRIM_MEMORY_COMPLETE || trimLevel == TRIM_MEMORY_MODERATE) {
+            if (defaultImage != null) {
+                defaultImage.setImageBitmap(null);
+            }
+        }
+    }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.review:
@@ -186,9 +202,9 @@ public class HuntRecapActivity extends BaseActivity implements View.OnClickListe
 
             case R.id.home:
                 Intent createHuntIntent = new Intent(this, MainActivity.class);
+                finish();
                 createHuntIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 this.startActivity(createHuntIntent);
-                finish();
                 break;
             default:
                 break;

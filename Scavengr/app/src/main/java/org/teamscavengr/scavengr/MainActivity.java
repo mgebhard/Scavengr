@@ -6,7 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+//import android.util.Log;
+import android.text.Selection;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,14 +17,14 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
+//import com.facebook.FacebookCallback;
+//import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
+//import com.facebook.login.LoginResult;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseCrashReporting;
@@ -31,7 +32,7 @@ import com.parse.ParseCrashReporting;
 import org.teamscavengr.scavengr.createhunt.MyHuntsActivity;
 import org.teamscavengr.scavengr.goonhunt.HuntsList;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,16 +45,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public static boolean waitingLogin = false;
     public static FragmentManager fm;
 
-    private CallbackManager callbackManager;
-    private AccessTokenTracker accessTokenTracker;
-    private boolean isResumed = false;
+    private static CallbackManager callbackManager;
+//    private AccessTokenTracker accessTokenTracker;
+//    private boolean isResumed = false;
     public static User user = null;
     public static boolean loggedInSuccess = false;
-    private ProfileTracker profileTracker;
+    private static ProfileTracker profileTracker;
+    public static Hunt hunt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hunt = null;
         FacebookSdk.sdkInitialize(getApplicationContext());
         if (!ParseCrashReporting.isCrashReportingEnabled()) {
             ParseCrashReporting.enable(this);
@@ -80,15 +83,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                    } else {
 //                        showFragment(LOGIN, false);
 //                    }
-
-                    if(currentProfile == null) {
-                        Log.d("Profile", "This shouldnt be null");
-                        // Quick hack to fix some user being stuck being logged in without a user object
-                        Intent home = new Intent(MainActivity.this ,MainActivity.class);
-                        home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(home);
-                        return;
-                    }
                     if (loggedInSuccess) {
                         // Dont bother trying to find user again.
                         return;
@@ -229,6 +223,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
+        hunt = null;
         if (user == null && Profile.getCurrentProfile() != null) {
             User.findUserWithFacebookIdInBackground(Profile.getCurrentProfile().getId(),
                     new User.FacebookLookupDoneCallback() {
@@ -262,7 +257,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         }
                     }, true);
         }
-        isResumed = true;
+//        isResumed = true;
 
         // Call the 'activateApp' method to log an app event for use in analytics and advertising
         // reporting.  Do so in the onResume methods of the primary Activities that an app may be
@@ -273,7 +268,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onPause() {
         super.onPause();
-        isResumed = false;
+//        isResumed = false;
 
         // Call the 'deactivateApp' method to log an app event for use in analytics and advertising
         // reporting.  Do so in the onPause methods of the primary Activities that an app may be
@@ -313,7 +308,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             showFragment(LOGIN, false);
         }
     }
-//
+
 //    public void showLoginFragment() {
 //        showFragment(LOGIN, true);
 //    }
@@ -329,6 +324,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onTrimMemory(int trimLevel) {
+        if (trimLevel == TRIM_MEMORY_COMPLETE || trimLevel == TRIM_MEMORY_MODERATE) {
+            if (LoginFragment.backgroundImage != null) {
+                LoginFragment.backgroundImage.setImageBitmap(null);
+            }
+            if (SelectionFragment.profileBanner != null) {
+                SelectionFragment.profileBanner.setImageBitmap(null);
+            }
+        }
     }
 
     @Override
