@@ -94,7 +94,7 @@ public class User implements Parcelable {
      */
     public static User loadUser(String id) throws IOException {
         try {
-            URL url = new URL("http://scavengr.meteor.com/users/" + id);
+            URL url = new URL("http://scavengr3.meteor.com/users/" + id);
             JSONObject result = NetworkHelper.doRequest(url, "GET");
             Optional<String> gPlus, fb;
             if(result.has("googleplus")) {
@@ -159,7 +159,7 @@ public class User implements Parcelable {
     public static List<String> findUserWithName(final String name) throws IOException {
         System.out.println(name);
         try {
-            URL url = new URL("http://scavengr.meteor.com/users/byName/" + URLEncoder.encode(name, "UTF-8"));
+            URL url = new URL("http://scavengr3.meteor.com/users/byName/" + URLEncoder.encode(name, "UTF-8"));
             JSONObject result = NetworkHelper.doRequest(url, "GET");
             JSONArray a = result.getJSONArray("result");
             List<String> ret = new ArrayList<>();
@@ -179,7 +179,7 @@ public class User implements Parcelable {
     public static List<String> findUserWithFacebookId(final String facebookId) throws IOException {
         System.out.println(facebookId);
         try {
-            URL url = new URL("http://scavengr.meteor.com/users/byFacebookId/" + URLEncoder.encode(facebookId, "UTF-8"));
+            URL url = new URL("http://scavengr3.meteor.com/users/byFacebookId/" + URLEncoder.encode(facebookId, "UTF-8"));
             JSONObject result = NetworkHelper.doRequest(url, "GET");
             JSONArray a = result.getJSONArray("result");
             List<String> ret = new ArrayList<>();
@@ -269,7 +269,7 @@ public class User implements Parcelable {
         try {
             URL url;
             if(id == null) {
-                url = new URL("http://scavengr.meteor.com/users/");
+                url = new URL("http://scavengr3.meteor.com/users/");
 
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", getName());
@@ -284,11 +284,11 @@ public class User implements Parcelable {
             }
 
             // Make an empty review array.
-            url = new URL("http://scavenger.meteor.com/users/" + id + "/reviews");
+            url = new URL("http://scavengr3.meteor.com/users/" + id + "/reviews");
             NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
 
             // Save the tasks
-            url = new URL("http://scavengr.meteor.com/users/" + id + "/hunts");
+            url = new URL("http://scavengr3.meteor.com/users/" + id + "/hunts");
             NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
 
         } catch(MalformedURLException ex) {

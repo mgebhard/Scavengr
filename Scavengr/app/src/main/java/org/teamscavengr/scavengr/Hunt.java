@@ -227,7 +227,7 @@ public class Hunt implements Parcelable, Serializable {
         try {
             URL url;
             if(id == null) {
-                url = new URL("http://scavengr.meteor.com/hunts/");
+                url = new URL("http://scavengr3.meteor.com/hunts/");
                 creatorId = creatorMeteorId;
                 Map<String, String> requestMap = new HashMap<>();
                 requestMap.put("name", name);
@@ -242,11 +242,11 @@ public class Hunt implements Parcelable, Serializable {
             }
 
             // Make an empty review array.
-            url = new URL("http://scavenger.meteor.com/hunts/" + id + "/reviews");
+            url = new URL("http://scavengr3.meteor.com/hunts/" + id + "/reviews");
             NetworkHelper.doRequest(url, "POST", true, new HashMap<String, String>());
 
             // Save the tasks
-            url = new URL("http://scavengr.meteor.com/hunts/" + id + "/tasks");
+            url = new URL("http://scavengr3.meteor.com/hunts/" + id + "/tasks");
             Log.d("URL",url.toString());
             NetworkHelper.doRequest(url, "DELETE", false, new HashMap<String, String>());
             for(Task t : tasks) {
@@ -292,7 +292,7 @@ public class Hunt implements Parcelable, Serializable {
      */
     public static Hunt loadHunt(String id) throws IOException {
         try {
-            URL url = new URL("http://scavengr.meteor.com/hunts/" + id);
+            URL url = new URL("http://scavengr3.meteor.com/hunts/" + id);
             JSONObject obj = NetworkHelper.doRequest(url, "GET", false, new HashMap<String, String>());
             return new Hunt(id, obj.getString("name"), reviewsFromJSONArray(obj),
                     tasksFromJSONArray(obj.getJSONArray("tasks")),
@@ -345,7 +345,7 @@ public class Hunt implements Parcelable, Serializable {
     public static List<Optional<Hunt>> loadAllHunts() {
         InputStream in = null;
         try {
-            URL url = new URL("http://scavengr.meteor.com/hunts/");
+            URL url = new URL("http://scavengr3.meteor.com/hunts/");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(1000);
             conn.setConnectTimeout(1000);
@@ -354,7 +354,7 @@ public class Hunt implements Parcelable, Serializable {
             conn.connect();
 
             // int response = conn.getResponseCode();
-            Log.d("SCV", "Got response from scavengr.meteor.com");
+            Log.d("SCV", "Got response from scavengr3.meteor.com");
             in = conn.getInputStream();
 
             // Read data
@@ -400,7 +400,7 @@ public class Hunt implements Parcelable, Serializable {
     public static List<Optional<Hunt>> loadAllUserHunts(String userId) {
         InputStream in = null;
         try {
-            URL url = new URL("http://scavengr.meteor.com/hunts/byAuthor/" + URLEncoder.encode(userId, "UTF-8"));
+            URL url = new URL("http://scavengr3.meteor.com/hunts/byAuthor/" + URLEncoder.encode(userId, "UTF-8"));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(1000);
             conn.setConnectTimeout(1000);
@@ -409,7 +409,7 @@ public class Hunt implements Parcelable, Serializable {
             conn.connect();
 
             // int response = conn.getResponseCode();
-            Log.d("SCV", "Got response from scavengr.meteor.com");
+            Log.d("SCV", "Got response from scavengr3.meteor.com");
             in = conn.getInputStream();
 
             // Read data
